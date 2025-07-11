@@ -23,10 +23,6 @@ export class RedisService implements OnModuleDestroy {
     });
   }
 
-  onModuleInit(): void {
-    console.log("RedisCache Service initialized");
-  }
-
   async setKey(key: string, value: any, ttl: number): Promise<void> {
     try {
       await this.redisClient.set(key, JSON.stringify(value), "EX", ttl);

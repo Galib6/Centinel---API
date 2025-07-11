@@ -15,21 +15,29 @@ export function createLogger(): LoggerService {
         format: format.combine(format.timestamp(), utilities.format.nestLike()),
         filename: `${logFolder}/errors.log`,
         level: "error",
+        maxsize: 100 * 1024 * 1024, // 100MB
+        maxFiles: 5,
       }),
       new transports.File({
         format: format.combine(format.timestamp(), utilities.format.nestLike()),
         filename: `${logFolder}/warnings.log`,
         level: "warning",
+        maxsize: 100 * 1024 * 1024, // 100MB
+        maxFiles: 5,
       }),
       new transports.File({
         format: format.combine(format.timestamp(), utilities.format.nestLike()),
         filename: `${logFolder}/critical.log`,
         level: "crit",
+        maxsize: 100 * 1024 * 1024, // 100MB
+        maxFiles: 5,
       }),
       new transports.File({
         format: format.combine(format.timestamp(), utilities.format.nestLike()),
         filename: `${logFolder}/log.log`,
         level: "log",
+        maxsize: 100 * 1024 * 1024, // 100MB
+        maxFiles: 5,
       }),
     ],
   };
