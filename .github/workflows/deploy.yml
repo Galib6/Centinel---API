@@ -1,0 +1,173 @@
+name: Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+env:
+  PORT: 6800
+  APP_ENV: production
+  NODE_ENV: production
+  APP_NAME: meet-live-api
+  SERVER_USER: ${{ secrets.SERVER_USER }}
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+  DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_DATABASE: ${{ secrets.DB_DATABASE }}
+  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+  GOOGLE_REDIRECT_URL: ${{ secrets.GOOGLE_REDIRECT_URL }}
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Generate .env file
+        run: |
+          envsubst "$(printf '${%s} ' $(sh -c "env | cut -d'=' -f1"))" < ./environments/prod.example.env > ./environments/$NODE_ENV.env
+          cat ./environments/$NODE_ENV.env
+        env:
+          PORT: ${{ env.PORT }}
+          APP_ENV: ${{ env.APP_ENV }}
+          NODE_ENV: ${{ env.APP_ENV }}
+          API_PREFIX: api/v1
+          TZ: UTC
+          API_VERSION: 1.0.0
+          API_TITLE: "r-tech meet app"
+          API_DESCRIPTION: "r-tech meet app"
+          DB_TYPE: postgres
+          DB_HOST: ${{ env.DB_HOST }}
+          DB_PORT: 5432
+          DB_USERNAME: ${{ env.DB_USERNAME }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_DATABASE: ${{ env.DB_DATABASE }}
+          DB_SYNCHRONIZE: true
+          DB_LOGGING: false
+          DB_SSLMODE: false
+          DB_REJECT_UNAUTHORIZED: false
+          CORS_ALLOWED_ORIGINS: http://localhost, http://localhost:5800, https://meet-api.r-tech.live, https://meet.r-tech.live
+          RATE_LIMIT_TTL: 60000
+          RATE_LIMIT_MAX: 100
+          LOG_FOLDER: logs
+          JWT_SECRET: db222766fa5cd7d6df05b7f29072bcc311d4575a1a589e24d7f6e03e84484931d7a068f651d17011974dd680fd4af767d0ce
+          JWT_SALT_ROUNDS: 10
+          JWT_EXPIRES_IN: 30d
+          JWT_REFRESH_TOKEN_EXPIRES_IN: 30d
+          S3_ENDPOINT: sgp1.digitaloceanspaces.com
+          S3_REGION: sgp1
+          S3_ACCESS_KEY: DO00J7N6BMX64HRNTKUN
+          S3_SECRET_KEY: Rqf25w+w9On9DLeIS5LIPa18kEWmEoXjKDHs5MOtW2Q
+          S3_BUCKET: unispaces
+          S3_FOLDER_PREFIX: nebula
+          REDIS_HOST: 157.245.50.140
+          REDIS_PORT: 6379
+          REDIS_USERNAME: default
+          REDIS_PASSWORD: 30kLkJSDjXp2
+          REDIS_TLS: false
+          SMTP_HOST:
+          SMTP_PORT:
+          SMTP_SECURE:
+          SMTP_AUTH_USER:
+          SMTP_AUTH_PASS:
+          GOOGLE_CLIENT_ID: ${{ env.GOOGLE_CLIENT_ID }}
+          GOOGLE_SECRET: ${{ env.GOOGLE_SECRET }}
+          GOOGLE_REDIRECT_URL: ${{ env.GOOGLE_REDIRECT_URL }}
+          SUPER_ADMIN_EMAIL: galib@gmail.com
+          SUPER_ADMIN_PASSWORD: 123456
+          LIVEKIT_API_KEY: galib
+          LIVEKIT_API_SECRET: 123456galib
+          LIVEKIT_SERVER_URL: wss://r-tech.live
+
+      - name: Docker Login
+        run: docker login -u ${{ env.DOCKER_USER }} -p ${{ env.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build . -f Dockerfile -t ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:latest
+
+      - name: Push Docker Image
+        run: docker push ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:latest
+
+  Deploy:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy with Zero Downtime
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -e
+
+            echo "Logging into Docker"
+            docker login -u ${{ env.DOCKER_USER }} -p ${{ env.DOCKER_PASSWORD }}
+
+            echo "Pulling latest Docker image"
+            docker pull ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:latest
+
+            CURRENT_PORT=$(grep -oP '(?<=proxy_pass http://127.0.0.1:)\d+' /etc/nginx/sites-enabled/meet-api.r-tech.live || echo "")
+
+            if [ -z "$CURRENT_PORT" ]; then
+              NEW_PORT=6800
+              NEW_CONTAINER=meet-live-api-6800
+            elif [ "$CURRENT_PORT" == "6800" ]; then
+              NEW_PORT=6801
+              OLD_CONTAINER=meet-live-api-6800
+              NEW_CONTAINER=meet-live-api-6801
+            else
+              NEW_PORT=6800
+              OLD_CONTAINER=meet-live-api-6801
+              NEW_CONTAINER=meet-live-api-6800
+            fi
+
+            echo "Starting new container on port $NEW_PORT"
+            docker run -d --name $NEW_CONTAINER \
+              -e NODE_ENV=production \
+              --restart always \
+              -p $NEW_PORT:6800 \
+              -v /var/www/uploads:/uploads \
+              ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:latest || {
+                echo "❌ Failed to start container. Cleaning up..."
+                docker rmi ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:latest || true
+                exit 1
+              }
+
+            echo "Waiting for service health on port $NEW_PORT..."
+            for i in {1..20}; do
+              sleep 5
+              if curl -sSf http://localhost:$NEW_PORT/api/v1/health > /dev/null; then
+                echo "✅ Healthy!"
+                break
+              elif [ $i -eq 20 ]; then
+                echo "❌ Health check failed. Removing container and image..."
+                docker logs $NEW_CONTAINER || true
+                docker rm -f $NEW_CONTAINER || true
+                docker rmi ${{ env.DOCKER_USER }}/${{ env.APP_NAME }}:latest || true
+                exit 1
+              fi
+            done
+
+            echo "Updating Nginx to new port $NEW_PORT"
+            sed -i "s/proxy_pass http:\/\/127.0.0.1:$CURRENT_PORT;/proxy_pass http:\/\/127.0.0.1:$NEW_PORT;/" /etc/nginx/sites-enabled/meet-api.r-tech.live
+            nginx -s reload
+
+            if [ ! -z "$OLD_CONTAINER" ]; then
+              echo "Removing old container: $OLD_CONTAINER"
+              OLD_IMAGE=$(docker inspect --format='{{.Image}}' $OLD_CONTAINER)
+              docker rm -f $OLD_CONTAINER || true
+              docker rmi $OLD_IMAGE || true
+              docker image prune -f
+            fi
+
+            echo "✅ Deployment complete"
