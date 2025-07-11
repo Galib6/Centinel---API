@@ -48,8 +48,6 @@ export class AuthenticationGuard implements CanActivate {
 
     //array of guards
     const guards = authType.map((type) => this.authTypeGuardMap[type]).flat();
-    console.log("🚀😬 ~ AuthenticationGuard ~ canActivate ~ guards:", guards);
-
     const result = {};
 
     //Loop guards canActivate

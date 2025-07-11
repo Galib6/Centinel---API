@@ -7,10 +7,12 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Auth } from "@src/app/decorators";
-import { AuthType } from "@src/app/enums/auth-type.enum";
+import { CacheKey } from "@src/app/decorators/cacheKey.decorator";
+import { CacheTTL } from "@src/app/decorators/cacheTTL.decorator";
+import { CacheInterceptor } from "@src/app/interceptors/cache.interceptor";
 import { SuccessResponse } from "@src/app/types";
 import { FilterRoleDTO } from "../../acl/dtos";
 import { Role } from "../../acl/entities/role.entity";
@@ -21,11 +23,13 @@ import { UserService } from "../services/user.service";
 @ApiTags("User")
 @ApiBearerAuth()
 @Controller("users")
-@Auth(AuthType.None)
+@UseInterceptors(CacheInterceptor)
 export class UserController {
   RELATIONS = ["userRoles", "userRoles.role"];
   constructor(private readonly service: UserService) {}
 
+  @CacheKey("users:user_list")
+  @CacheTTL(3600)
   @Get()
   async findAll(
     @Query() query: FilterUserDTO
@@ -41,6 +45,7 @@ export class UserController {
     return this.service.availableRoles(id, query);
   }
 
+  @CacheKey("users:user_list_{id}")
   @Get(":id")
   async findById(@Param("id") id: number): Promise<User> {
     return this.service.findByIdBase(id, { relations: this.RELATIONS });

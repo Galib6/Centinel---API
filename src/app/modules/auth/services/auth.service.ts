@@ -253,14 +253,6 @@ export class AuthService {
       { relations: ["role"], withoutPaginate: true }
     )) as UserRole[];
 
-    // Queue welcome email
-    await this.emailQueueService.queueWelcomeEmail(
-      user.email,
-      `${user.firstName} ${user.lastName}`.trim() || "User",
-      undefined, // verificationUrl can be added if needed
-      { priority: 2 } // Medium priority for welcome email
-    );
-
     const roles = userRoles?.map((uR) => uR.role?.title) || [];
     const permissions = await this.userRoleService.getUserPermissions(user.id);
 
