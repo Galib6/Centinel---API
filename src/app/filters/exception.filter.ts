@@ -4,20 +4,44 @@ import {
   ForbiddenException,
   HttpException,
   HttpStatus,
+  Logger,
   ExceptionFilter as NestExceptionFilter,
 } from "@nestjs/common";
 import { ENV } from "@src/env";
 
 @Catch()
 export class ExceptionFilter implements NestExceptionFilter {
+  private readonly logger = new Logger(ExceptionFilter.name);
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
+    const request = ctx.getRequest();
 
     let statusCode: number;
     let errorMessages: string[] = [exception.message];
 
-    console.log(exception);
+    // Enhanced error logging with detailed information
+    const errorDetails = {
+      message: exception?.message || "Unknown error",
+      stack: exception?.stack,
+      name: exception?.name || exception?.constructor?.name,
+      url: request?.url,
+      method: request?.method,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Log different levels based on error type
+    if (exception instanceof HttpException) {
+      this.logger.warn(
+        `HTTP Exception [${exception.getStatus()}]: ${exception.message} | URL: ${request?.url} | Method: ${request?.method}`
+      );
+    } else {
+      this.logger.error(
+        `Unhandled Exception: ${errorDetails.message} | Type: ${errorDetails.name} | URL: ${errorDetails.url} | Method: ${errorDetails.method}`,
+        errorDetails.stack
+      );
+    }
 
     if (exception instanceof TypeError) {
       errorMessages = errorMessages;
