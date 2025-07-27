@@ -18,7 +18,7 @@ export function MustMoreThan(
   minVal: number,
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: MUST_MORE_THAN,
       target: object.constructor,

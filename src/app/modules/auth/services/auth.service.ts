@@ -412,7 +412,7 @@ export class AuthService {
     const responseData = ((await firstValueFrom(googleResponse)) as any).data;
 
     let user: User = null;
-    let isEmailRequired = false;
+    const isEmailRequired = false;
 
     user = await this.userService.findOne({
       where: { email: responseData.email },

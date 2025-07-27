@@ -30,7 +30,7 @@ export const groupItemBy = (array, property): any => {
   const groupedData = {},
     props = property.split(".");
   for (let i = 0; i < array.length; i++) {
-    let key = props.reduce((acc, prop) => {
+    const key = props.reduce((acc, prop) => {
       return acc && acc[prop];
     }, array[i]);
     if (!groupedData[key]) groupedData[key] = [];
