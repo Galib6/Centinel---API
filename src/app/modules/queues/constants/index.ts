@@ -16,3 +16,21 @@ export const queuesConstants = {
     },
   },
 };
+
+const getQueueName = (queuesConstant) => {
+  const queues = [];
+  Object.entries(queuesConstants).forEach((each) => {
+    queues.push(each[1].name);
+  });
+  return queues;
+};
+
+export const queueNames: string[] = getQueueName(queuesConstants);
+
+export const defaultJobOptions = {
+  attempts: 5, // Number of retry attempts
+  backoff: {
+    type: "exponential", // every retries it will wait exponential at delay time
+    delay: 5000, // Delay in milliseconds
+  },
+};

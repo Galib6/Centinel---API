@@ -18,6 +18,7 @@ import { ResponseInterceptor } from "./interceptors/response.interceptor";
 import { AuthMiddleware } from "./middlewares";
 import { AuthModule } from "./modules/auth/auth.module";
 import { GalleryModule } from "./modules/galleries/gallery.module";
+import { BullBoardModule } from "./modules/queues/bullBoard.module";
 import { QueueModule } from "./modules/queues/queue.module";
 import { RedisModule } from "./modules/redis/redis.module";
 import { LogCleanupService } from "./services";
@@ -29,6 +30,7 @@ const MODULES = [
   GalleryModule,
   QueueModule,
   RedisModule,
+  BullBoardModule,
   // KafkaModule,
 ];
 @Module({
