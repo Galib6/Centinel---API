@@ -6,4 +6,5 @@ export class BaseDTO {
   @IsOptional()
   @ApiProperty({ required: false })
   isActive: boolean;
+  sxcvbcvb;
 }

@@ -19,6 +19,8 @@
     "prettier:check": "prettier --check --ignore-path .gitignore .",
     "prettier:fix": "prettier --write --ignore-path .gitignore .",
     "lint-prettier": "yarn lint:check && yarn prettier:check",
+    "prepare": "husky install",
+    "husky-prepare-pre-commit": "husky add .husky/pre-commit 'yarn lint-staged'",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
