@@ -1,3 +1,4 @@
+#entrypoint.sh
 #!/bin/bash
 # Create the log directory and log file
 
