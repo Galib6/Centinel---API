@@ -35,12 +35,13 @@ jobs:
             export $line
           done
 
-          echo "📂 List loaded env vars:"
-          env | sort
-
           envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < ./environments/prod.example.env > ./environments/$NODE_ENV.env
+          echo "Contents of ./environments/$NODE_ENV.env:"
+          cat ./environments/$NODE_ENV.env
 
           envsubst < docker-compose.template.yml > docker-compose.yml
+          echo "Contents of docker-compose.yml:"
+          cat docker-compose.yml
 
       - name: Log in to Docker Hub
         run: docker login -u ${{env.DOCKER_USER}} -p ${{env.DOCKER_PASSWORD}}
