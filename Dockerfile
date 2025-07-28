@@ -34,7 +34,7 @@ COPY --from=builder /app/entrypoint.sh ./
 RUN chmod +x ./entrypoint.sh
 
 # Set the environment variable
-ENV PORT 6800
+ENV PORT=6800
 
 # Expose the port
 EXPOSE $PORT

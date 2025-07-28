@@ -13,7 +13,6 @@ const processors = [CountryPurVisaCatServiceDocProcessor, EmailProcessor];
 const services = [QueueService, EmailQueueService];
 const modules = [HelpersModule];
 
-
 @Module({
   imports: [
     ...modules,
@@ -23,6 +22,9 @@ const modules = [HelpersModule];
         username: ENV.redis.username,
         password: ENV.redis.password,
         port: ENV.redis.port,
+        ...(!ENV.redis.host?.startsWith("localhost")
+          ? { tls: { rejectUnauthorized: false } }
+          : {}),
       },
     }),
     BullModule.registerQueue({
