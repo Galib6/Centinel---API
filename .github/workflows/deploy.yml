@@ -38,6 +38,10 @@ jobs:
           echo "📂 List loaded env vars:"
           env | sort
 
+          envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < ./environments/prod.example.env > ./environments/$NODE_ENV.env
+
+          envsubst < docker-compose.staging.yml > docker-compose.yml
+
       - name: Log in to Docker Hub
         run: docker login -u ${{env.DOCKER_USER}} -p ${{env.DOCKER_PASSWORD}}
       - name: Build the Docker image
