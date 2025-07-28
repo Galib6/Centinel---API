@@ -25,6 +25,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Process and Load Environment Variables
         run: |
           echo "📝 Loading env vars from secret into memory"
