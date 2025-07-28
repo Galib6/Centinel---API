@@ -12,6 +12,7 @@ export const ENV = {
     nodeEnv: envConfig.NODE_ENV,
     timeZone: envConfig.TZ,
     isDevelopment: envConfig.NODE_ENV === "development",
+    isProduction: envConfig.NODE_ENV === "production",
   },
   swagger: {
     apiPrefix: envConfig.API_PREFIX,

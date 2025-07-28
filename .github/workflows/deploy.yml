@@ -60,10 +60,6 @@ jobs:
             echo "File docker-compose.yml does not exist."
             exit 1
           fi
-          echo "HOST ===> ${{env.HOST}}"
-          echo "USER ===> ${{env.USER}}"
-          echo "SSH_KEY ===> ${{env.SSH_KEY}}"
-
       - name: Transfer Docker Compose, Env File
         uses: appleboy/scp-action@master
         with:

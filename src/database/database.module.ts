@@ -1,42 +1,23 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ENV } from "@src/env";
-import { MigrationCommand } from "./commands/migration.command";
-import { MigrationService } from "./services/migration.service";
+import * as path from "path";
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
-        type: "postgres",
-        autoLoadEntities: true,
-        synchronize: false,
+        type: ENV.defaultDatabase.type,
         port: ENV.defaultDatabase.port,
         username: ENV.defaultDatabase.user,
         password: ENV.defaultDatabase.password,
         host: ENV.defaultDatabase.host,
         database: ENV.defaultDatabase.databaseName,
         logging: ENV.defaultDatabase.logging,
-        migrations: [__dirname + "/migrations/*{.ts,.js}"],
-        migrationsTableName: "migrations",
-        ssl:
-          ENV.config.nodeEnv === "production"
-            ? {
-                rejectUnauthorized: false,
-              }
-            : false,
-        extra: {
-          max: 20, // Maximum connections
-          idleTimeoutMillis: 30000,
-          connectionTimeoutMillis: 5000,
-        },
-        cli: {
-          migrationsDir: "src/database/migrations",
-        },
+        entities: [path.join(__dirname, "../**/*.entity{.ts,.js}")],
+        migrations: [path.join(__dirname, "migrations/*{.ts,.js}")],
       }),
     }),
   ],
-  providers: [MigrationService, MigrationCommand],
-  exports: [MigrationService],
 })
 export class DatabaseModule {}

@@ -19,7 +19,7 @@
     "prettier:check": "prettier --check --ignore-path .gitignore .",
     "prettier:fix": "prettier --write --ignore-path .gitignore .",
     "lint-prettier": "yarn lint:check && yarn prettier:check",
-    "prepare": "husky install",
+    "prepare": "husky",
     "husky-prepare-pre-commit": "husky add .husky/pre-commit 'yarn lint-staged'",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -29,11 +29,10 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "db:seed": "ts-node dist/database/seeds/seed.js",
     "db:drop": "yarn typeorm schema:drop -d dist/database/ormconfig.js",
-    "db:migration:generate": "ts-node -r tsconfig-paths/register src/cli.ts migration generate",
-    "db:migration:run": "ts-node -r tsconfig-paths/register src/cli.ts migration run",
-    "db:migration:revert": "ts-node -r tsconfig-paths/register src/cli.ts migration revert",
-    "db:migration:status": "ts-node -r tsconfig-paths/register src/cli.ts migration status",
-    "db:migration:validate": "ts-node -r tsconfig-paths/register src/cli.ts migration validate"
+    "migration:create": "ts-node ./src/database/scripts/migration.create.ts",
+    "migration:generate": "ts-node ./src/database/scripts/migration.generate.ts",
+    "migration:run": "yarn typeorm migration:run -d ./src/database/data-source.ts",
+    "migration:revert": "yarn typeorm migration:revert -d ./src/database/data-source.ts"
   },
   "husky": {
     "hooks": {
