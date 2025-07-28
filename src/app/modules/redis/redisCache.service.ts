@@ -12,10 +12,7 @@ export class RedisService implements OnModuleDestroy {
       port: ENV.redis.port,
       password: ENV.redis.password,
       username: ENV.redis.username,
-      maxRetriesPerRequest: 1,
-      ...(!ENV.redis.host?.startsWith("localhost")
-        ? { tls: { rejectUnauthorized: false } }
-        : {}),
+      ...(!ENV.redis.tls ? { tls: { rejectUnauthorized: false } } : {}),
     });
 
     this.redisClient.on("error", (err) => {

@@ -38,6 +38,7 @@ ENV PORT=6800
 
 # Expose the port
 EXPOSE $PORT
+EXPOSE $APM_PROMETHEUS_PORT
 
 # Define the entrypoint
 ENTRYPOINT ["sh", "./entrypoint.sh"]

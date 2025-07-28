@@ -22,9 +22,7 @@ const modules = [HelpersModule];
         username: ENV.redis.username,
         password: ENV.redis.password,
         port: ENV.redis.port,
-        ...(!ENV.redis.host?.startsWith("localhost")
-          ? { tls: { rejectUnauthorized: false } }
-          : {}),
+        ...(!ENV.redis.tls ? { tls: { rejectUnauthorized: false } } : {}),
       },
     }),
     BullModule.registerQueue({
