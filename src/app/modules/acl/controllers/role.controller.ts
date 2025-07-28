@@ -31,7 +31,7 @@ export class RoleController {
 
   @Get()
   async findAll(
-    @Query() query: FilterRoleDTO
+    @Query() query: FilterRoleDTO,
   ): Promise<SuccessResponse | Role[]> {
     return this.service.findAllBase(query, { relations: this.RELATIONS });
   }
@@ -39,7 +39,7 @@ export class RoleController {
   @Get(":id/available-permissions")
   async availablePermissions(
     @Param("id") id: number,
-    @Query() query: FilterPermissionDTO
+    @Query() query: FilterPermissionDTO,
   ): Promise<Permission[]> {
     return this.service.availablePermissions(id, query);
   }
@@ -57,7 +57,7 @@ export class RoleController {
   @Post(":id/add-permissions")
   async addPermission(
     @Param("id") id: number,
-    @Body() body: AddPermissionsDTO
+    @Body() body: AddPermissionsDTO,
   ): Promise<Permission[]> {
     return this.service.addPermissions(id, body);
   }
@@ -70,7 +70,7 @@ export class RoleController {
   @Patch(":id")
   async updateOne(
     @Param("id") id: number,
-    @Body() body: UpdateRoleDTO
+    @Body() body: UpdateRoleDTO,
   ): Promise<Role> {
     return this.service.updateOneBase(id, body, { relations: this.RELATIONS });
   }
@@ -83,7 +83,7 @@ export class RoleController {
   @Delete(":id/remove-permissions")
   async removePermission(
     @Param("id") id: number,
-    @Body() body: RemovePermissionsDTO
+    @Body() body: RemovePermissionsDTO,
   ): Promise<Permission[]> {
     return this.service.removePermissions(id, body);
   }

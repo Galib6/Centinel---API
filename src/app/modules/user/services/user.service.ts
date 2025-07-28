@@ -31,7 +31,7 @@ export class UserService extends BaseService<User> {
     private readonly userRoleService: UserRoleService,
     private readonly roleService: RoleService,
     private readonly bcrypt: BcryptHelper,
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
   ) {
     super(userRepository);
   }
@@ -52,7 +52,7 @@ export class UserService extends BaseService<User> {
     if (roles && roles.length > 0) {
       roles.forEach((role) => {
         const isAlreadyAdded = userRoles.find(
-          (userRole) => userRole.roleId === role.id
+          (userRole) => userRole.roleId === role.id,
         );
         role.isAlreadyAdded = !!isAlreadyAdded;
       });
@@ -63,7 +63,7 @@ export class UserService extends BaseService<User> {
 
   async createUser(
     payload: CreateUserDTO,
-    relations?: string[]
+    relations?: string[],
   ): Promise<User> {
     const { roles, ...userData } = payload;
 
@@ -75,7 +75,7 @@ export class UserService extends BaseService<User> {
 
     try {
       createdUser = await queryRunner.manager.save(
-        Object.assign(new User(), userData)
+        Object.assign(new User(), userData),
       );
 
       if (!createdUser) {
@@ -89,7 +89,7 @@ export class UserService extends BaseService<User> {
             Object.assign(new UserRole(), {
               user: createdUser.id,
               role: role.role,
-            })
+            }),
           );
         });
       }
@@ -120,7 +120,7 @@ export class UserService extends BaseService<User> {
   async updateUser(
     id: number,
     payload: UpdateUserDTO,
-    relations: string[]
+    relations: string[],
   ): Promise<User> {
     const isUserExist = await this.isExist({ id });
 
@@ -166,7 +166,7 @@ export class UserService extends BaseService<User> {
               Object.assign(new UserRole(), {
                 user: id,
                 role: role.role,
-              })
+              }),
             );
           }
         });
@@ -259,7 +259,7 @@ export class UserService extends BaseService<User> {
 
     const isPasswordMatch = await this.bcrypt.compareHash(
       payload.password,
-      isExist.password
+      isExist.password,
     );
 
     if (!isPasswordMatch) {

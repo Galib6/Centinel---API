@@ -17,7 +17,7 @@ export class EmailQueueService {
 
   constructor(
     @InjectQueue(queuesConstants.emailQueue.name)
-    private readonly emailQueue: Queue
+    private readonly emailQueue: Queue,
   ) {}
 
   /**
@@ -32,7 +32,7 @@ export class EmailQueueService {
       priority?: number;
       delay?: number;
       attempts?: number;
-    }
+    },
   ) {
     try {
       const job = await this.emailQueue.add(
@@ -46,11 +46,11 @@ export class EmailQueueService {
             type: "exponential",
             delay: 5000,
           },
-        }
+        },
       );
 
       this.logger.log(
-        `Email job queued with ID: ${job.id} for ${emailOptions.to}`
+        `Email job queued with ID: ${job.id} for ${emailOptions.to}`,
       );
       return job;
     } catch (error) {
@@ -70,7 +70,7 @@ export class EmailQueueService {
     userEmail: string,
     userName: string,
     verificationUrl?: string,
-    jobOptions?: { priority?: number; delay?: number; attempts?: number }
+    jobOptions?: { priority?: number; delay?: number; attempts?: number },
   ) {
     const emailOptions: EmailOptions = {
       to: userEmail,
@@ -102,7 +102,7 @@ export class EmailQueueService {
     otp: string | number,
     resetUrl?: string,
     expirationTime: number = 5,
-    jobOptions?: { priority?: number; delay?: number; attempts?: number }
+    jobOptions?: { priority?: number; delay?: number; attempts?: number },
   ) {
     const emailOptions: EmailOptions = {
       to: userEmail,
@@ -133,7 +133,7 @@ export class EmailQueueService {
     userName: string,
     otp: string | number,
     expirationTime: number = 5,
-    jobOptions?: { priority?: number; delay?: number; attempts?: number }
+    jobOptions?: { priority?: number; delay?: number; attempts?: number },
   ) {
     const emailOptions: EmailOptions = {
       to: userEmail,
@@ -163,7 +163,7 @@ export class EmailQueueService {
     subject: string,
     templateName: string,
     context: EmailTemplateContext,
-    jobOptions?: { priority?: number; delay?: number; attempts?: number }
+    jobOptions?: { priority?: number; delay?: number; attempts?: number },
   ) {
     const emailOptions: EmailOptions = {
       to,
@@ -188,7 +188,7 @@ export class EmailQueueService {
     subject: string,
     html: string,
     text?: string,
-    jobOptions?: { priority?: number; delay?: number; attempts?: number }
+    jobOptions?: { priority?: number; delay?: number; attempts?: number },
   ) {
     const emailOptions: EmailOptions = {
       to,

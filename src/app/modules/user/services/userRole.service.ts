@@ -10,7 +10,7 @@ export class UserRoleService extends BaseService<UserRole> {
   constructor(
     @InjectRepository(UserRole)
     public readonly userRoleRepository: Repository<UserRole>,
-    private readonly rolePermissionService: RolePermissionService
+    private readonly rolePermissionService: RolePermissionService,
   ) {
     super(userRoleRepository);
   }

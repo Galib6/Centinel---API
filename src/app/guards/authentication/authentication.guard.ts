@@ -27,7 +27,7 @@ export class AuthenticationGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuards: AccessTokenGuard,
-    private readonly permissionGuard: PermissionGuard
+    private readonly permissionGuard: PermissionGuard,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -54,7 +54,7 @@ export class AuthenticationGuard implements CanActivate {
     for (let index = 0; index < guards.length; index++) {
       const instance = guards[index];
       const canActivate = await Promise.resolve(
-        instance.canActivate(context)
+        instance.canActivate(context),
       ).catch((err) => ({
         error: err,
       }));

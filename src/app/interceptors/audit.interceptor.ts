@@ -29,7 +29,7 @@ export class ActiveUserInserter implements NestInterceptor {
 
   intercept(
     context: ExecutionContext,
-    next: CallHandler<any>
+    next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest<Request>();
     const method = request.method.toUpperCase();

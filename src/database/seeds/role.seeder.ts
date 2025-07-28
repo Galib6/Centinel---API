@@ -14,7 +14,7 @@ export default class RoleSeeder {
       await this.dataSource.manager.save(
         Object.assign(new Role(), {
           title: ENUM_ACL_DEFAULT_ROLES.SUPER_ADMIN,
-        })
+        }),
       );
     }
 
@@ -26,7 +26,7 @@ export default class RoleSeeder {
       await this.dataSource.manager.save(
         Object.assign(new Role(), {
           title: ENUM_ACL_DEFAULT_ROLES.SUPER_ADMIN,
-        })
+        }),
       );
     }
   }

@@ -27,7 +27,7 @@ export class PermissionTypeController {
 
   @Get()
   async findAll(
-    @Query() query: FilterPermissionTypeDTO
+    @Query() query: FilterPermissionTypeDTO,
   ): Promise<SuccessResponse | PermissionType[]> {
     return this.service.findAllBase(query, { relations: this.RELATIONS });
   }
@@ -39,7 +39,7 @@ export class PermissionTypeController {
 
   @Post()
   async createOne(
-    @Body() body: CreatePermissionTypeDTO
+    @Body() body: CreatePermissionTypeDTO,
   ): Promise<PermissionType> {
     return this.service.createOneBase(body, { relations: this.RELATIONS });
   }
@@ -52,7 +52,7 @@ export class PermissionTypeController {
   @Patch(":id")
   async updateOne(
     @Param("id") id: number,
-    @Body() body: UpdatePermissionTypeDTO
+    @Body() body: UpdatePermissionTypeDTO,
   ): Promise<PermissionType> {
     return this.service.updateOneBase(id, body, { relations: this.RELATIONS });
   }

@@ -36,7 +36,7 @@ export class AuthController {
   @Get("google")
   async googleAuthRequest(
     @Query() query: GoogleAuthRequestDTO,
-    @Response() res
+    @Response() res,
   ) {
     const authorizationUrl = await this.service.googleAuthRequest(query);
     res.redirect(authorizationUrl);
@@ -85,7 +85,7 @@ export class AuthController {
   @Post("change-password")
   async changePassword(
     @Body() body: ChangePasswordDTO,
-    @ActiveUser() authUser: IActiveUser
+    @ActiveUser() authUser: IActiveUser,
   ) {
     return this.service.changePassword(body, authUser);
   }

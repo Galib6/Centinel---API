@@ -79,13 +79,13 @@ export class EmailService {
 
         htmlContent = await this.emailTemplateHelper.renderTemplate(
           options.template,
-          options.context || {}
+          options.context || {},
         );
       }
 
       if (!htmlContent && !options.text) {
         throw new Error(
-          "Either template, html, or text content must be provided"
+          "Either template, html, or text content must be provided",
         );
       }
 
@@ -117,7 +117,7 @@ export class EmailService {
       const result = await this.transporter.sendMail(mailOptions);
 
       this.logger.log(
-        `Email sent successfully to ${options.to}. Message ID: ${result.messageId}`
+        `Email sent successfully to ${options.to}. Message ID: ${result.messageId}`,
       );
 
       return {

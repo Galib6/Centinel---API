@@ -18,7 +18,7 @@ export class WebUserController {
   @Patch(":id")
   async updateOne(
     @Param("id") id: number,
-    @Body() body: UpdateUserDTO
+    @Body() body: UpdateUserDTO,
   ): Promise<User> {
     return this.service.updateOneBase(id, body);
   }

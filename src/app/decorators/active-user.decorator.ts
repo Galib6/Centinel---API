@@ -12,5 +12,5 @@ export const ActiveUser = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     const user: IActiveUser = request[REQUEST_USER_KEY];
     return field ? user?.[field] : user;
-  }
+  },
 );

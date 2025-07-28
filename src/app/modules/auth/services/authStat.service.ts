@@ -9,7 +9,7 @@ import { AuthStat } from "../entities/authStat.entity";
 export class AuthStatService extends BaseService<AuthStat> {
   constructor(
     @InjectRepository(AuthStat)
-    private readonly authStatRepository: Repository<AuthStat>
+    private readonly authStatRepository: Repository<AuthStat>,
   ) {
     super(authStatRepository);
   }

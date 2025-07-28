@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { JWTHelper } from '@src/app/helpers';
+import { Injectable } from "@nestjs/common";
+import { JWTHelper } from "@src/app/helpers";
 import {
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-} from 'class-validator';
+} from "class-validator";
 
 @ValidatorConstraint({
-  name: 'AuthTokenValidatorPipe',
+  name: "AuthTokenValidatorPipe",
   async: true,
 })
 @Injectable()

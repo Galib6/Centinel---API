@@ -5,7 +5,7 @@ export class EntityManagerUtil<T, U> {
   constructor(
     private queryRunner: QueryRunner,
     private entity: EntityTarget<T>,
-    private checkExistence: (criteria: Partial<U>) => Promise<boolean>
+    private checkExistence: (criteria: Partial<U>) => Promise<boolean>,
   ) {}
 
   // General method to process items for delete, update, and add operations
@@ -18,13 +18,13 @@ export class EntityManagerUtil<T, U> {
       updateEntityFields: (item: U) => Partial<T>;
       parentIdField?: keyof T;
       parentId?: string;
-    }
+    },
   ) {
     const deleteItems = items.filter(options.getDeleteCondition);
     const updateItems = items.filter(options.getUpdateCondition);
     const newItems = items.filter(
       (item) =>
-        !options.getDeleteCondition(item) && !options.getUpdateCondition(item)
+        !options.getDeleteCondition(item) && !options.getUpdateCondition(item),
     );
 
     await Promise.all([
@@ -33,7 +33,7 @@ export class EntityManagerUtil<T, U> {
         updateItems,
         options.updateEntityFields,
         options.parentIdField,
-        options.parentId
+        options.parentId,
       ),
       this.addNewEntities(newItems, options.createEntity),
     ]);
@@ -51,7 +51,7 @@ export class EntityManagerUtil<T, U> {
           await this.queryRunner.manager.delete(this.entity, {
             id: (item as any).id,
           });
-      })
+      }),
     );
   }
 
@@ -60,7 +60,7 @@ export class EntityManagerUtil<T, U> {
     updateItems: U[],
     updateEntityFields: (item: U) => Partial<T>,
     parentIdField?: keyof T,
-    parentId?: string
+    parentId?: string,
   ) {
     if (!updateItems.length) return;
     await Promise.all(
@@ -76,10 +76,10 @@ export class EntityManagerUtil<T, U> {
           await this.queryRunner.manager.update(
             this.entity,
             { id: (item as any).id },
-            updateData
+            updateData,
           );
         }
-      })
+      }),
     );
   }
 
@@ -90,7 +90,7 @@ export class EntityManagerUtil<T, U> {
       newItems.map(async (item) => {
         const entityInstance = createEntity(item);
         await this.queryRunner.manager.save(entityInstance);
-      })
+      }),
     );
   }
 }

@@ -1,3 +1,3 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from "@nestjs/common";
 
-export const CacheTTL = (ttl: number) => SetMetadata('cacheTTL', ttl);
+export const CacheTTL = (ttl: number) => SetMetadata("cacheTTL", ttl);

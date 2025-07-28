@@ -6,7 +6,7 @@ config({
   path: path.join(
     process.cwd(),
     "environments",
-    `${process.env.NODE_ENV || "development"}.env`
+    `${process.env.NODE_ENV || "development"}.env`,
   ),
 });
 
@@ -40,7 +40,7 @@ const envSchema = Joi.object({
 
   // Security configuration
   CORS_ALLOWED_ORIGINS: Joi.string().default(
-    "http://localhost,http://localhost:3000"
+    "http://localhost,http://localhost:3000",
   ),
   RATE_LIMIT_TTL: Joi.number().default(60000),
   RATE_LIMIT_MAX: Joi.number().default(100),

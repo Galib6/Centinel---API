@@ -30,8 +30,8 @@ export class BullBoardModule implements OnModuleInit {
                 ? { tls: { rejectUnauthorized: false } }
                 : {}),
             },
-          })
-        )
+          }),
+        ),
     );
 
     createBullBoard({
@@ -42,7 +42,7 @@ export class BullBoardModule implements OnModuleInit {
     app.use("/admin/queues", serverAdapter.getRouter());
     app.listen(3001, () => {
       console.log(
-        "🧿 Bull Board available at http://localhost:3001/admin/queues"
+        "🧿 Bull Board available at http://localhost:3001/admin/queues",
       );
     });
   }

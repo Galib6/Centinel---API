@@ -77,11 +77,11 @@ export function getDiffPercentage(min: number, max: number) {
 
 export const removeDuplicateFromArray = <T>(
   data: T[],
-  property: string
+  property: string,
 ): T[] => {
   return data.filter(
     (val: T, index: number, arr: T[]) =>
-      arr.findIndex((val2) => val2[property] === val[property]) === index
+      arr.findIndex((val2) => val2[property] === val[property]) === index,
   );
 };
 
@@ -91,7 +91,7 @@ export const isEmptyObject = (obj) => {
 
 export function isArrayHasSameObject<T>(
   arr: T[],
-  propertyKey: keyof T
+  propertyKey: keyof T,
 ): boolean {
   const unique = [...new Set(arr.map((a) => a[propertyKey]))];
   if (unique.length === arr.length) {

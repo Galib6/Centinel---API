@@ -15,7 +15,7 @@ export class AccessTokenGuard implements CanActivate {
     /**
      * jwt service
      */
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
 
     /**
      * inject JWT configuration

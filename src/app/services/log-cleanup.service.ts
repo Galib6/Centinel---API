@@ -26,7 +26,7 @@ export class LogCleanupService {
           logFolder,
           logFileName,
           maxFileSize,
-          maxFiles
+          maxFiles,
         );
       }
 
@@ -40,14 +40,14 @@ export class LogCleanupService {
     logFolder: string,
     baseFileName: string,
     maxFileSize: number,
-    maxFiles: number
+    maxFiles: number,
   ) {
     try {
       // Get all related log files (base file + rotated files)
       const files = await fs.promises.readdir(logFolder);
       const relatedFiles = files
         .filter(
-          (file) => file.startsWith(baseFileName) && file.endsWith(".log")
+          (file) => file.startsWith(baseFileName) && file.endsWith(".log"),
         )
         .sort((a, b) => {
           // Sort by modification time (newest first)
@@ -65,7 +65,7 @@ export class LogCleanupService {
         if (i >= maxFiles) {
           await fs.promises.unlink(filePath);
           this.logger.log(
-            `Removed old log file: ${relatedFiles[i]} (exceeded max files limit)`
+            `Removed old log file: ${relatedFiles[i]} (exceeded max files limit)`,
           );
           continue;
         }
@@ -80,7 +80,7 @@ export class LogCleanupService {
 
             await fs.promises.rename(filePath, rotatedPath);
             this.logger.log(
-              `Rotated large log file: ${baseFileName} -> ${rotatedName}`
+              `Rotated large log file: ${baseFileName} -> ${rotatedName}`,
             );
 
             // Create new empty log file
@@ -96,7 +96,7 @@ export class LogCleanupService {
       // Re-check and ensure we don't exceed maxFiles after rotation
       const updatedFiles = (await fs.promises.readdir(logFolder))
         .filter(
-          (file) => file.startsWith(baseFileName) && file.endsWith(".log")
+          (file) => file.startsWith(baseFileName) && file.endsWith(".log"),
         )
         .sort((a, b) => {
           const statA = fs.statSync(path.join(logFolder, a));
@@ -138,13 +138,13 @@ export class LogCleanupService {
             sizeInMB: (stat.size / (1024 * 1024)).toFixed(2),
             modified: stat.mtime,
           };
-        })
+        }),
       );
 
       return {
         totalFiles: logFiles.length,
         files: stats.sort(
-          (a, b) => b.modified.getTime() - a.modified.getTime()
+          (a, b) => b.modified.getTime() - a.modified.getTime(),
         ),
       };
     } catch (error) {

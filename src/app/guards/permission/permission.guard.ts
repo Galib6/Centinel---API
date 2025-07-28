@@ -18,12 +18,12 @@ export class PermissionGuard implements CanActivate {
     private readonly reflector: Reflector,
 
     /**User service */
-    private readonly userRoleService: UserRoleService
+    private readonly userRoleService: UserRoleService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredPermission = this.reflector.getAllAndOverride(
       PERMISSION_KEY,
-      [context.getHandler(), context.getClass()]
+      [context.getHandler(), context.getClass()],
     );
 
     const request = context.switchToHttp().getRequest();

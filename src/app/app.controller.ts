@@ -9,7 +9,7 @@ import { LogCleanupService } from "./services";
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly logCleanupService: LogCleanupService
+    private readonly logCleanupService: LogCleanupService,
   ) {}
 
   @Auth(AuthType?.None)

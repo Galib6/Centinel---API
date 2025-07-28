@@ -19,19 +19,19 @@ export class CacheInterceptor implements NestInterceptor {
 
   constructor(
     @Inject(RedisService) private readonly redisService: RedisService,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async intercept(
     context: ExecutionContext,
-    next: CallHandler
+    next: CallHandler,
   ): Promise<Observable<any>> {
     const handler = context.getHandler();
     const request: Request = context.switchToHttp().getRequest();
 
     const revalidateKeys = this.reflector.get<string[]>(
       "cacheRevalidateKeys",
-      handler
+      handler,
     );
 
     // Handle cache invalidation
@@ -76,7 +76,7 @@ export class CacheInterceptor implements NestInterceptor {
       catchError((err) => {
         this.logger.error(`Handler error: ${err.message}`);
         throw err;
-      })
+      }),
     );
   }
 

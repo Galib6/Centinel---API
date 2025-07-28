@@ -14,7 +14,7 @@ import { KAFKA_TOPICS } from "../topics/kafka.types";
 export class KafkaSendEventController {
   constructor(
     private readonly service: KafkaService,
-    private readonly adminService: KafkaAdminService
+    private readonly adminService: KafkaAdminService,
   ) {}
 
   @Get()
@@ -39,7 +39,7 @@ export class KafkaSendEventController {
       {
         eventSent: success,
         eventData: userEvent,
-      }
+      },
     );
   }
 

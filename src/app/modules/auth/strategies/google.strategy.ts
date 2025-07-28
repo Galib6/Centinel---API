@@ -7,7 +7,7 @@ import { Strategy, VerifyCallback } from "passport-google-oauth20";
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(
   Strategy,
-  GOOGLE_STRATEGY
+  GOOGLE_STRATEGY,
 ) {
   constructor() {
     super({
@@ -22,7 +22,7 @@ export class GoogleStrategy extends PassportStrategy(
     accessToken: string,
     refreshToken: string,
     profile: any,
-    done: VerifyCallback
+    done: VerifyCallback,
   ): Promise<any> {
     const { id, name, emails, photos } = profile;
 

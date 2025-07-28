@@ -34,12 +34,12 @@ export class ExceptionFilter implements NestExceptionFilter {
     // Log different levels based on error type
     if (exception instanceof HttpException) {
       this.logger.warn(
-        `HTTP Exception [${exception.getStatus()}]: ${exception.message} | URL: ${request?.url} | Method: ${request?.method}`
+        `HTTP Exception [${exception.getStatus()}]: ${exception.message} | URL: ${request?.url} | Method: ${request?.method}`,
       );
     } else {
       this.logger.error(
         `Unhandled Exception: ${errorDetails.message} | Type: ${errorDetails.name} | URL: ${errorDetails.url} | Method: ${errorDetails.method}`,
-        errorDetails.stack
+        errorDetails.stack,
       );
     }
 
@@ -66,7 +66,7 @@ export class ExceptionFilter implements NestExceptionFilter {
       if (
         exception?.message &&
         exception.message.includes(
-          "duplicate key value violates unique constraint"
+          "duplicate key value violates unique constraint",
         )
       ) {
         const field = exception.detail.split("Key (")[1].split(")")[0];

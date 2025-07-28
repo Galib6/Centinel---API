@@ -8,7 +8,7 @@ import { RolePermission } from "../entities/rolePermission.entity";
 export class RolePermissionService extends BaseService<RolePermission> {
   constructor(
     @InjectRepository(RolePermission)
-    private readonly _repo: Repository<RolePermission>
+    private readonly _repo: Repository<RolePermission>,
   ) {
     super(_repo);
   }

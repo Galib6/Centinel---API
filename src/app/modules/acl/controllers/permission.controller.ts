@@ -27,7 +27,7 @@ export class PermissionController {
 
   @Get()
   async findAll(
-    @Query() query: FilterPermissionDTO
+    @Query() query: FilterPermissionDTO,
   ): Promise<SuccessResponse | Permission[]> {
     return this.service.findAllBase(query, { relations: this.RELATIONS });
   }
@@ -50,7 +50,7 @@ export class PermissionController {
   @Patch(":id")
   async updateOne(
     @Param("id") id: number,
-    @Body() body: UpdatePermissionDTO
+    @Body() body: UpdatePermissionDTO,
   ): Promise<Permission> {
     return this.service.updateOneBase(id, body, { relations: this.RELATIONS });
   }

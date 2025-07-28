@@ -14,7 +14,7 @@ function isValidated<T>(value: T[], keyProperty: keyof T): boolean {
 
 export function ArrayObjectCanNotBeSame<T>(
   keyProperty: keyof T,
-  validationOptions?: ValidationOptions
+  validationOptions?: ValidationOptions,
 ): PropertyDecorator {
   return ValidateBy(
     {
@@ -27,10 +27,10 @@ export function ArrayObjectCanNotBeSame<T>(
           (eachPrefix) =>
             eachPrefix +
             `array of $property object property ${keyProperty.toString()} can not be same`,
-          validationOptions
+          validationOptions,
         ),
       },
     },
-    validationOptions
+    validationOptions,
   );
 }

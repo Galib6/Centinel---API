@@ -91,12 +91,12 @@ export class KafkaAdminService implements OnModuleInit {
 
       const topicConfigs = this.getTopicConfigurations();
       const topicsToCreate = topicConfigs.filter(
-        (config) => !existingTopics.includes(config.topic)
+        (config) => !existingTopics.includes(config.topic),
       );
 
       if (topicsToCreate.length > 0) {
         this.logger.log(
-          `Creating topics: ${topicsToCreate.map((t) => t.topic).join(", ")}`
+          `Creating topics: ${topicsToCreate.map((t) => t.topic).join(", ")}`,
         );
 
         await this.admin.createTopics({
@@ -112,7 +112,7 @@ export class KafkaAdminService implements OnModuleInit {
         });
 
         this.logger.log(
-          `Successfully created topics: ${topicsToCreate.map((t) => t.topic).join(", ")}`
+          `Successfully created topics: ${topicsToCreate.map((t) => t.topic).join(", ")}`,
         );
       } else {
         this.logger.log("All required topics already exist");
@@ -192,7 +192,7 @@ export class KafkaAdminService implements OnModuleInit {
     } catch (error) {
       this.logger.error(
         `Failed to get metadata for topic ${topicName}:`,
-        error
+        error,
       );
       return null;
     } finally {

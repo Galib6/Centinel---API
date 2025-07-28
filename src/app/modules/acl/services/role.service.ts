@@ -18,14 +18,14 @@ export class RoleService extends BaseService<Role> {
     private readonly _repo: Repository<Role>,
     private readonly dataSource: DataSource,
     private readonly rolePermissionService: RolePermissionService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
   ) {
     super(_repo);
   }
 
   async availablePermissions(
     id: number,
-    payload: FilterPermissionDTO
+    payload: FilterPermissionDTO,
   ): Promise<Permission[]> {
     const isExist = await this.isExist({ id });
 
@@ -42,7 +42,7 @@ export class RoleService extends BaseService<Role> {
     if (permissions && permissions.length > 0) {
       permissions.forEach((permission) => {
         const isAlreadyAdded = rolePermissions.find(
-          (rolePermission) => rolePermission.permissionId === permission.id
+          (rolePermission) => rolePermission.permissionId === permission.id,
         );
         permission.isAlreadyAdded = !!isAlreadyAdded;
       });
@@ -53,7 +53,7 @@ export class RoleService extends BaseService<Role> {
 
   async addPermissions(
     id: number,
-    payload: AddPermissionsDTO
+    payload: AddPermissionsDTO,
   ): Promise<Permission[]> {
     const isRoleExist = await this.isExist({ id });
 
@@ -81,7 +81,7 @@ export class RoleService extends BaseService<Role> {
           Object.assign(new RolePermission(), {
             role: isRoleExist.id,
             permission: permissionId,
-          })
+          }),
         );
 
         addedPermissions.push(permissionId);
@@ -111,7 +111,7 @@ export class RoleService extends BaseService<Role> {
 
   async removePermissions(
     id: number,
-    payload: RemovePermissionsDTO
+    payload: RemovePermissionsDTO,
   ): Promise<Permission[]> {
     const isRoleExist = await this.isExist({ id });
 

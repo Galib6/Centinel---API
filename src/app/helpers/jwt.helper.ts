@@ -18,7 +18,7 @@ export class JWTHelper {
 
   public async signToken<T extends object | Buffer>(
     expiresIn: string,
-    payload?: T
+    payload?: T,
   ) {
     return await this.jwtService.signAsync(payload, {
       audience: ENV.jwt.audience,
@@ -69,7 +69,7 @@ export class JWTHelper {
     };
     return await this.signToken<GenericObject>(
       ENV.jwt.refreshTokenExpireIn,
-      payload
+      payload,
     );
   }
 
@@ -79,7 +79,7 @@ export class JWTHelper {
     };
     return await this.signToken<GenericObject>(
       ENV.jwt.refreshTokenExpireIn,
-      payload
+      payload,
     );
   }
 
@@ -90,7 +90,7 @@ export class JWTHelper {
   public verifyOtpHash(
     identifier: string,
     otp: number,
-    otpHash: string
+    otpHash: string,
   ): boolean {
     return OtpUtil.verifyOTP(identifier, otp, otpHash, ENV.jwt.secret);
   }

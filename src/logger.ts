@@ -9,7 +9,7 @@ export function createLogger(): LoggerService {
   // Console format with colors for development
   const consoleFormat = format.combine(
     format.timestamp(),
-    utilities.format.nestLike()
+    utilities.format.nestLike(),
   );
 
   // File format without colors for clean logs
@@ -18,7 +18,7 @@ export function createLogger(): LoggerService {
     format.uncolorize(),
     format.printf(({ timestamp, level, message, context }) => {
       return `${timestamp} [${level.toUpperCase()}] ${context ? `[${context}] ` : ""}${message}`;
-    })
+    }),
   );
 
   const winstonOptions: WinstonModuleOptions = {

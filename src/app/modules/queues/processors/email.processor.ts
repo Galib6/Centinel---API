@@ -27,12 +27,12 @@ export class EmailProcessor extends WorkerHost {
 
       if (result.success) {
         this.logger.log(
-          `Email sent successfully. Job ID: ${job.id}, Message ID: ${result.messageId}`
+          `Email sent successfully. Job ID: ${job.id}, Message ID: ${result.messageId}`,
         );
         return result;
       } else {
         this.logger.error(
-          `Email sending failed. Job ID: ${job.id}, Error: ${result.error}`
+          `Email sending failed. Job ID: ${job.id}, Error: ${result.error}`,
         );
         throw new Error(result.error);
       }

@@ -23,7 +23,7 @@ export class EmailTemplateHelper {
    */
   async renderTemplate(
     templateName: string,
-    context: EmailTemplateContext
+    context: EmailTemplateContext,
   ): Promise<string> {
     try {
       const templatePath = path.join(this.templatesPath, `${templateName}.hbs`);
@@ -31,7 +31,7 @@ export class EmailTemplateHelper {
       // Check if template file exists
       if (!fs.existsSync(templatePath)) {
         throw new Error(
-          `Email template '${templateName}' not found at ${templatePath}`
+          `Email template '${templateName}' not found at ${templatePath}`,
         );
       }
 
@@ -52,7 +52,7 @@ export class EmailTemplateHelper {
       return template(enrichedContext);
     } catch (error) {
       throw new Error(
-        `Failed to render email template '${templateName}': ${error.message}`
+        `Failed to render email template '${templateName}': ${error.message}`,
       );
     }
   }
@@ -92,7 +92,7 @@ export class EmailTemplateHelper {
         }
 
         return new Intl.DateTimeFormat("en-US", options).format(new Date(date));
-      }
+      },
     );
 
     // Helper to capitalize text
@@ -109,7 +109,7 @@ export class EmailTemplateHelper {
           return options.fn(this);
         }
         return options.inverse(this);
-      }
+      },
     );
 
     // Helper to join arrays
@@ -118,7 +118,7 @@ export class EmailTemplateHelper {
       function (array: any[], separator: string) {
         if (!Array.isArray(array)) return "";
         return array.join(separator || ", ");
-      }
+      },
     );
   }
 

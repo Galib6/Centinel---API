@@ -33,11 +33,11 @@ export class FileStorageController {
   @ApiConsumes("multipart/form-data")
   @ApiBody({ type: UploadFileDto })
   @UseInterceptors(
-    FilesInterceptor("files", 5, { storage: storageImageOptions })
+    FilesInterceptor("files", 5, { storage: storageImageOptions }),
   )
   async uploadImage(
     @UploadedFiles() files: IFileMeta[],
-    @Body() body: UploadFileDto
+    @Body() body: UploadFileDto,
   ): Promise<SuccessResponse> {
     return this.fileUploadService.uploadImage(files, body);
   }

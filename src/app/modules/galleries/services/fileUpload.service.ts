@@ -22,11 +22,11 @@ export class FileUploadService {
     private readonly fileStorageService: FileStorageService,
 
     @Inject(s3Configs.KEY)
-    private readonly s3Configuration: ConfigType<typeof s3Configs>
+    private readonly s3Configuration: ConfigType<typeof s3Configs>,
   ) {}
 
   async filterFiles(
-    payload: FilterFiledDTO
+    payload: FilterFiledDTO,
   ): Promise<SuccessResponse | FileStorage[]> {
     if (payload.folder) {
       payload.folder = payload.folder.replace(/\+/g, "/").replace(" ", "");

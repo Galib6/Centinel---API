@@ -66,17 +66,17 @@ export class KafkaService implements OnModuleInit {
     } catch (error) {
       this.logger.error(
         `Failed to send request for pattern '${pattern}'`,
-        error
+        error,
       );
       throw error;
     }
   }
 
   async bulkEmit(
-    messages: Array<{ topic: string; message: IKafkaMessage }>
+    messages: Array<{ topic: string; message: IKafkaMessage }>,
   ): Promise<boolean[]> {
     return Promise.all(
-      messages.map(({ topic, message }) => this.emit(topic, message))
+      messages.map(({ topic, message }) => this.emit(topic, message)),
     );
   }
 
@@ -99,19 +99,19 @@ export class KafkaService implements OnModuleInit {
             ],
           });
           this.logger.log(
-            `Topic '${topicConfig.topic}' registered successfully`
+            `Topic '${topicConfig.topic}' registered successfully`,
           );
           results.push(true);
         } else {
           this.logger.error(
-            `Admin client not available for topic '${topicConfig.topic}'`
+            `Admin client not available for topic '${topicConfig.topic}'`,
           );
           results.push(false);
         }
       } catch (error) {
         this.logger.error(
           `Failed to register topic '${topicConfig.topic}'`,
-          error
+          error,
         );
         results.push(false);
       }

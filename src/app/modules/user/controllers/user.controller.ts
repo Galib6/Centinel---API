@@ -32,7 +32,7 @@ export class UserController {
   @CacheTTL(3600)
   @Get()
   async findAll(
-    @Query() query: FilterUserDTO
+    @Query() query: FilterUserDTO,
   ): Promise<SuccessResponse | User[]> {
     return this.service.findAllBase(query, { relations: this.RELATIONS });
   }
@@ -40,7 +40,7 @@ export class UserController {
   @Get(":id/available-roles")
   async availableRoles(
     @Param("id") id: number,
-    @Query() query: FilterRoleDTO
+    @Query() query: FilterRoleDTO,
   ): Promise<Role[]> {
     return this.service.availableRoles(id, query);
   }
@@ -64,7 +64,7 @@ export class UserController {
   @Patch(":id")
   async updateOne(
     @Param("id") id: number,
-    @Body() body: UpdateUserDTO
+    @Body() body: UpdateUserDTO,
   ): Promise<User> {
     return this.service.updateUser(id, body, this.RELATIONS);
   }

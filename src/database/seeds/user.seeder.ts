@@ -25,7 +25,7 @@ export default class UserSeeder {
           identifier: ENV.seedData.email,
           isVerified: true,
           password,
-        })
+        }),
       );
 
       const superAdminRole = await this.dataSource.manager.findOne(Role, {
@@ -37,7 +37,7 @@ export default class UserSeeder {
         Object.assign(new UserRole(), {
           role: superAdminRole.id,
           user: createdSuperAdmin?.id,
-        })
+        }),
       );
     }
   }
