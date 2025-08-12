@@ -5,7 +5,7 @@ import { EmailTemplateContext } from "../../../helpers/email-template.helper";
 import { EmailOptions } from "../../../helpers/email.service";
 import { queuesConstants } from "../constants";
 
-export interface QueueEmailOptions extends EmailOptions {
+export interface IQueueEmailOptions extends EmailOptions {
   priority?: number;
   delay?: number;
   attempts?: number;
@@ -14,7 +14,6 @@ export interface QueueEmailOptions extends EmailOptions {
 @Injectable()
 export class EmailQueueService {
   private readonly logger = new Logger(EmailQueueService.name);
-
   constructor(
     @InjectQueue(queuesConstants.emailQueue.name)
     private readonly emailQueue: Queue,
@@ -28,12 +27,8 @@ export class EmailQueueService {
    */
   async queueEmail(
     emailOptions: EmailOptions,
-    jobOptions?: {
-      priority?: number;
-      delay?: number;
-      attempts?: number;
-    },
-  ) {
+    jobOptions?: { priority?: number; delay?: number; attempts?: number },
+  ): Promise<any> {
     try {
       const job = await this.emailQueue.add(
         queuesConstants.emailQueue.jobNames.sendEmail,
@@ -71,7 +66,7 @@ export class EmailQueueService {
     userName: string,
     verificationUrl?: string,
     jobOptions?: { priority?: number; delay?: number; attempts?: number },
-  ) {
+  ): Promise<void> {
     const emailOptions: EmailOptions = {
       to: userEmail,
       subject: "Welcome to Meet API!",
@@ -103,7 +98,7 @@ export class EmailQueueService {
     resetUrl?: string,
     expirationTime: number = 5,
     jobOptions?: { priority?: number; delay?: number; attempts?: number },
-  ) {
+  ): Promise<void> {
     const emailOptions: EmailOptions = {
       to: userEmail,
       subject: "Password Reset Request",
@@ -134,7 +129,7 @@ export class EmailQueueService {
     otp: string | number,
     expirationTime: number = 5,
     jobOptions?: { priority?: number; delay?: number; attempts?: number },
-  ) {
+  ): Promise<void> {
     const emailOptions: EmailOptions = {
       to: userEmail,
       subject: "Verification Code",
@@ -164,7 +159,7 @@ export class EmailQueueService {
     templateName: string,
     context: EmailTemplateContext,
     jobOptions?: { priority?: number; delay?: number; attempts?: number },
-  ) {
+  ): Promise<void> {
     const emailOptions: EmailOptions = {
       to,
       subject,
@@ -189,7 +184,7 @@ export class EmailQueueService {
     html: string,
     text?: string,
     jobOptions?: { priority?: number; delay?: number; attempts?: number },
-  ) {
+  ): Promise<void> {
     const emailOptions: EmailOptions = {
       to,
       subject,
@@ -203,7 +198,7 @@ export class EmailQueueService {
   /**
    * Gets email queue statistics
    */
-  async getQueueStats() {
+  async getQueueStats(): Promise<any> {
     const waiting = await this.emailQueue.getWaiting();
     const active = await this.emailQueue.getActive();
     const completed = await this.emailQueue.getCompleted();
@@ -222,7 +217,9 @@ export class EmailQueueService {
    * Clears completed jobs from the queue
    * @param gracePeriod - Grace period in milliseconds
    */
-  async cleanCompletedJobs(gracePeriod: number = 24 * 60 * 60 * 1000) {
+  async cleanCompletedJobs(
+    gracePeriod: number = 24 * 60 * 60 * 1000,
+  ): Promise<void> {
     await this.emailQueue.clean(gracePeriod, 100, "completed");
     this.logger.log("Cleaned completed email jobs");
   }
@@ -231,7 +228,9 @@ export class EmailQueueService {
    * Clears failed jobs from the queue
    * @param gracePeriod - Grace period in milliseconds
    */
-  async cleanFailedJobs(gracePeriod: number = 7 * 24 * 60 * 60 * 1000) {
+  async cleanFailedJobs(
+    gracePeriod: number = 7 * 24 * 60 * 60 * 1000,
+  ): Promise<void> {
     await this.emailQueue.clean(gracePeriod, 100, "failed");
     this.logger.log("Cleaned failed email jobs");
   }

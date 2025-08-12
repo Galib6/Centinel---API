@@ -10,17 +10,17 @@ export class WebAuthController {
   constructor(private readonly service: AuthService) {}
 
   @Post("send-otp")
-  async sendOtp(@Body() body: SendOtpDTO) {
+  async sendOtp(@Body() body: SendOtpDTO): Promise<any> {
     return this.service.sendOtp(body);
   }
 
   @Post("verify-otp")
-  async verifyOtp(@Body() body: VerifyOtpDTO) {
+  async verifyOtp(@Body() body: VerifyOtpDTO): Promise<any> {
     return this.service.verifyOtp(body);
   }
 
   @Post("refresh-token")
-  async refreshToken(@Body() body: RefreshTokenDTO) {
+  async refreshToken(@Body() body: RefreshTokenDTO): Promise<any> {
     return this.service.refreshToken(body);
   }
 }

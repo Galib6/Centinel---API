@@ -32,53 +32,10 @@ export class KafkaAdminService implements OnModuleInit {
     this.admin = this.kafka.admin();
   }
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     if (ENV.kafka.enabled === "true") {
       await this.createTopicsIfNotExist();
     }
-  }
-
-  private getTopicConfigurations(): ITopicConfig[] {
-    return [
-      {
-        topic: KAFKA_TOPICS.USER_EVENTS,
-        numPartitions: 3,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "604800000" }, // 7 days
-          { name: "cleanup.policy", value: "delete" },
-          { name: "compression.type", value: "snappy" },
-        ],
-      },
-      {
-        topic: KAFKA_TOPICS.MEETING_EVENTS,
-        numPartitions: 3,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "604800000" }, // 7 days
-          { name: "cleanup.policy", value: "delete" },
-          { name: "compression.type", value: "snappy" },
-        ],
-      },
-      {
-        topic: KAFKA_TOPICS.NOTIFICATION_EVENTS,
-        numPartitions: 2,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "259200000" }, // 3 days
-          { name: "cleanup.policy", value: "delete" },
-        ],
-      },
-      {
-        topic: KAFKA_TOPICS.SYSTEM_HEALTH,
-        numPartitions: 1,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "86400000" }, // 1 day
-          { name: "cleanup.policy", value: "delete" },
-        ],
-      },
-    ];
   }
 
   async createTopicsIfNotExist(): Promise<void> {
@@ -198,5 +155,48 @@ export class KafkaAdminService implements OnModuleInit {
     } finally {
       await this.admin.disconnect();
     }
+  }
+
+  private getTopicConfigurations(): ITopicConfig[] {
+    return [
+      {
+        topic: KAFKA_TOPICS.USER_EVENTS,
+        numPartitions: 3,
+        replicationFactor: 1,
+        configEntries: [
+          { name: "retention.ms", value: "604800000" }, // 7 days
+          { name: "cleanup.policy", value: "delete" },
+          { name: "compression.type", value: "snappy" },
+        ],
+      },
+      {
+        topic: KAFKA_TOPICS.MEETING_EVENTS,
+        numPartitions: 3,
+        replicationFactor: 1,
+        configEntries: [
+          { name: "retention.ms", value: "604800000" }, // 7 days
+          { name: "cleanup.policy", value: "delete" },
+          { name: "compression.type", value: "snappy" },
+        ],
+      },
+      {
+        topic: KAFKA_TOPICS.NOTIFICATION_EVENTS,
+        numPartitions: 2,
+        replicationFactor: 1,
+        configEntries: [
+          { name: "retention.ms", value: "259200000" }, // 3 days
+          { name: "cleanup.policy", value: "delete" },
+        ],
+      },
+      {
+        topic: KAFKA_TOPICS.SYSTEM_HEALTH,
+        numPartitions: 1,
+        replicationFactor: 1,
+        configEntries: [
+          { name: "retention.ms", value: "86400000" }, // 1 day
+          { name: "cleanup.policy", value: "delete" },
+        ],
+      },
+    ];
   }
 }

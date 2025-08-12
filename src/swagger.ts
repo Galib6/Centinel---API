@@ -3,7 +3,7 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from "@nestjs/swagger";
 import { PathsObject } from "@nestjs/swagger/dist/interfaces/open-api-spec.interface";
 import { ENV } from "./env";
 
-function filterInternalRoutes(doc: OpenAPIObject, tag) {
+function filterInternalRoutes(doc: OpenAPIObject, _tag): OpenAPIObject {
   const publicDoc = structuredClone(doc);
   const paths: PathsObject = {};
   Object.entries(publicDoc.paths).map(([k, path]) => {

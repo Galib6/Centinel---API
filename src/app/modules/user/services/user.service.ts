@@ -84,7 +84,7 @@ export class UserService extends BaseService<User> {
 
       if (roles && roles.length) {
         await asyncForEach(roles, async (role: CreateRolesDTO) => {
-          const isRoleExist = await this.roleService.isExist({ id: role.role });
+          await this.roleService.isExist({ id: role.role });
           await queryRunner.manager.save(
             Object.assign(new UserRole(), {
               user: createdUser.id,
@@ -122,7 +122,7 @@ export class UserService extends BaseService<User> {
     payload: UpdateUserDTO,
     relations: string[],
   ): Promise<User> {
-    const isUserExist = await this.isExist({ id });
+    await this.isExist({ id });
 
     const { roles, ...userData } = payload;
 
@@ -140,7 +140,7 @@ export class UserService extends BaseService<User> {
         const newOrUpdatedItems = roles.filter((role) => !role.isDeleted);
 
         await asyncForEach(deletedItems, async (role: UpdateRolesDTO) => {
-          const isUserRoleExist = await this.userRoleService.isExist({
+          await this.userRoleService.isExist({
             user: { id },
             role: { id: role.role },
           });
@@ -151,7 +151,7 @@ export class UserService extends BaseService<User> {
         });
 
         await asyncForEach(newOrUpdatedItems, async (role: UpdateRolesDTO) => {
-          const isRoleExist = await this.roleService.isExist({
+          await this.roleService.isExist({
             id: role.role,
           });
           const isUserRoleExist = await this.userRoleService.findOne({
@@ -204,7 +204,7 @@ export class UserService extends BaseService<User> {
         phoneNumber,
       });
 
-      const userRole = await this.userRoleService.createOneBase({
+      await this.userRoleService.createOneBase({
         user: user.id as any,
         role: role.id as any,
       });
@@ -251,7 +251,7 @@ export class UserService extends BaseService<User> {
       ],
     });
 
-    console.log();
+    console.info();
 
     if (!isExist) {
       throw new BadRequestException("User does not exists");

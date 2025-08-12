@@ -286,10 +286,8 @@ export class AuthService {
     });
   }
 
-  async sendOtp(payload: SendOtpDTO) {
-    const user = await this.userService.findOrCreateByPhoneNumber(
-      payload.phoneNumber,
-    );
+  async sendOtp(payload: SendOtpDTO): Promise<SuccessResponse> {
+    await this.userService.findOrCreateByPhoneNumber(payload.phoneNumber);
 
     const otp = gen6digitOTP();
     const authStat = await this.authStatService.createOrUpdateOtpByPhoneNumber(
@@ -303,7 +301,7 @@ export class AuthService {
     );
   }
 
-  async verifyOtp(payload: VerifyOtpDTO) {
+  async verifyOtp(payload: VerifyOtpDTO): Promise<SuccessResponse> {
     await this.authStatService.verifyOtp(payload.phoneNumber, payload.otp);
 
     const user = await this.userService.findOneBase({
@@ -370,7 +368,7 @@ export class AuthService {
 
         await queryRunner.manager.save(Object.assign(new User(), newUserData));
         await queryRunner.commitTransaction();
-      } catch (error) {
+      } catch {
         await queryRunner.rollbackTransaction();
       }
     }

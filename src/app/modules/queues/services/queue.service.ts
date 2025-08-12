@@ -11,14 +11,14 @@ export class QueueService {
     private readonly pdfQueue: Queue,
   ) {}
 
-  async createBulkCountryPurVisaCatDoc(data: any) {
+  async createBulkCountryPurVisaCatDoc(data: any): Promise<any> {
     return await this.pdfQueue.add(
       queuesConstants.defaultQueue.jobNames.createOne,
       data,
     );
   }
 
-  async updateBulkCountryPurVisaCatDoc(data: any) {
+  async updateBulkCountryPurVisaCatDoc(data: any): Promise<any> {
     return await this.pdfQueue.add(
       queuesConstants.defaultQueue.jobNames.updateOne,
       data,

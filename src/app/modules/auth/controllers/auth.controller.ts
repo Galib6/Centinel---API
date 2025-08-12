@@ -37,14 +37,14 @@ export class AuthController {
   async googleAuthRequest(
     @Query() query: GoogleAuthRequestDTO,
     @Response() res,
-  ) {
+  ): Promise<void> {
     const authorizationUrl = await this.service.googleAuthRequest(query);
     res.redirect(authorizationUrl);
   }
 
   @Get("google-redirect")
   @UseGuards(GoogleOAuthGuard)
-  async googleAuthRedirect(@Request() req, @Response() res) {
+  async googleAuthRedirect(@Request() req, @Response() res): Promise<void> {
     const { user } = req;
     const { state } = req.query;
     const responseData = await this.service.googleLogin(user, state);
@@ -58,27 +58,31 @@ export class AuthController {
 
   @Auth(AuthType.None)
   @Post("login")
-  async loginUser(@Body() body: LoginDTO) {
+  async loginUser(@Body() body: LoginDTO): Promise<SuccessResponse> {
     return this.service.loginUser(body);
   }
 
   @Post("register")
-  async registerUser(@Body() body: RegisterDTO) {
+  async registerUser(@Body() body: RegisterDTO): Promise<SuccessResponse> {
     return this.service.registerUser(body);
   }
 
   @Post("refresh-token")
-  async refreshToken(@Body() body: RefreshTokenDTO) {
+  async refreshToken(@Body() body: RefreshTokenDTO): Promise<SuccessResponse> {
     return this.service.refreshToken(body);
   }
 
   @Post("reset-password-request")
-  async resetPassword(@Body() body: ResetPasswordDTO) {
+  async resetPassword(
+    @Body() body: ResetPasswordDTO,
+  ): Promise<SuccessResponse> {
     return this.service.resetPassword(body);
   }
 
   @Post("reset-password-verify")
-  async verifyPassword(@Body() body: VerifyResetPasswordDTO) {
+  async verifyPassword(
+    @Body() body: VerifyResetPasswordDTO,
+  ): Promise<SuccessResponse> {
     return this.service.verifyResetPassword(body);
   }
 
@@ -86,7 +90,7 @@ export class AuthController {
   async changePassword(
     @Body() body: ChangePasswordDTO,
     @ActiveUser() authUser: IActiveUser,
-  ) {
+  ): Promise<SuccessResponse> {
     return this.service.changePassword(body, authUser);
   }
 }

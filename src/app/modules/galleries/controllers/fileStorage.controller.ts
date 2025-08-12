@@ -25,7 +25,7 @@ export class FileStorageController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Get()
-  async filterFiles(@Query() query: FilterFiledDTO) {
+  async filterFiles(@Query() query: FilterFiledDTO): Promise<any> {
     return this.fileUploadService.filterFiles(query);
   }
 

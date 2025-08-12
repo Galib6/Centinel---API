@@ -1,10 +1,10 @@
 import slugify from "slugify";
 
-export const gen6digitOTP = () => {
+export const gen6digitOTP = (): number => {
   return Math.floor(100000 + Math.random() * 900000);
 };
 
-export const slugifyString = (str: string) => {
+export const slugifyString = (str: string): string => {
   const slug = slugify(str, {
     replacement: "-",
     remove: undefined,
@@ -13,11 +13,14 @@ export const slugifyString = (str: string) => {
   return slug;
 };
 
-export const getPaddedCode = (val: number) => {
+export const getPaddedCode = (val: number): string => {
   return val.toString().padStart(8, "0");
 };
 
-export const asyncForEach = async (array: any[], callback: any) => {
+export const asyncForEach = async (
+  array: any[],
+  callback: any,
+): Promise<void> => {
   if (!Array.isArray(array)) {
     throw Error("Expected an array");
   }
@@ -59,7 +62,7 @@ export const getMaxValueContainedItem = <T>(array: T[], prop: string): T => {
   );
 };
 
-export const getPaginationData = (payload: any) => {
+export const getPaginationData = (payload: any): any => {
   let { page, limit } = payload;
   page = Number(page || 1);
   limit = Number(limit || 10);
@@ -67,12 +70,14 @@ export const getPaginationData = (payload: any) => {
   return { skip, limit, page };
 };
 
-export const sleep = (milliseconds) => {
+export const sleep = (milliseconds: number): Promise<void> => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
-export function getDiffPercentage(min: number, max: number) {
-  return Number(100 * Math.abs((max - min) / ((max + min) / 2))).toFixed(0);
+export function getDiffPercentage(min: number, max: number): number {
+  return Number(
+    Number(100 * Math.abs((max - min) / ((max + min) / 2))).toFixed(0),
+  );
 }
 
 export const removeDuplicateFromArray = <T>(
@@ -85,7 +90,7 @@ export const removeDuplicateFromArray = <T>(
   );
 };
 
-export const isEmptyObject = (obj) => {
+export const isEmptyObject = (obj: object): boolean => {
   return Object.keys(obj).length === 0;
 };
 

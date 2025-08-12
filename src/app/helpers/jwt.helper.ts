@@ -18,8 +18,8 @@ export class JWTHelper {
 
   public async signToken<T extends object | Buffer>(
     expiresIn: string,
-    payload?: T,
-  ) {
+    payload: T,
+  ): Promise<string> {
     return await this.jwtService.signAsync(payload, {
       audience: ENV.jwt.audience,
       issuer: ENV.jwt.issuer,
@@ -28,15 +28,15 @@ export class JWTHelper {
     });
   }
 
-  public async verify(token: string) {
+  public async verify(token: string): Promise<any> {
     try {
       return await this.jwtService.verifyAsync(token, ENV.jwt);
-    } catch (error) {
+    } catch (_error) {
       throw new UnauthorizedException("Unauthorized Access Detected");
     }
   }
 
-  public async verifyRefreshToken(token: string) {
+  public async verifyRefreshToken(token: string): Promise<any> {
     try {
       const decoded: any = await this.jwtService.verifyAsync(token, ENV.jwt);
       if (decoded.isRefreshToken) {
@@ -44,26 +44,26 @@ export class JWTHelper {
       } else {
         throw new ForbiddenException("Unauthorized Access Detected");
       }
-    } catch (error) {
+    } catch (_error) {
       throw new ForbiddenException("Unauthorized Access Detected");
     }
   }
 
-  public extractToken(headers: GenericObject) {
+  public extractToken(headers: GenericObject): string | null {
     let token: string =
       headers && headers.authorization ? headers.authorization : "";
     token = token.replace(/Bearer\s+/gm, "");
     return token;
   }
 
-  public async makeAccessToken(data: GenericObject) {
+  public async makeAccessToken(data: GenericObject): Promise<string> {
     const payload = {
       ...data,
     };
     return await this.signToken<GenericObject>(ENV.jwt.tokenExpireIn, payload);
   }
 
-  public async makeRefreshToken(data: GenericObject) {
+  public async makeRefreshToken(data: GenericObject): Promise<string> {
     const payload = {
       ...data,
     };
@@ -73,7 +73,7 @@ export class JWTHelper {
     );
   }
 
-  public async makePermissionToken(data: GenericObject) {
+  public async makePermissionToken(data: GenericObject): Promise<string> {
     const payload = {
       ...data,
     };

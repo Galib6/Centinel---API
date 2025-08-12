@@ -14,7 +14,10 @@ export class AuthStatService extends BaseService<AuthStat> {
     super(authStatRepository);
   }
 
-  async createOrUpdateOtpByPhoneNumber(phoneNumber: string, otp: number) {
+  async createOrUpdateOtpByPhoneNumber(
+    phoneNumber: string,
+    otp: number,
+  ): Promise<AuthStat> {
     const isExist = await this.findOneBase({ phoneNumber });
     if (isExist && !this.isOtpExpired(isExist.otpExpiryAt)) {
       return isExist;
@@ -54,11 +57,11 @@ export class AuthStatService extends BaseService<AuthStat> {
     return isExist;
   }
 
-  isOtpExpired(otpExpiryAt: Date) {
+  isOtpExpired(otpExpiryAt: Date): boolean {
     return otpExpiryAt.getTime() < new Date().getTime();
   }
 
-  getOtpExpiryTime() {
+  getOtpExpiryTime(): string {
     const current = new Date();
     current.setMinutes(current.getMinutes() + ENV.otpExpiresIn);
     const otpExpiryTime = current.toISOString();

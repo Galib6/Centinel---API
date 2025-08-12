@@ -1,13 +1,13 @@
 import { diskStorage } from "multer";
 import * as path from "path";
 
-export const generateFilename = (file) => {
+export const generateFilename = (file): string => {
   return `${crypto.randomUUID()}${path.extname(file.originalname)}`;
 };
 
 export const storageImageOptions = diskStorage({
   destination: "./uploads/temp",
-  filename: (req, file, callback) => {
+  filename: (_req, file, callback) => {
     callback(null, generateFilename(file));
   },
 });

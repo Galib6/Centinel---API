@@ -31,7 +31,7 @@ export class KafkaModule implements OnModuleInit {
   private readonly logger = new Logger(KafkaModule.name);
   constructor(private readonly adminService?: KafkaAdminService) {}
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     if (KafkaFactory.isEnabled()) {
       if (this.adminService) {
         try {

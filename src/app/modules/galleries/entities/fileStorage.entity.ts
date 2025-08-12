@@ -20,8 +20,4 @@ export class FileStorage extends BaseEntity {
 
   @Column({ length: 256, nullable: true })
   link?: string;
-
-  constructor() {
-    super();
-  }
 }

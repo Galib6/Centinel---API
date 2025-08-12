@@ -32,7 +32,7 @@ export class KafkaService implements OnModuleInit {
 
   constructor(@Inject("KAFKA_CLIENT") private readonly client: ClientKafka) {}
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     try {
       await this.client.connect();
       this.logger.log("Kafka client connected successfully");
@@ -187,7 +187,7 @@ export class KafkaService implements OnModuleInit {
     }
   }
 
-  async onApplicationShutdown() {
+  async onApplicationShutdown(): Promise<void> {
     try {
       await this.client.close();
       this.logger.log("Kafka client closed");

@@ -6,8 +6,6 @@ import { FindManyOptions, FindOptionsWhere, ILike, Repository } from "typeorm";
 
 @Injectable()
 export class QueryHelper {
-  constructor() {}
-
   public async buildSearchFilter<T>(
     filters: any,
     options: IFindAllBaseOptions,
@@ -18,10 +16,10 @@ export class QueryHelper {
     skip: number;
     page: number;
   }> {
-    let { searchTerm, limit: take, page, ...queryOptions } = filters;
-    take = toNumber(take) || 10;
-    page = toNumber(page) || 1;
-    const skip = (page - 1) * take;
+    const { searchTerm, limit, page, ...queryOptions } = filters;
+    const take = toNumber(limit) || 10;
+    const currentPage = toNumber(page) || 1;
+    const skip = (currentPage - 1) * take;
 
     if (searchTerm && _repo.target.valueOf().hasOwnProperty("SEARCH_TERMS")) {
       let SEARCH_TERMS = (_repo.target.valueOf() as any).SEARCH_TERMS || [];

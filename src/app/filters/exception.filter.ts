@@ -13,7 +13,7 @@ import { ENV } from "@src/env";
 export class ExceptionFilter implements NestExceptionFilter {
   private readonly logger = new Logger(ExceptionFilter.name);
 
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
@@ -84,18 +84,18 @@ export class ExceptionFilter implements NestExceptionFilter {
       statusCode = statusCode ? statusCode : HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
-    const handleErrorMessage = (errorMessages) => {
+    const handleErrorMessage = (messages: any[]): string[] | string => {
       if (
-        Array.isArray(errorMessages) &&
-        errorMessages?.length &&
+        Array.isArray(messages) &&
+        messages?.length &&
         ENV.config.isDevelopment
       ) {
         return [
           ...(exception.response?.detail ? [exception.response?.detail] : []),
-          errorMessages[0],
+          messages[0],
         ];
-      } else if (Array.isArray(errorMessages) && errorMessages?.length) {
-        return [errorMessages[0]];
+      } else if (Array.isArray(messages) && messages?.length) {
+        return [messages[0]];
       } else {
         return "something went wrong";
       }

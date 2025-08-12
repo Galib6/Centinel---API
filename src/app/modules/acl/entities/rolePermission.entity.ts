@@ -9,21 +9,17 @@ import { Role } from "./role.entity";
 export class RolePermission extends BaseEntity {
   public static readonly SEARCH_TERMS: string[] = [];
 
-  @ManyToOne((t) => Role, { onDelete: "CASCADE" })
-  @Type((t) => Role)
+  @ManyToOne(() => Role, { onDelete: "CASCADE" })
+  @Type(() => Role)
   role?: Role;
 
   @RelationId((e: RolePermission) => e.role)
   roleId?: string;
 
-  @ManyToOne((t) => Permission, { onDelete: "CASCADE" })
-  @Type((t) => Permission)
+  @ManyToOne(() => Permission, { onDelete: "CASCADE" })
+  @Type(() => Permission)
   permission?: Permission;
 
   @RelationId((e: RolePermission) => e.permission)
   permissionId?: number;
-
-  constructor() {
-    super();
-  }
 }

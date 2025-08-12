@@ -3,14 +3,11 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
-  RequestMethod,
 } from "@nestjs/common";
 import { Observable } from "rxjs";
 
 @Injectable()
 export class WebRequestInterceptor implements NestInterceptor {
-  constructor() {}
-
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,

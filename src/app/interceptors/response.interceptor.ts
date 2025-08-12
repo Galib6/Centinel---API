@@ -12,10 +12,8 @@ import { SuccessResponse } from "../types";
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
-  constructor() {}
-
   intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(

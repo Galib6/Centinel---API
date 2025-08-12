@@ -2,15 +2,15 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ENV } from "@src/env";
 import * as nodemailer from "nodemailer";
 import {
-  EmailTemplateContext,
   EmailTemplateHelper,
+  IEmailTemplateContext,
 } from "../helpers/email-template.helper";
 
-export interface EmailOptions {
+export interface IEmailOptions {
   to: string | string[];
   subject: string;
   template?: string;
-  context?: EmailTemplateContext;
+  context?: IEmailTemplateContext;
   html?: string;
   text?: string;
   cc?: string | string[];
@@ -22,7 +22,7 @@ export interface EmailOptions {
   }>;
 }
 
-export interface EmailSendResult {
+export interface IEmailSendResult {
   success: boolean;
   messageId?: string;
   error?: string;
@@ -38,36 +38,7 @@ export class EmailService {
     this.emailTemplateHelper.registerHelpers();
   }
 
-  private initializeTransporter(): void {
-    this.transporter = nodemailer.createTransport({
-      host: ENV.smtp.smtpHost,
-      port: parseInt(ENV.smtp.smtpPort),
-      secure: parseInt(ENV.smtp.smtpPort) === 465, // true for 465, false for other ports
-      auth: {
-        user: ENV.smtp.smtpUser,
-        pass: ENV.smtp.smtpPassword,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-
-    // Verify connection configuration
-    this.transporter.verify((error, success) => {
-      if (error) {
-        this.logger.error("SMTP connection failed:", error);
-      } else {
-        this.logger.log("SMTP server is ready to send emails");
-      }
-    });
-  }
-
-  /**
-   * Sends an email using template or raw HTML
-   * @param options - Email options
-   * @returns Promise with send result
-   */
-  async sendEmail(options: EmailOptions): Promise<EmailSendResult> {
+  async sendEmail(options: IEmailOptions): Promise<IEmailSendResult> {
     try {
       let htmlContent = options.html;
 
@@ -76,7 +47,6 @@ export class EmailService {
         if (!this.emailTemplateHelper.templateExists(options.template)) {
           throw new Error(`Email template '${options.template}' not found`);
         }
-
         htmlContent = await this.emailTemplateHelper.renderTemplate(
           options.template,
           options.context || {},
@@ -97,19 +67,16 @@ export class EmailService {
         text: options.text,
       };
 
-      // Add optional fields
       if (options.cc) {
         mailOptions.cc = Array.isArray(options.cc)
           ? options.cc.join(", ")
           : options.cc;
       }
-
       if (options.bcc) {
         mailOptions.bcc = Array.isArray(options.bcc)
           ? options.bcc.join(", ")
           : options.bcc;
       }
-
       if (options.attachments) {
         mailOptions.attachments = options.attachments;
       }
@@ -124,13 +91,51 @@ export class EmailService {
         success: true,
         messageId: result.messageId,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to send email to ${options.to}:`, error);
-
       return {
         success: false,
-        error: error.message,
+        error: error?.message || String(error),
       };
     }
   }
+
+  private initializeTransporter(): void {
+    this.transporter = nodemailer.createTransport({
+      host: ENV.smtp.smtpHost,
+      port: parseInt(ENV.smtp.smtpPort),
+      secure: parseInt(ENV.smtp.smtpPort) === 465, // true for 465, false for other ports
+      auth: {
+        user: ENV.smtp.smtpUser,
+        pass: ENV.smtp.smtpPassword,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    // Verify connection configuration
+    this.transporter.verify((error, _success) => {
+      if (error) {
+        this.logger.error("SMTP connection failed:", error);
+      } else {
+        this.logger.log("SMTP server is ready to send emails");
+      }
+    });
+  }
+}
+export interface IEmailOptions {
+  to: string | string[];
+  subject: string;
+  template?: string;
+  context?: IEmailTemplateContext;
+  html?: string;
+  text?: string;
+  cc?: string | string[];
+  bcc?: string | string[];
+  attachments?: Array<{
+    filename: string;
+    content: Buffer | string;
+    contentType?: string;
+  }>;
 }

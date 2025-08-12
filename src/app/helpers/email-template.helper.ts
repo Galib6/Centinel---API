@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as handlebars from "handlebars";
 import * as path from "path";
 
-export interface EmailTemplateContext {
+export interface IEmailTemplateContext {
   [key: string]: any;
 }
 
@@ -23,7 +23,7 @@ export class EmailTemplateHelper {
    */
   async renderTemplate(
     templateName: string,
-    context: EmailTemplateContext,
+    context: IEmailTemplateContext,
   ): Promise<string> {
     try {
       const templatePath = path.join(this.templatesPath, `${templateName}.hbs`);
@@ -106,9 +106,9 @@ export class EmailTemplateHelper {
       "ifEquals",
       function (a: any, b: any, options: any) {
         if (a === b) {
-          return options.fn(this);
+          return options.fn(options.data?.root ?? {});
         }
-        return options.inverse(this);
+        return options.inverse(options.data?.root ?? {});
       },
     );
 

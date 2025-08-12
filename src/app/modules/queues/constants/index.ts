@@ -17,7 +17,7 @@ export const queuesConstants = {
   },
 };
 
-const getQueueName = (queuesConstant) => {
+const getQueueName = (_queuesConstant): string[] => {
   const queues = [];
   Object.entries(queuesConstants).forEach((each) => {
     queues.push(each[1].name);

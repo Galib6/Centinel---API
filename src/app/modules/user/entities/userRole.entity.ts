@@ -11,12 +11,12 @@ export class UserRole {
   @PrimaryGeneratedColumn("increment", { type: ENUM_COLUMN_TYPES.INT })
   id?: number;
 
-  @ManyToOne((t) => Role, { onDelete: "CASCADE" })
-  @Type((t) => Role)
+  @ManyToOne(() => Role, { onDelete: "CASCADE" })
+  @Type(() => Role)
   role?: Role;
 
-  @ManyToOne((t) => User, { onDelete: "CASCADE" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: "CASCADE" })
+  @Type(() => User)
   user?: User;
 
   @RelationId((e: UserRole) => e.role)

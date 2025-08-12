@@ -1,3 +1,4 @@
 import { SetMetadata } from "@nestjs/common";
 
-export const CacheTTL = (ttl: number) => SetMetadata("cacheTTL", ttl);
+export const CacheTTL = (ttl: number): ReturnType<typeof SetMetadata> =>
+  SetMetadata("cacheTTL", ttl);

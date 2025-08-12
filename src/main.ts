@@ -13,7 +13,7 @@ import { setupSwagger } from "./swagger";
 const logger = new Logger();
 //test
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ENV.config.isDevelopment
       ? createLogger()
@@ -29,7 +29,7 @@ async function bootstrap() {
       console.error("❌ Failed to start Kafka microservice:", error);
     }
   } else {
-    console.log("⚠️ Kafka is disabled or configuration is missing");
+    console.warn("⚠️ Kafka is disabled or configuration is missing");
   }
 
   app.setBaseViewsDir(join(process.cwd(), "views"));

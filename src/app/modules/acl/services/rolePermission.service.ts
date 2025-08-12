@@ -13,7 +13,9 @@ export class RolePermissionService extends BaseService<RolePermission> {
     super(_repo);
   }
 
-  public async findRolePermissionByRoles(roles: string[]) {
+  public async findRolePermissionByRoles(
+    roles: string[],
+  ): Promise<RolePermission[]> {
     return this.repo.find({
       where: {
         role: In(roles),

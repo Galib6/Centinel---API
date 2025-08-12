@@ -10,7 +10,7 @@ import { queueNames } from "./constants";
 
 @Module({})
 export class BullBoardModule implements OnModuleInit {
-  onModuleInit() {
+  onModuleInit(): void {
     const app = express();
 
     const serverAdapter = new ExpressAdapter();
@@ -41,7 +41,7 @@ export class BullBoardModule implements OnModuleInit {
 
     app.use("/admin/queues", serverAdapter.getRouter());
     app.listen(3001, () => {
-      console.log(
+      console.info(
         "🧿 Bull Board available at http://localhost:3001/admin/queues",
       );
     });

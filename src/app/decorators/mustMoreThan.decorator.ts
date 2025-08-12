@@ -25,7 +25,7 @@ export function MustMoreThan(
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate: (value, args): boolean => isValidated(value, minVal),
+        validate: (value, _args): boolean => isValidated(value, minVal),
         defaultMessage: buildMessage(
           (eachPrefix) => eachPrefix + "$property must be more than 0",
           validationOptions,

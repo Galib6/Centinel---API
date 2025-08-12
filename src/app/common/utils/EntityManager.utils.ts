@@ -19,7 +19,7 @@ export class EntityManagerUtil<T, U> {
       parentIdField?: keyof T;
       parentId?: string;
     },
-  ) {
+  ): Promise<void> {
     const deleteItems = items.filter(options.getDeleteCondition);
     const updateItems = items.filter(options.getUpdateCondition);
     const newItems = items.filter(
@@ -40,7 +40,7 @@ export class EntityManagerUtil<T, U> {
   }
 
   // Delete entities based on specified items
-  private async deleteEntities(deleteItems: U[]) {
+  private async deleteEntities(deleteItems: U[]): Promise<void> {
     if (!deleteItems.length) return;
     await Promise.all(
       deleteItems.map(async (item) => {
@@ -61,7 +61,7 @@ export class EntityManagerUtil<T, U> {
     updateEntityFields: (item: U) => Partial<T>,
     parentIdField?: keyof T,
     parentId?: string,
-  ) {
+  ): Promise<void> {
     if (!updateItems.length) return;
     await Promise.all(
       updateItems.map(async (item) => {
@@ -84,7 +84,10 @@ export class EntityManagerUtil<T, U> {
   }
 
   // Add new entities based on specified items
-  private async addNewEntities(newItems: U[], createEntity: (item: U) => T) {
+  private async addNewEntities(
+    newItems: U[],
+    createEntity: (item: U) => T,
+  ): Promise<void> {
     if (!newItems.length) return;
     await Promise.all(
       newItems.map(async (item) => {

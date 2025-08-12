@@ -11,7 +11,25 @@ export class KafkaFactory {
     return ENV.kafka.enabled === "true";
   }
 
-  private static createKafkaOptions() {
+  static createClientOptions(): ClientOptions {
+    return {
+      transport: Transport.KAFKA,
+      options: this.createKafkaOptions(),
+    };
+  }
+
+  static createMicroserviceOptions(): MicroserviceOptions | null {
+    if (!this.isEnabled()) {
+      return null;
+    }
+
+    return {
+      transport: Transport.KAFKA,
+      options: this.createKafkaOptions(),
+    };
+  }
+
+  private static createKafkaOptions(): import("@nestjs/microservices").KafkaOptions["options"] {
     const baseClientId = ENV.kafka.clientId;
     const uniqueId = Math.random().toString(36).substring(7);
 
@@ -33,7 +51,6 @@ export class KafkaFactory {
       consumer: {
         groupId: ENV.kafka.groupId,
         allowAutoTopicCreation: true,
-        fromBeginning: true, // Start from latest to avoid old messages
         retry: {
           initialRetryTime: 100,
           retries: 8,
@@ -47,24 +64,6 @@ export class KafkaFactory {
           retries: 3,
         },
       },
-    };
-  }
-
-  static createClientOptions(): ClientOptions {
-    return {
-      transport: Transport.KAFKA,
-      options: this.createKafkaOptions(),
-    };
-  }
-
-  static createMicroserviceOptions(): MicroserviceOptions | null {
-    if (!this.isEnabled()) {
-      return null;
-    }
-
-    return {
-      transport: Transport.KAFKA,
-      options: this.createKafkaOptions(),
     };
   }
 }

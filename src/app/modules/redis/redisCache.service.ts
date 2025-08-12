@@ -5,7 +5,6 @@ import * as Redis from "ioredis";
 @Injectable()
 export class RedisService implements OnModuleDestroy {
   private redisClient: Redis.Redis;
-
   constructor() {
     this.redisClient = new Redis.Redis({
       host: ENV.redis.host,
@@ -57,7 +56,7 @@ export class RedisService implements OnModuleDestroy {
     await this.redisClient.expire(key, seconds);
   }
 
-  onModuleDestroy() {
+  onModuleDestroy(): void {
     this.redisClient.disconnect();
   }
 }

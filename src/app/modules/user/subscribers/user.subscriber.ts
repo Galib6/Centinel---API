@@ -16,11 +16,11 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     dataSource.subscribers.push(this);
   }
 
-  listenTo() {
+  listenTo(): typeof User {
     return User;
   }
 
-  async beforeInsert(event: InsertEvent<User>) {
+  async beforeInsert(event: InsertEvent<User>): Promise<void> {
     if (event.entity.password) {
       event.entity.password = await this.bcryptHelper.hash(
         event.entity.password,
@@ -34,7 +34,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     }
   }
 
-  async beforeUpdate(event: InsertEvent<User>) {
+  async beforeUpdate(event: InsertEvent<User>): Promise<void> {
     if (event.entity.password) {
       event.entity.password = await this.bcryptHelper.hash(
         event.entity.password,
@@ -42,7 +42,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     }
   }
 
-  async afterLoad(entity: User) {
+  async afterLoad(entity: User): Promise<void> {
     if (entity.userRoles && entity.userRoles.length) {
       entity.roles = entity.userRoles
         .map((userRole) => userRole.role)

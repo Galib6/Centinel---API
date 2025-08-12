@@ -21,7 +21,6 @@ import { GalleryModule } from "./modules/galleries/gallery.module";
 import { BullBoardModule } from "./modules/queues/bullBoard.module";
 import { QueueModule } from "./modules/queues/queue.module";
 import { RedisModule } from "./modules/redis/redis.module";
-import { LogCleanupService } from "./services";
 
 const MODULES = [
   DatabaseModule,
@@ -43,14 +42,13 @@ const MODULES = [
   controllers: [AppController],
   providers: [
     AppService,
-    LogCleanupService,
     { provide: APP_FILTER, useClass: ExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: ActiveUserInserter },
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(AuthMiddleware)
       .forRoutes({ path: "/*path", method: RequestMethod.ALL });

@@ -104,12 +104,12 @@ export default [
         {
           default: [
             "public-static-field",
-            "protected-static-field",
             "private-static-field",
+            "protected-static-field",
             "protected-instance-field",
-            "constructor",
             "private-instance-field",
             "public-instance-field",
+            "constructor",
             "public-static-method",
             "protected-static-method",
             "private-static-method",

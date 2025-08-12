@@ -25,8 +25,6 @@ import { Observable } from "rxjs";
  */
 @Injectable()
 export class ActiveUserInserter implements NestInterceptor {
-  constructor() {}
-
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,

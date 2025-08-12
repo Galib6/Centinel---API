@@ -14,8 +14,4 @@ export class AuthStat extends BaseEntity {
 
   @Column({ nullable: true, type: ENUM_COLUMN_TYPES.TIMESTAMP_UTC })
   otpExpiryAt?: Date;
-
-  constructor() {
-    super();
-  }
 }

@@ -4,12 +4,13 @@ import { queuesConstants } from "../constants";
 
 @Processor(queuesConstants.defaultQueue.name)
 export class CountryPurVisaCatServiceDocProcessor extends WorkerHost {
-  constructor /**import service here ans call form here */() {
-    // private readonly countryPurVisaCatServiceDocService: CountryPurVisaCatServiceDocService
-    super();
-  }
+  // constructor /**import service here ans call form here */(
+  //   private readonly countryPurVisaCatServiceDocService: CountryPurVisaCatServiceDocService
+  // ) {
+  //   super();
+  // }
 
-  async process(job: Job) {
+  async process(job: Job): Promise<void> {
     switch (job.name) {
       case queuesConstants.defaultQueue.jobNames.createOne:
         // await this.countryPurVisaCatServiceDocService.createBulk(job.data);
@@ -20,12 +21,12 @@ export class CountryPurVisaCatServiceDocProcessor extends WorkerHost {
         break;
 
       default:
-        console.log(`Unknown job type: ${job.name}`);
+        console.info(`Unknown job type: ${job.name}`);
     }
   }
 
   @OnWorkerEvent("completed")
-  onComplete(job: Job) {
-    console.log(`Job completed: ${job.id}, ${job.name}`);
+  onComplete(job: Job): void {
+    console.info(`Job completed: ${job.id}, ${job.name}`);
   }
 }

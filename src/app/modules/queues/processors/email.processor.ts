@@ -4,7 +4,7 @@ import { Job } from "bullmq";
 import { EmailOptions, EmailService } from "../../../helpers/email.service";
 import { queuesConstants } from "../constants";
 
-export interface EmailJobData extends EmailOptions {
+export interface IEmailJobData extends EmailOptions {
   priority?: number;
   delay?: number;
   attempts?: number;
@@ -18,7 +18,7 @@ export class EmailProcessor extends WorkerHost {
     super();
   }
 
-  async process(job: Job<EmailJobData>): Promise<any> {
+  async process(job: Job<IEmailJobData>): Promise<any> {
     const { data } = job;
     this.logger.log(`Processing email job ${job.id} for ${data.to}`);
 

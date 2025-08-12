@@ -36,15 +36,15 @@ export class Role {
   @DeleteDateColumn({ select: false, type: ENUM_COLUMN_TYPES.TIMESTAMP_UTC })
   deletedAt?: Date;
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: "NO ACTION" })
+  @Type(() => User)
   createdBy?: User;
 
   @RelationId((e: Role) => e.createdBy)
   createdById?: number;
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: "NO ACTION" })
+  @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: Role) => e.updatedBy)

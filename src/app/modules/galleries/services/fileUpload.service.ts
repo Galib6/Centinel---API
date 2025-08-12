@@ -17,7 +17,6 @@ import { FileStorageService } from "./fileStorage.service";
 @Injectable()
 export class FileUploadService {
   BASE = join(process.cwd(), "uploads/images");
-
   constructor(
     private readonly fileStorageService: FileStorageService,
 
@@ -37,7 +36,10 @@ export class FileUploadService {
     return files;
   }
 
-  async uploadImage(files: IFileMeta[], body: { folder: string }) {
+  async uploadImage(
+    files: IFileMeta[],
+    body: { folder: string },
+  ): Promise<SuccessResponse> {
     if (body.folder) {
       body.folder = body.folder.replace(/\+/g, "/").replace(" ", "");
     }
@@ -117,8 +119,8 @@ export class FileUploadService {
       // Step 5: Clean up the local file after upload
       try {
         await fs.unlinkSync(join(process.cwd(), filePath));
-      } catch (error) {
-        console.log("Error in file unlink");
+      } catch {
+        console.info("Error in file unlink");
       }
 
       // Step 6: Store the file metadata in the database

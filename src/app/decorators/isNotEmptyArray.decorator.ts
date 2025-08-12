@@ -16,7 +16,7 @@ export function IsNotEmptyArray(
     {
       name: IS_NOT_EMPTY_ARRAY,
       validator: {
-        validate: (value, args): boolean => isValidated(value),
+        validate: (value, _args): boolean => isValidated(value),
         defaultMessage: buildMessage(
           (eachPrefix) => eachPrefix + "$property can not be empty array",
           validationOptions,

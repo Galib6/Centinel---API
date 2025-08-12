@@ -56,19 +56,19 @@ export class User {
   @Column({ type: ENUM_COLUMN_TYPES.VARCHAR, default: false })
   isVerified?: boolean;
 
-  @OneToMany((t) => UserRole, (e) => e.user)
-  @Type((t) => UserRole)
+  @OneToMany(() => UserRole, (e) => e.user)
+  @Type(() => UserRole)
   userRoles?: UserRole[];
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: "NO ACTION" })
+  @Type(() => User)
   createdBy?: User;
 
   @RelationId((e: User) => e.createdBy)
   createdById?: number;
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: "NO ACTION" })
+  @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: User) => e.updatedBy)

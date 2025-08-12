@@ -8,8 +8,4 @@ export class PermissionType extends BaseEntity {
 
   @Column()
   title?: string;
-
-  constructor() {
-    super();
-  }
 }
