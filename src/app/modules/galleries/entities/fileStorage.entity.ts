@@ -1,8 +1,8 @@
-import { BaseEntity } from "@src/app/base";
-import { ENUM_TABLE_NAMES } from "@src/shared";
-import { Column, Entity } from "typeorm";
+import { BaseEntity } from '@src/app/base';
+import { ENUM_TABLE_NAMES } from '@src/shared';
+import { Column, Entity } from 'typeorm';
 
-@Entity(ENUM_TABLE_NAMES.FILE_STORAGES, { orderBy: { createdAt: "DESC" } })
+@Entity(ENUM_TABLE_NAMES.FILE_STORAGES, { orderBy: { createdAt: 'DESC' } })
 export class FileStorage extends BaseEntity {
   public static readonly SEARCH_TERMS: string[] = [];
 

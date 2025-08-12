@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { BaseUpdateDTO } from "@src/app/base";
-import { Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { BaseUpdateDTO } from '@src/app/base';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -10,13 +10,13 @@ import {
   MaxLength,
   MinLength,
   ValidateNested,
-} from "class-validator";
+} from 'class-validator';
 
 export class UpdateRolesDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "c10ee33d-20a7-4689-8f80-929963400f7d",
+    example: 'c10ee33d-20a7-4689-8f80-929963400f7d',
   })
   @IsNotEmpty()
   @IsNumber()
@@ -36,7 +36,7 @@ export class UpdateUserDTO extends BaseUpdateDTO {
   @ApiProperty({
     type: String,
     required: false,
-    example: "Galib",
+    example: 'Galib',
   })
   @IsOptional()
   @IsString()
@@ -45,7 +45,7 @@ export class UpdateUserDTO extends BaseUpdateDTO {
   @ApiProperty({
     type: String,
     required: false,
-    example: "Test",
+    example: 'Test',
   })
   @IsOptional()
   @IsString()
@@ -63,7 +63,7 @@ export class UpdateUserDTO extends BaseUpdateDTO {
   @ApiProperty({
     type: String,
     required: false,
-    example: "123456",
+    example: '123456',
   })
   @IsOptional()
   @IsString()
@@ -76,10 +76,10 @@ export class UpdateUserDTO extends BaseUpdateDTO {
     required: false,
     example: [
       {
-        role: "1e276fa4-bab1-4bda-bee2-8bc509960467",
+        role: '1e276fa4-bab1-4bda-bee2-8bc509960467',
       },
       {
-        role: "c10ee33d-20a7-4689-8f80-929963400f7d",
+        role: 'c10ee33d-20a7-4689-8f80-929963400f7d',
         isDeleted: true,
       },
     ],

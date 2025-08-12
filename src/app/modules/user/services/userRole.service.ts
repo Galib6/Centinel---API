@@ -1,16 +1,16 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { BaseService } from "@src/app/base/base.service";
-import { In, Repository } from "typeorm";
-import { RolePermissionService } from "../../acl/services/rolePermission.service";
-import { UserRole } from "../entities/userRole.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService } from '@src/app/base/base.service';
+import { In, Repository } from 'typeorm';
+import { RolePermissionService } from '../../acl/services/rolePermission.service';
+import { UserRole } from '../entities/userRole.entity';
 
 @Injectable()
 export class UserRoleService extends BaseService<UserRole> {
   constructor(
     @InjectRepository(UserRole)
     public readonly userRoleRepository: Repository<UserRole>,
-    private readonly rolePermissionService: RolePermissionService,
+    private readonly rolePermissionService: RolePermissionService
   ) {
     super(userRoleRepository);
   }
@@ -23,7 +23,7 @@ export class UserRoleService extends BaseService<UserRole> {
       where: {
         user: { id: userId },
       },
-      relations: ["role"],
+      relations: ['role'],
     });
 
     const roleIds = userRoles.map((uR) => uR.role.id);
@@ -37,7 +37,7 @@ export class UserRoleService extends BaseService<UserRole> {
             id: In(roleIds),
           },
         },
-        relations: ["permission", "role"],
+        relations: ['permission', 'role'],
       });
 
       permissions = rolePermissions.map((rP) => rP.permission.title) || [];

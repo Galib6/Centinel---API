@@ -4,22 +4,19 @@ import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
-} from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-import { AUTH_TYPE_KEY } from "@src/app/constants/keys.constants";
-import { AuthType } from "@src/app/enums/auth-type.enum";
-import { AccessTokenGuard } from "../access-token/access-token.guard";
-import { PermissionGuard } from "../permission/permission.guard";
+import { AUTH_TYPE_KEY } from '@src/app/constants/keys.constants';
+import { AuthType } from '@src/app/enums/auth-type.enum';
+import { AccessTokenGuard } from '../access-token/access-token.guard';
+import { PermissionGuard } from '../permission/permission.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
   private static readonly defaultAuthType = AuthType.Bearer;
 
-  private readonly authTypeGuardMap: Record<
-    AuthType,
-    CanActivate | CanActivate[]
-  > = {
+  private readonly authTypeGuardMap: Record<AuthType, CanActivate | CanActivate[]> = {
     [AuthType.Bearer]: this.accessTokenGuards,
     [AuthType.None]: { canActivate: () => true },
     [AuthType.Permission]: this.permissionGuard,
@@ -27,7 +24,7 @@ export class AuthenticationGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuards: AccessTokenGuard,
-    private readonly permissionGuard: PermissionGuard,
+    private readonly permissionGuard: PermissionGuard
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -39,10 +36,7 @@ export class AuthenticationGuard implements CanActivate {
     ]) ?? [AuthenticationGuard.defaultAuthType];
 
     //if api need to authenticate with permission meta data then authType need to added authentication token by default
-    if (
-      authType.includes(AuthType.Permission) &&
-      !authType.includes(AuthType.Bearer)
-    ) {
+    if (authType.includes(AuthType.Permission) && !authType.includes(AuthType.Bearer)) {
       authType = [AuthType.Bearer, ...authType];
     }
 
@@ -53,17 +47,14 @@ export class AuthenticationGuard implements CanActivate {
     //Loop guards canActivate
     for (let index = 0; index < guards.length; index++) {
       const instance = guards[index];
-      const canActivate = await Promise.resolve(
-        instance.canActivate(context),
-      ).catch((err) => ({
+      const canActivate = await Promise.resolve(instance.canActivate(context)).catch((err) => ({
         error: err,
       }));
       //result set to result array
       result[authType?.[index]] = canActivate;
     }
 
-    const authenticated =
-      result[AuthType.Bearer] === true || result[AuthType.None] === true;
+    const authenticated = result[AuthType.Bearer] === true || result[AuthType.None] === true;
 
     const havePermission = result[AuthType.Permission]
       ? result[AuthType.Permission] === true
@@ -77,6 +68,6 @@ export class AuthenticationGuard implements CanActivate {
       throw new ForbiddenException("User don't have api access permission");
     }
 
-    throw new UnauthorizedException("Unauthorized token or token expired");
+    throw new UnauthorizedException('Unauthorized token or token expired');
   }
 }

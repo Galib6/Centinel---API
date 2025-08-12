@@ -1,46 +1,31 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { SuccessResponse } from "@src/app/types";
-import {
-  CreatePermissionTypeDTO,
-  FilterPermissionTypeDTO,
-  UpdatePermissionTypeDTO,
-} from "../dtos";
-import { PermissionType } from "../entities/permissionType.entity";
-import { PermissionTypeService } from "../services/permissionType.service";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { SuccessResponse } from '@src/app/types';
+import { CreatePermissionTypeDTO, FilterPermissionTypeDTO, UpdatePermissionTypeDTO } from '../dtos';
+import { PermissionType } from '../entities/permissionType.entity';
+import { PermissionTypeService } from '../services/permissionType.service';
 
-@ApiTags("PermissionType")
+@ApiTags('PermissionType')
 @ApiBearerAuth()
-@Controller("permission-types")
+@Controller('permission-types')
 export class PermissionTypeController {
   RELATIONS = [];
   constructor(private readonly service: PermissionTypeService) {}
 
   @Get()
   async findAll(
-    @Query() query: FilterPermissionTypeDTO,
+    @Query() query: FilterPermissionTypeDTO
   ): Promise<SuccessResponse | PermissionType[]> {
     return this.service.findAllBase(query, { relations: this.RELATIONS });
   }
 
-  @Get(":id")
-  async findById(@Param("id") id: number): Promise<PermissionType> {
+  @Get(':id')
+  async findById(@Param('id') id: number): Promise<PermissionType> {
     return this.service.findByIdBase(id, { relations: this.RELATIONS });
   }
 
   @Post()
-  async createOne(
-    @Body() body: CreatePermissionTypeDTO,
-  ): Promise<PermissionType> {
+  async createOne(@Body() body: CreatePermissionTypeDTO): Promise<PermissionType> {
     return this.service.createOneBase(body, { relations: this.RELATIONS });
   }
 
@@ -49,16 +34,16 @@ export class PermissionTypeController {
   //     return this.service.recoverByIdBase(id, { relations: this.RELATIONS });
   //   }
 
-  @Patch(":id")
+  @Patch(':id')
   async updateOne(
-    @Param("id") id: number,
-    @Body() body: UpdatePermissionTypeDTO,
+    @Param('id') id: number,
+    @Body() body: UpdatePermissionTypeDTO
   ): Promise<PermissionType> {
     return this.service.updateOneBase(id, body, { relations: this.RELATIONS });
   }
 
-  @Delete(":id")
-  async deleteOne(@Param("id") id: number): Promise<SuccessResponse> {
+  @Delete(':id')
+  async deleteOne(@Param('id') id: number): Promise<SuccessResponse> {
     return this.service.deleteOneBase(id);
   }
 

@@ -1,5 +1,5 @@
-import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from "@src/shared";
-import { Type } from "class-transformer";
+import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from '@src/shared';
+import { Type } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -9,14 +9,14 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../user/entities/user.entity";
+} from 'typeorm';
+import { User } from '../../user/entities/user.entity';
 
-@Entity(ENUM_TABLE_NAMES.ROLES, { orderBy: { createdAt: "DESC" } })
+@Entity(ENUM_TABLE_NAMES.ROLES, { orderBy: { createdAt: 'DESC' } })
 export class Role {
-  public static readonly SEARCH_TERMS: string[] = ["title"];
+  public static readonly SEARCH_TERMS: string[] = ['title'];
 
-  @PrimaryGeneratedColumn("increment", { type: ENUM_COLUMN_TYPES.INT })
+  @PrimaryGeneratedColumn('increment', { type: ENUM_COLUMN_TYPES.INT })
   id?: number;
 
   @Column()
@@ -36,14 +36,14 @@ export class Role {
   @DeleteDateColumn({ select: false, type: ENUM_COLUMN_TYPES.TIMESTAMP_UTC })
   deletedAt?: Date;
 
-  @ManyToOne(() => User, { onDelete: "NO ACTION" })
+  @ManyToOne(() => User, { onDelete: 'NO ACTION' })
   @Type(() => User)
   createdBy?: User;
 
   @RelationId((e: Role) => e.createdBy)
   createdById?: number;
 
-  @ManyToOne(() => User, { onDelete: "NO ACTION" })
+  @ManyToOne(() => User, { onDelete: 'NO ACTION' })
   @Type(() => User)
   updatedBy?: User;
 

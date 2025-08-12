@@ -1,10 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { ENV } from "@src/env";
-import * as nodemailer from "nodemailer";
-import {
-  EmailTemplateHelper,
-  IEmailTemplateContext,
-} from "../helpers/email-template.helper";
+import { Injectable, Logger } from '@nestjs/common';
+import { ENV } from '@src/env';
+import * as nodemailer from 'nodemailer';
+import { EmailTemplateHelper, IEmailTemplateContext } from '../helpers/email-template.helper';
 
 export interface IEmailOptions {
   to: string | string[];
@@ -49,33 +46,27 @@ export class EmailService {
         }
         htmlContent = await this.emailTemplateHelper.renderTemplate(
           options.template,
-          options.context || {},
+          options.context || {}
         );
       }
 
       if (!htmlContent && !options.text) {
-        throw new Error(
-          "Either template, html, or text content must be provided",
-        );
+        throw new Error('Either template, html, or text content must be provided');
       }
 
       const mailOptions: nodemailer.SendMailOptions = {
         from: `"Meet API" <${ENV.smtp.smtpUser}>`,
-        to: Array.isArray(options.to) ? options.to.join(", ") : options.to,
+        to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
         subject: options.subject,
         html: htmlContent,
         text: options.text,
       };
 
       if (options.cc) {
-        mailOptions.cc = Array.isArray(options.cc)
-          ? options.cc.join(", ")
-          : options.cc;
+        mailOptions.cc = Array.isArray(options.cc) ? options.cc.join(', ') : options.cc;
       }
       if (options.bcc) {
-        mailOptions.bcc = Array.isArray(options.bcc)
-          ? options.bcc.join(", ")
-          : options.bcc;
+        mailOptions.bcc = Array.isArray(options.bcc) ? options.bcc.join(', ') : options.bcc;
       }
       if (options.attachments) {
         mailOptions.attachments = options.attachments;
@@ -83,9 +74,7 @@ export class EmailService {
 
       const result = await this.transporter.sendMail(mailOptions);
 
-      this.logger.log(
-        `Email sent successfully to ${options.to}. Message ID: ${result.messageId}`,
-      );
+      this.logger.log(`Email sent successfully to ${options.to}. Message ID: ${result.messageId}`);
 
       return {
         success: true,
@@ -117,9 +106,9 @@ export class EmailService {
     // Verify connection configuration
     this.transporter.verify((error, _success) => {
       if (error) {
-        this.logger.error("SMTP connection failed:", error);
+        this.logger.error('SMTP connection failed:', error);
       } else {
-        this.logger.log("SMTP server is ready to send emails");
+        this.logger.log('SMTP server is ready to send emails');
       }
     });
   }

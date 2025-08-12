@@ -1,19 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Request,
-  Response,
-  UseGuards,
-} from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { ActiveUser, Auth } from "@src/app/decorators";
-import { IActiveUser } from "@src/app/decorators/active-user.decorator";
-import { AuthType } from "@src/app/enums/auth-type.enum";
-import { GoogleOAuthGuard } from "@src/app/modules/auth/guards/googleAuth/google.guard";
-import { SuccessResponse } from "@src/app/types";
+import { Body, Controller, Get, Post, Query, Request, Response, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { ActiveUser, Auth } from '@src/app/decorators';
+import { IActiveUser } from '@src/app/decorators/active-user.decorator';
+import { AuthType } from '@src/app/enums/auth-type.enum';
+import { GoogleOAuthGuard } from '@src/app/modules/auth/guards/googleAuth/google.guard';
+import { SuccessResponse } from '@src/app/types';
 import {
   ChangePasswordDTO,
   GoogleAuthRequestDTO,
@@ -22,27 +13,24 @@ import {
   RegisterDTO,
   ResetPasswordDTO,
   VerifyResetPasswordDTO,
-} from "../dtos";
-import { ValidateDTO } from "../dtos/validate.dto";
-import { AuthService } from "../services/auth.service";
+} from '../dtos';
+import { ValidateDTO } from '../dtos/validate.dto';
+import { AuthService } from '../services/auth.service';
 
-@ApiTags("Auth")
+@ApiTags('Auth')
 // @ApiBearerAuth()
 @Auth(AuthType.None)
-@Controller("auth")
+@Controller('auth')
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
-  @Get("google")
-  async googleAuthRequest(
-    @Query() query: GoogleAuthRequestDTO,
-    @Response() res,
-  ): Promise<void> {
+  @Get('google')
+  async googleAuthRequest(@Query() query: GoogleAuthRequestDTO, @Response() res): Promise<void> {
     const authorizationUrl = await this.service.googleAuthRequest(query);
     res.redirect(authorizationUrl);
   }
 
-  @Get("google-redirect")
+  @Get('google-redirect')
   @UseGuards(GoogleOAuthGuard)
   async googleAuthRedirect(@Request() req, @Response() res): Promise<void> {
     const { user } = req;
@@ -51,45 +39,41 @@ export class AuthController {
     res.redirect(responseData.callBackUrl);
   }
 
-  @Post("validate")
+  @Post('validate')
   async validate(@Body() body: ValidateDTO): Promise<SuccessResponse> {
     return this.service.validate(body);
   }
 
   @Auth(AuthType.None)
-  @Post("login")
+  @Post('login')
   async loginUser(@Body() body: LoginDTO): Promise<SuccessResponse> {
     return this.service.loginUser(body);
   }
 
-  @Post("register")
+  @Post('register')
   async registerUser(@Body() body: RegisterDTO): Promise<SuccessResponse> {
     return this.service.registerUser(body);
   }
 
-  @Post("refresh-token")
+  @Post('refresh-token')
   async refreshToken(@Body() body: RefreshTokenDTO): Promise<SuccessResponse> {
     return this.service.refreshToken(body);
   }
 
-  @Post("reset-password-request")
-  async resetPassword(
-    @Body() body: ResetPasswordDTO,
-  ): Promise<SuccessResponse> {
+  @Post('reset-password-request')
+  async resetPassword(@Body() body: ResetPasswordDTO): Promise<SuccessResponse> {
     return this.service.resetPassword(body);
   }
 
-  @Post("reset-password-verify")
-  async verifyPassword(
-    @Body() body: VerifyResetPasswordDTO,
-  ): Promise<SuccessResponse> {
+  @Post('reset-password-verify')
+  async verifyPassword(@Body() body: VerifyResetPasswordDTO): Promise<SuccessResponse> {
     return this.service.verifyResetPassword(body);
   }
 
-  @Post("change-password")
+  @Post('change-password')
   async changePassword(
     @Body() body: ChangePasswordDTO,
-    @ActiveUser() authUser: IActiveUser,
+    @ActiveUser() authUser: IActiveUser
   ): Promise<SuccessResponse> {
     return this.service.changePassword(body, authUser);
   }

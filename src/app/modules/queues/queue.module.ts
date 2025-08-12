@@ -1,13 +1,13 @@
-import { BullModule } from "@nestjs/bullmq";
-import { Module } from "@nestjs/common";
-import { HelpersModule } from "@src/app/helpers/helpers.module";
-import { ENV } from "@src/env";
+import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
+import { HelpersModule } from '@src/app/helpers/helpers.module';
+import { ENV } from '@src/env';
 
-import { defaultJobOptions, queuesConstants } from "./constants";
-import { EmailProcessor } from "./processors/email.processor";
-import { CountryPurVisaCatServiceDocProcessor } from "./processors/example.processor";
-import { EmailQueueService } from "./services/email-queue.service";
-import { QueueService } from "./services/queue.service";
+import { defaultJobOptions, queuesConstants } from './constants';
+import { EmailProcessor } from './processors/email.processor';
+import { CountryPurVisaCatServiceDocProcessor } from './processors/example.processor';
+import { EmailQueueService } from './services/email-queue.service';
+import { QueueService } from './services/queue.service';
 
 const processors = [CountryPurVisaCatServiceDocProcessor, EmailProcessor];
 const services = [QueueService, EmailQueueService];

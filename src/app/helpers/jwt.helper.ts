@@ -1,12 +1,8 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { ENV } from "@src/env";
-import * as OtpUtil from "otp-without-db";
-import { GenericObject } from "../types";
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ENV } from '@src/env';
+import * as OtpUtil from 'otp-without-db';
+import { GenericObject } from '../types';
 
 @Injectable()
 export class JWTHelper {
@@ -18,7 +14,7 @@ export class JWTHelper {
 
   public async signToken<T extends object | Buffer>(
     expiresIn: string,
-    payload: T,
+    payload: T
   ): Promise<string> {
     return await this.jwtService.signAsync(payload, {
       audience: ENV.jwt.audience,
@@ -32,7 +28,7 @@ export class JWTHelper {
     try {
       return await this.jwtService.verifyAsync(token, ENV.jwt);
     } catch (_error) {
-      throw new UnauthorizedException("Unauthorized Access Detected");
+      throw new UnauthorizedException('Unauthorized Access Detected');
     }
   }
 
@@ -42,17 +38,16 @@ export class JWTHelper {
       if (decoded.isRefreshToken) {
         return decoded;
       } else {
-        throw new ForbiddenException("Unauthorized Access Detected");
+        throw new ForbiddenException('Unauthorized Access Detected');
       }
     } catch (_error) {
-      throw new ForbiddenException("Unauthorized Access Detected");
+      throw new ForbiddenException('Unauthorized Access Detected');
     }
   }
 
   public extractToken(headers: GenericObject): string | null {
-    let token: string =
-      headers && headers.authorization ? headers.authorization : "";
-    token = token.replace(/Bearer\s+/gm, "");
+    let token: string = headers && headers.authorization ? headers.authorization : '';
+    token = token.replace(/Bearer\s+/gm, '');
     return token;
   }
 
@@ -67,31 +62,21 @@ export class JWTHelper {
     const payload = {
       ...data,
     };
-    return await this.signToken<GenericObject>(
-      ENV.jwt.refreshTokenExpireIn,
-      payload,
-    );
+    return await this.signToken<GenericObject>(ENV.jwt.refreshTokenExpireIn, payload);
   }
 
   public async makePermissionToken(data: GenericObject): Promise<string> {
     const payload = {
       ...data,
     };
-    return await this.signToken<GenericObject>(
-      ENV.jwt.refreshTokenExpireIn,
-      payload,
-    );
+    return await this.signToken<GenericObject>(ENV.jwt.refreshTokenExpireIn, payload);
   }
 
   public generateOtpHash(identifier: string, otp: number): string {
     return OtpUtil.createNewOTP(identifier, otp, ENV.jwt.secret, 5);
   }
 
-  public verifyOtpHash(
-    identifier: string,
-    otp: number,
-    otpHash: string,
-  ): boolean {
+  public verifyOtpHash(identifier: string, otp: number, otpHash: string): boolean {
     return OtpUtil.verifyOTP(identifier, otp, otpHash, ENV.jwt.secret);
   }
 }

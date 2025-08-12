@@ -1,11 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdatePermissionDTO {
   @ApiProperty({
     type: String,
     required: false,
-    example: "catalogs.create",
+    example: 'catalogs.create',
   })
   @IsOptional()
   @IsString()
@@ -14,7 +14,7 @@ export class UpdatePermissionDTO {
   @ApiProperty({
     type: String,
     required: false,
-    example: "permission type id",
+    example: 'permission type id',
   })
   @IsOptional()
   @IsUUID()

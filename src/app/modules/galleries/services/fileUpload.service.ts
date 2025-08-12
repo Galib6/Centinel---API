@@ -1,47 +1,42 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
-import { IFileMeta } from "@src/app/interfaces";
-import { SuccessResponse } from "@src/app/types";
-import { ENV } from "@src/env";
-import { asyncForEach } from "@src/shared";
-import { ENUM_FILE_STORAGE } from "@src/shared/file.constants";
-import * as fs from "fs";
-import { join } from "path";
-import { User } from "../../user/entities/user.entity";
-import s3Configs from "../configs/S3.configs";
-import { FilterFiledDTO } from "../dtos";
-import { FileStorage } from "../entities/fileStorage.entity";
-import { FileStorageService } from "./fileStorage.service";
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { IFileMeta } from '@src/app/interfaces';
+import { SuccessResponse } from '@src/app/types';
+import { ENV } from '@src/env';
+import { asyncForEach } from '@src/shared';
+import { ENUM_FILE_STORAGE } from '@src/shared/file.constants';
+import * as fs from 'fs';
+import { join } from 'path';
+import { User } from '../../user/entities/user.entity';
+import s3Configs from '../configs/S3.configs';
+import { FilterFiledDTO } from '../dtos';
+import { FileStorage } from '../entities/fileStorage.entity';
+import { FileStorageService } from './fileStorage.service';
 
 @Injectable()
 export class FileUploadService {
-  BASE = join(process.cwd(), "uploads/images");
+  BASE = join(process.cwd(), 'uploads/images');
   constructor(
     private readonly fileStorageService: FileStorageService,
 
     @Inject(s3Configs.KEY)
-    private readonly s3Configuration: ConfigType<typeof s3Configs>,
+    private readonly s3Configuration: ConfigType<typeof s3Configs>
   ) {}
 
-  async filterFiles(
-    payload: FilterFiledDTO,
-  ): Promise<SuccessResponse | FileStorage[]> {
+  async filterFiles(payload: FilterFiledDTO): Promise<SuccessResponse | FileStorage[]> {
     if (payload.folder) {
-      payload.folder = payload.folder.replace(/\+/g, "/").replace(" ", "");
-      payload.folder = "images/" + payload.folder;
+      payload.folder = payload.folder.replace(/\+/g, '/').replace(' ', '');
+      payload.folder = 'images/' + payload.folder;
     }
 
     const files = await this.fileStorageService.findAllBase(payload);
     return files;
   }
 
-  async uploadImage(
-    files: IFileMeta[],
-    body: { folder: string },
-  ): Promise<SuccessResponse> {
+  async uploadImage(files: IFileMeta[], body: { folder: string }): Promise<SuccessResponse> {
     if (body.folder) {
-      body.folder = body.folder.replace(/\+/g, "/").replace(" ", "");
+      body.folder = body.folder.replace(/\+/g, '/').replace(' ', '');
     }
     const uploaded = [];
 
@@ -68,7 +63,7 @@ export class FileUploadService {
 
     if (!uploaded.length) throw new BadRequestException();
 
-    return new SuccessResponse("Uploaded successfully", uploaded);
+    return new SuccessResponse('Uploaded successfully', uploaded);
   }
 
   async uploadToSpace(data: {
@@ -76,7 +71,7 @@ export class FileUploadService {
     folder?: string;
     createdBy?: User;
   }): Promise<FileStorage> {
-    const { file, folder = "others" } = data;
+    const { file, folder = 'others' } = data;
     // Return null if no file is provided
     if (!file) return null;
 
@@ -120,7 +115,7 @@ export class FileUploadService {
       try {
         await fs.unlinkSync(join(process.cwd(), filePath));
       } catch {
-        console.info("Error in file unlink");
+        console.info('Error in file unlink');
       }
 
       // Step 6: Store the file metadata in the database
@@ -141,7 +136,7 @@ export class FileUploadService {
       return null;
     } catch (error) {
       await fs.unlinkSync(join(process.cwd(), filePath));
-      console.error("Error during file upload:", error);
+      console.error('Error during file upload:', error);
       return null;
     }
   }

@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { ENV } from "@src/env";
-import * as path from "path";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ENV } from '@src/env';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -14,8 +14,8 @@ import * as path from "path";
         host: ENV.defaultDatabase.host,
         database: ENV.defaultDatabase.databaseName,
         logging: ENV.defaultDatabase.logging,
-        entities: [path.join(__dirname, "../**/*.entity{.ts,.js}")],
-        migrations: [path.join(__dirname, "migrations/*{.ts,.js}")],
+        entities: [path.join(__dirname, '../**/*.entity{.ts,.js}')],
+        migrations: [path.join(__dirname, 'migrations/*{.ts,.js}')],
       }),
     }),
   ],

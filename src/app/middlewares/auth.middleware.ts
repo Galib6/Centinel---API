@@ -1,5 +1,5 @@
-import { Injectable, NestMiddleware } from "@nestjs/common";
-import { JWTHelper } from "../helpers";
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { JWTHelper } from '../helpers';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

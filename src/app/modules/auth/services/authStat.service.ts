@@ -1,23 +1,20 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { BaseService } from "@src/app/base";
-import { ENV } from "@src/env";
-import { Repository } from "typeorm";
-import { AuthStat } from "../entities/authStat.entity";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService } from '@src/app/base';
+import { ENV } from '@src/env';
+import { Repository } from 'typeorm';
+import { AuthStat } from '../entities/authStat.entity';
 
 @Injectable()
 export class AuthStatService extends BaseService<AuthStat> {
   constructor(
     @InjectRepository(AuthStat)
-    private readonly authStatRepository: Repository<AuthStat>,
+    private readonly authStatRepository: Repository<AuthStat>
   ) {
     super(authStatRepository);
   }
 
-  async createOrUpdateOtpByPhoneNumber(
-    phoneNumber: string,
-    otp: number,
-  ): Promise<AuthStat> {
+  async createOrUpdateOtpByPhoneNumber(phoneNumber: string, otp: number): Promise<AuthStat> {
     const isExist = await this.findOneBase({ phoneNumber });
     if (isExist && !this.isOtpExpired(isExist.otpExpiryAt)) {
       return isExist;
@@ -41,17 +38,17 @@ export class AuthStatService extends BaseService<AuthStat> {
     const isExist = await this.findOneBase({ phoneNumber });
 
     if (!isExist) {
-      throw new BadRequestException("OTP not sent");
+      throw new BadRequestException('OTP not sent');
     }
 
     if (isExist.otp !== otp) {
-      throw new BadRequestException("OTP not matched");
+      throw new BadRequestException('OTP not matched');
     }
 
     const isExpired = this.isOtpExpired(isExist.otpExpiryAt);
 
     if (isExpired) {
-      throw new BadRequestException("OTP expired");
+      throw new BadRequestException('OTP expired');
     }
 
     return isExist;

@@ -1,10 +1,10 @@
-import { Module } from "@nestjs/common";
-import { APP_GUARD } from "@nestjs/core";
-import { JwtModule } from "@nestjs/jwt";
-import { UserModule } from "../modules/user/user.module";
-import { AccessTokenGuard } from "./access-token/access-token.guard";
-import { AuthenticationGuard } from "./authentication/authentication.guard";
-import { PermissionGuard } from "./permission/permission.guard";
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
+import { UserModule } from '../modules/user/user.module';
+import { AccessTokenGuard } from './access-token/access-token.guard';
+import { AuthenticationGuard } from './authentication/authentication.guard';
+import { PermissionGuard } from './permission/permission.guard';
 
 @Module({
   imports: [

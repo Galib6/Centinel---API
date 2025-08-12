@@ -1,10 +1,10 @@
-import { Role } from "@src/app/modules/acl/entities/role.entity";
-import { User } from "@src/app/modules/user/entities/user.entity";
-import { UserRole } from "@src/app/modules/user/entities/userRole.entity";
-import { ENV } from "@src/env";
-import { DataSource } from "typeorm";
-import RoleSeeder from "./role.seeder";
-import UserSeeder from "./user.seeder";
+import { Role } from '@src/app/modules/acl/entities/role.entity';
+import { User } from '@src/app/modules/user/entities/user.entity';
+import { UserRole } from '@src/app/modules/user/entities/userRole.entity';
+import { ENV } from '@src/env';
+import { DataSource } from 'typeorm';
+import RoleSeeder from './role.seeder';
+import UserSeeder from './user.seeder';
 
 const dataSource = new DataSource({
   type: ENV.defaultDatabase.type,

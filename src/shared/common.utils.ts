@@ -1,4 +1,4 @@
-import slugify from "slugify";
+import slugify from 'slugify';
 
 export const gen6digitOTP = (): number => {
   return Math.floor(100000 + Math.random() * 900000);
@@ -6,7 +6,7 @@ export const gen6digitOTP = (): number => {
 
 export const slugifyString = (str: string): string => {
   const slug = slugify(str, {
-    replacement: "-",
+    replacement: '-',
     remove: undefined,
     lower: true,
   });
@@ -14,15 +14,12 @@ export const slugifyString = (str: string): string => {
 };
 
 export const getPaddedCode = (val: number): string => {
-  return val.toString().padStart(8, "0");
+  return val.toString().padStart(8, '0');
 };
 
-export const asyncForEach = async (
-  array: any[],
-  callback: any,
-): Promise<void> => {
+export const asyncForEach = async (array: any[], callback: any): Promise<void> => {
   if (!Array.isArray(array)) {
-    throw Error("Expected an array");
+    throw Error('Expected an array');
   }
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -31,7 +28,7 @@ export const asyncForEach = async (
 
 export const groupItemBy = (array, property): any => {
   const groupedData = {},
-    props = property.split(".");
+    props = property.split('.');
   for (let i = 0; i < array.length; i++) {
     const key = props.reduce((acc, prop) => {
       return acc && acc[prop];
@@ -75,18 +72,13 @@ export const sleep = (milliseconds: number): Promise<void> => {
 };
 
 export function getDiffPercentage(min: number, max: number): number {
-  return Number(
-    Number(100 * Math.abs((max - min) / ((max + min) / 2))).toFixed(0),
-  );
+  return Number(Number(100 * Math.abs((max - min) / ((max + min) / 2))).toFixed(0));
 }
 
-export const removeDuplicateFromArray = <T>(
-  data: T[],
-  property: string,
-): T[] => {
+export const removeDuplicateFromArray = <T>(data: T[], property: string): T[] => {
   return data.filter(
     (val: T, index: number, arr: T[]) =>
-      arr.findIndex((val2) => val2[property] === val[property]) === index,
+      arr.findIndex((val2) => val2[property] === val[property]) === index
   );
 };
 
@@ -94,10 +86,7 @@ export const isEmptyObject = (obj: object): boolean => {
   return Object.keys(obj).length === 0;
 };
 
-export function isArrayHasSameObject<T>(
-  arr: T[],
-  propertyKey: keyof T,
-): boolean {
+export function isArrayHasSameObject<T>(arr: T[], propertyKey: keyof T): boolean {
   const unique = [...new Set(arr.map((a) => a[propertyKey]))];
   if (unique.length === arr.length) {
     return false;
@@ -107,8 +96,8 @@ export function isArrayHasSameObject<T>(
 }
 
 export function randomString(length: number): string {
-  let result = "";
-  const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));

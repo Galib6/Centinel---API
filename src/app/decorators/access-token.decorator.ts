@@ -1,10 +1,8 @@
-import { SetMetadata } from "@nestjs/common";
-import { AUTH_TYPE_KEY } from "../constants/keys.constants";
-import { AuthType } from "../enums/auth-type.enum";
+import { SetMetadata } from '@nestjs/common';
+import { AUTH_TYPE_KEY } from '../constants/keys.constants';
+import { AuthType } from '../enums/auth-type.enum';
 
-export function Auth(
-  ...authTypes: AuthType[]
-): MethodDecorator & ClassDecorator {
+export function Auth(...authTypes: AuthType[]): MethodDecorator & ClassDecorator {
   // Uncomment and adjust logic below if needed for validation
   // if (
   //   authTypes.includes(AuthType.Permission) &&

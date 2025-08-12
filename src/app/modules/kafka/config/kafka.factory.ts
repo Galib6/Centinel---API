@@ -1,14 +1,10 @@
-import {
-  ClientOptions,
-  MicroserviceOptions,
-  Transport,
-} from "@nestjs/microservices";
-import { ENV } from "@src/env";
-import { Partitioners } from "kafkajs";
+import { ClientOptions, MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { ENV } from '@src/env';
+import { Partitioners } from 'kafkajs';
 
 export class KafkaFactory {
   static isEnabled(): boolean {
-    return ENV.kafka.enabled === "true";
+    return ENV.kafka.enabled === 'true';
   }
 
   static createClientOptions(): ClientOptions {
@@ -29,7 +25,7 @@ export class KafkaFactory {
     };
   }
 
-  private static createKafkaOptions(): import("@nestjs/microservices").KafkaOptions["options"] {
+  private static createKafkaOptions(): import('@nestjs/microservices').KafkaOptions['options'] {
     const baseClientId = ENV.kafka.clientId;
     const uniqueId = Math.random().toString(36).substring(7);
 

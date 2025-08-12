@@ -1,6 +1,6 @@
-import { registerAs } from "@nestjs/config";
+import { registerAs } from '@nestjs/config';
 
-export default registerAs("AWS_S3_CONFIG", () => ({
+export default registerAs('AWS_S3_CONFIG', () => ({
   s3EndPoint: process.env.S3_ENDPOINT,
   s3AccessKey: process.env.S3_ACCESS_KEY,
   s3SecretKey: process.env.S3_SECRET_KEY,

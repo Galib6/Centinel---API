@@ -1,39 +1,24 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { SuccessResponse } from "@src/app/types";
-import {
-  CreatePermissionDTO,
-  FilterPermissionDTO,
-  UpdatePermissionDTO,
-} from "../dtos";
-import { Permission } from "../entities/permission.entity";
-import { PermissionService } from "../services/permission.service";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { SuccessResponse } from '@src/app/types';
+import { CreatePermissionDTO, FilterPermissionDTO, UpdatePermissionDTO } from '../dtos';
+import { Permission } from '../entities/permission.entity';
+import { PermissionService } from '../services/permission.service';
 
-@ApiTags("Permission")
+@ApiTags('Permission')
 @ApiBearerAuth()
-@Controller("permissions")
+@Controller('permissions')
 export class PermissionController {
-  RELATIONS = ["permissionType"];
+  RELATIONS = ['permissionType'];
   constructor(private readonly service: PermissionService) {}
 
   @Get()
-  async findAll(
-    @Query() query: FilterPermissionDTO,
-  ): Promise<SuccessResponse | Permission[]> {
+  async findAll(@Query() query: FilterPermissionDTO): Promise<SuccessResponse | Permission[]> {
     return this.service.findAllBase(query, { relations: this.RELATIONS });
   }
 
-  @Get(":id")
-  async findById(@Param("id") id: number): Promise<Permission> {
+  @Get(':id')
+  async findById(@Param('id') id: number): Promise<Permission> {
     return this.service.findByIdBase(id, { relations: this.RELATIONS });
   }
 
@@ -47,16 +32,13 @@ export class PermissionController {
   //     return this.service.recoverByIdBase(id, { relations: this.RELATIONS });
   //   }
 
-  @Patch(":id")
-  async updateOne(
-    @Param("id") id: number,
-    @Body() body: UpdatePermissionDTO,
-  ): Promise<Permission> {
+  @Patch(':id')
+  async updateOne(@Param('id') id: number, @Body() body: UpdatePermissionDTO): Promise<Permission> {
     return this.service.updateOneBase(id, body, { relations: this.RELATIONS });
   }
 
-  @Delete(":id")
-  async deleteOne(@Param("id") id: number): Promise<SuccessResponse> {
+  @Delete(':id')
+  async deleteOne(@Param('id') id: number): Promise<SuccessResponse> {
     return this.service.deleteOneBase(id);
   }
 

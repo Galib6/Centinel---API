@@ -1,14 +1,14 @@
-import { Logger, ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { NestExpressApplication } from "@nestjs/platform-express";
-import { json, urlencoded } from "body-parser";
-import { join } from "path";
-import { AppModule } from "./app/app.module";
-import { KafkaFactory } from "./app/modules/kafka/config/kafka.factory";
-import { ENV } from "./env";
-import { createLogger } from "./logger";
-import { setupSecurity } from "./security";
-import { setupSwagger } from "./swagger";
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { json, urlencoded } from 'body-parser';
+import { join } from 'path';
+import { AppModule } from './app/app.module';
+import { KafkaFactory } from './app/modules/kafka/config/kafka.factory';
+import { ENV } from './env';
+import { createLogger } from './logger';
+import { setupSecurity } from './security';
+import { setupSwagger } from './swagger';
 
 const logger = new Logger();
 //test
@@ -17,7 +17,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ENV.config.isDevelopment
       ? createLogger()
-      : ["error", "warn", "debug", "log", "verbose"],
+      : ['error', 'warn', 'debug', 'log', 'verbose'],
   });
 
   const kafkaOptions = KafkaFactory.createMicroserviceOptions();
@@ -26,23 +26,23 @@ async function bootstrap(): Promise<void> {
       app.connectMicroservice(kafkaOptions);
       await app.startAllMicroservices();
     } catch (error) {
-      console.error("❌ Failed to start Kafka microservice:", error);
+      console.error('❌ Failed to start Kafka microservice:', error);
     }
   } else {
-    console.warn("⚠️ Kafka is disabled or configuration is missing");
+    console.warn('⚠️ Kafka is disabled or configuration is missing');
   }
 
-  app.setBaseViewsDir(join(process.cwd(), "views"));
-  app.setViewEngine("hbs");
+  app.setBaseViewsDir(join(process.cwd(), 'views'));
+  app.setViewEngine('hbs');
 
   app.use(urlencoded({ extended: true }));
-  app.use(json({ limit: "10mb" }));
+  app.use(json({ limit: '10mb' }));
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    }),
+    })
   );
 
   app.setGlobalPrefix(ENV.swagger.apiPrefix);
@@ -51,12 +51,8 @@ async function bootstrap(): Promise<void> {
   setupSwagger(app);
 
   await app.listen(ENV.config.port);
-  logger.log(
-    `🚀🚀🚀🚀 Application is running on: ${await app.getUrl()} 🚀🚀🚀🚀`,
-  );
+  logger.log(`🚀🚀🚀🚀 Application is running on: ${await app.getUrl()} 🚀🚀🚀🚀`);
 
-  logger.log(
-    `📖📖📖 Documentation is available on: ${await app.getUrl()}/docs 📖📖📖`,
-  );
+  logger.log(`📖📖📖 Documentation is available on: ${await app.getUrl()}/docs 📖📖📖`);
 }
 bootstrap();

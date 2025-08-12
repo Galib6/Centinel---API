@@ -1,10 +1,10 @@
-import { BaseEntity } from "@src/app/base";
-import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from "@src/shared";
-import { Column, Entity } from "typeorm";
+import { BaseEntity } from '@src/app/base';
+import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from '@src/shared';
+import { Column, Entity } from 'typeorm';
 
 @Entity(ENUM_TABLE_NAMES.AUTH_STATS)
 export class AuthStat extends BaseEntity {
-  public static readonly SEARCH_TERMS: string[] = ["phoneNumber"];
+  public static readonly SEARCH_TERMS: string[] = ['phoneNumber'];
 
   @Column({ unique: true, nullable: true })
   phoneNumber?: string;

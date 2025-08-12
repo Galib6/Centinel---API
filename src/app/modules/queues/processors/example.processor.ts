@@ -1,6 +1,6 @@
-import { OnWorkerEvent, Processor, WorkerHost } from "@nestjs/bullmq";
-import { Job } from "bullmq";
-import { queuesConstants } from "../constants";
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+import { queuesConstants } from '../constants';
 
 @Processor(queuesConstants.defaultQueue.name)
 export class CountryPurVisaCatServiceDocProcessor extends WorkerHost {
@@ -25,7 +25,7 @@ export class CountryPurVisaCatServiceDocProcessor extends WorkerHost {
     }
   }
 
-  @OnWorkerEvent("completed")
+  @OnWorkerEvent('completed')
   onComplete(job: Job): void {
     console.info(`Job completed: ${job.id}, ${job.name}`);
   }

@@ -1,27 +1,21 @@
-import { InjectQueue } from "@nestjs/bullmq";
-import { Injectable } from "@nestjs/common";
-import { Queue } from "bullmq";
+import { InjectQueue } from '@nestjs/bullmq';
+import { Injectable } from '@nestjs/common';
+import { Queue } from 'bullmq';
 
-import { queuesConstants } from "../constants";
+import { queuesConstants } from '../constants';
 
 @Injectable()
 export class QueueService {
   constructor(
     @InjectQueue(queuesConstants.defaultQueue.name)
-    private readonly pdfQueue: Queue,
+    private readonly pdfQueue: Queue
   ) {}
 
   async createBulkCountryPurVisaCatDoc(data: any): Promise<any> {
-    return await this.pdfQueue.add(
-      queuesConstants.defaultQueue.jobNames.createOne,
-      data,
-    );
+    return await this.pdfQueue.add(queuesConstants.defaultQueue.jobNames.createOne, data);
   }
 
   async updateBulkCountryPurVisaCatDoc(data: any): Promise<any> {
-    return await this.pdfQueue.add(
-      queuesConstants.defaultQueue.jobNames.updateOne,
-      data,
-    );
+    return await this.pdfQueue.add(queuesConstants.defaultQueue.jobNames.updateOne, data);
   }
 }

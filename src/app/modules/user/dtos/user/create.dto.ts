@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -9,7 +9,7 @@ import {
   MaxLength,
   MinLength,
   ValidateNested,
-} from "class-validator";
+} from 'class-validator';
 
 export class CreateRolesDTO {
   @ApiProperty({
@@ -25,7 +25,7 @@ export class CreateUserDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "Galib",
+    example: 'Galib',
   })
   @IsNotEmpty()
   @IsString()
@@ -34,7 +34,7 @@ export class CreateUserDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "test",
+    example: 'test',
   })
   @IsNotEmpty()
   @IsString()
@@ -43,7 +43,7 @@ export class CreateUserDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "zahid@gmail.com",
+    example: 'zahid@gmail.com',
   })
   @IsNotEmpty()
   @IsEmail()
@@ -52,7 +52,7 @@ export class CreateUserDTO {
   @ApiProperty({
     type: String,
     required: false,
-    example: "123456",
+    example: '123456',
   })
   @IsOptional()
   @IsString()
@@ -65,10 +65,10 @@ export class CreateUserDTO {
     required: false,
     example: [
       {
-        role: "1e276fa4-bab1-4bda-bee2-8bc509960467",
+        role: '1e276fa4-bab1-4bda-bee2-8bc509960467',
       },
       {
-        role: "c10ee33d-20a7-4689-8f80-929963400f7d",
+        role: 'c10ee33d-20a7-4689-8f80-929963400f7d',
       },
     ],
   })

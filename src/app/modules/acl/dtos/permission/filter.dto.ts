@@ -1,11 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { BaseDTO } from "@src/app/base";
-import { IsNumberString, IsOptional, IsString, IsUUID } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { BaseDTO } from '@src/app/base';
+import { IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class FilterPermissionDTO extends BaseDTO {
   @ApiProperty({
     type: Number,
-    description: "Limit the number of results",
+    description: 'Limit the number of results',
     default: 10,
     required: false,
   })
@@ -15,7 +15,7 @@ export class FilterPermissionDTO extends BaseDTO {
 
   @ApiProperty({
     type: Number,
-    description: "The page number",
+    description: 'The page number',
     default: 1,
     required: false,
   })
@@ -25,7 +25,7 @@ export class FilterPermissionDTO extends BaseDTO {
 
   @ApiProperty({
     type: String,
-    description: "The search term",
+    description: 'The search term',
     required: false,
   })
   @IsOptional()
@@ -34,7 +34,7 @@ export class FilterPermissionDTO extends BaseDTO {
 
   @ApiProperty({
     type: String,
-    description: "permission type id",
+    description: 'permission type id',
     required: false,
   })
   @IsOptional()
