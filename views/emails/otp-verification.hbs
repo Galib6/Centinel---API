@@ -1,11 +1,11 @@
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>OTP Verification - {{appName}}</title>
     <style>
       body {
-        font-family: "Arial", sans-serif;
+        font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
         background-color: #f4f4f4;
@@ -53,7 +53,7 @@
         color: #28a745;
         letter-spacing: 8px;
         margin: 15px 0;
-        font-family: "Courier New", monospace;
+        font-family: 'Courier New', monospace;
       }
       .footer {
         text-align: center;
@@ -73,34 +73,33 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
+    <div class='container'>
+      <div class='header'>
         <h1>{{appName}}</h1>
       </div>
 
-      <div class="content">
+      <div class='content'>
         <h2>Verification Code</h2>
         <p>Hello {{userName}},</p>
         <p>Your verification code for {{appName}} is:</p>
 
-        <div class="otp-box">
+        <div class='otp-box'>
           <p><strong>Enter this code to verify your account:</strong></p>
-          <div class="otp-code">{{otp}}</div>
+          <div class='otp-code'>{{otp}}</div>
           <p>This code will expire in {{expirationTime}} minutes.</p>
         </div>
 
-        <div class="warning">
+        <div class='warning'>
           <strong>Security Note:</strong>
           This code is confidential. Do not share it with anyone.
         </div>
 
-        <p>If you didn't request this verification code, please ignore this
-          email.</p>
+        <p>If you didn't request this verification code, please ignore this email.</p>
 
         <p>Best regards,<br />The {{appName}} Team</p>
       </div>
 
-      <div class="footer">
+      <div class='footer'>
         <p>&copy; {{currentYear}} {{appName}}. All rights reserved.</p>
       </div>
     </div>

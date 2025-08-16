@@ -1,11 +1,10 @@
-import { Injectable, OnModuleDestroy } from "@nestjs/common";
-import { ENV } from "@src/env";
-import * as Redis from "ioredis";
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { ENV } from '@src/env';
+import * as Redis from 'ioredis';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
   private redisClient: Redis.Redis;
-
   constructor() {
     this.redisClient = new Redis.Redis({
       host: ENV.redis.host,
@@ -15,14 +14,14 @@ export class RedisService implements OnModuleDestroy {
       ...(!ENV.redis.tls ? { tls: { rejectUnauthorized: false } } : {}),
     });
 
-    this.redisClient.on("error", (err) => {
-      console.error("Redis Error:", err);
+    this.redisClient.on('error', (err) => {
+      console.error('Redis Error:', err);
     });
   }
 
   async setKey(key: string, value: any, ttl: number): Promise<void> {
     try {
-      await this.redisClient.set(key, JSON.stringify(value), "EX", ttl);
+      await this.redisClient.set(key, JSON.stringify(value), 'EX', ttl);
     } catch (error) {
       console.error(`Error setting key ${key}:`, error);
     }
@@ -57,7 +56,7 @@ export class RedisService implements OnModuleDestroy {
     await this.redisClient.expire(key, seconds);
   }
 
-  onModuleDestroy() {
+  onModuleDestroy(): void {
     this.redisClient.disconnect();
   }
 }

@@ -1,8 +1,8 @@
-import { buildMessage, ValidateBy, ValidationOptions } from "class-validator";
-import type { UUIDVersion } from "validator";
-import isUuidValidator from "validator/lib/isUUID";
+import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
+import type { UUIDVersion } from 'validator';
+import isUuidValidator from 'validator/lib/isUUID';
 
-export const IS_UUID_ARRAY = "isUuidArray";
+export const IS_UUID_ARRAY = 'isUuidArray';
 
 function isValidated(value: unknown, version?: UUIDVersion): boolean {
   let isOnlyUuid = true;
@@ -19,21 +19,20 @@ function isValidated(value: unknown, version?: UUIDVersion): boolean {
 
 export function IsUUIDArray(
   version?: UUIDVersion,
-  validationOptions?: ValidationOptions,
+  validationOptions?: ValidationOptions
 ): PropertyDecorator {
   return ValidateBy(
     {
       name: IS_UUID_ARRAY,
       constraints: [version],
       validator: {
-        validate: (value, args): boolean =>
-          isValidated(value, args?.constraints[0]),
+        validate: (value, args): boolean => isValidated(value, args?.constraints[0]),
         defaultMessage: buildMessage(
-          (eachPrefix) => eachPrefix + "$property must be an array of UUID",
-          validationOptions,
+          (eachPrefix) => eachPrefix + '$property must be an array of UUID',
+          validationOptions
         ),
       },
     },
-    validationOptions,
+    validationOptions
   );
 }

@@ -1,9 +1,9 @@
-import { envConfig } from "@src/env.validator";
+import { envConfig } from '@src/env.validator';
 
-export const ENV_DEVELOPMENT = "development";
-export const ENV_PRODUCTION = "production";
-export const ENV_STAGING = "staging";
-export const ENV_QA = "qa";
+export const ENV_DEVELOPMENT = 'development';
+export const ENV_PRODUCTION = 'production';
+export const ENV_STAGING = 'staging';
+export const ENV_QA = 'qa';
 
 export const ENV = {
   config: {
@@ -11,8 +11,8 @@ export const ENV = {
     appEnv: envConfig.APP_ENV,
     nodeEnv: envConfig.NODE_ENV,
     timeZone: envConfig.TZ,
-    isDevelopment: envConfig.NODE_ENV === "development",
-    isProduction: envConfig.NODE_ENV === "production",
+    isDevelopment: envConfig.NODE_ENV === 'development',
+    isProduction: envConfig.NODE_ENV === 'production',
   },
   swagger: {
     apiPrefix: envConfig.API_PREFIX,
@@ -47,8 +47,7 @@ export const ENV = {
 
   // Security configuration
   CORS_ALLOWED_ORIGINS:
-    process.env.CORS_ALLOWED_ORIGINS?.split(",").map((item) => item.trim()) ||
-    [],
+    process.env.CORS_ALLOWED_ORIGINS?.split(',').map((item) => item.trim()) || [],
 
   rateLimit: {
     rateLimitTTL: envConfig.RATE_LIMIT_TTL,

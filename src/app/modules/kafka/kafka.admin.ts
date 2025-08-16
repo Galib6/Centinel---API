@@ -1,7 +1,7 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { ENV } from "@src/env";
-import { Admin, Kafka } from "kafkajs";
-import { KAFKA_TOPICS } from "./topics/kafka.types";
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ENV } from '@src/env';
+import { Admin, Kafka } from 'kafkajs';
+import { KAFKA_TOPICS } from './topics/kafka.types';
 
 export interface ITopicConfig {
   topic: string;
@@ -32,72 +32,27 @@ export class KafkaAdminService implements OnModuleInit {
     this.admin = this.kafka.admin();
   }
 
-  async onModuleInit() {
-    if (ENV.kafka.enabled === "true") {
+  async onModuleInit(): Promise<void> {
+    if (ENV.kafka.enabled === 'true') {
       await this.createTopicsIfNotExist();
     }
-  }
-
-  private getTopicConfigurations(): ITopicConfig[] {
-    return [
-      {
-        topic: KAFKA_TOPICS.USER_EVENTS,
-        numPartitions: 3,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "604800000" }, // 7 days
-          { name: "cleanup.policy", value: "delete" },
-          { name: "compression.type", value: "snappy" },
-        ],
-      },
-      {
-        topic: KAFKA_TOPICS.MEETING_EVENTS,
-        numPartitions: 3,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "604800000" }, // 7 days
-          { name: "cleanup.policy", value: "delete" },
-          { name: "compression.type", value: "snappy" },
-        ],
-      },
-      {
-        topic: KAFKA_TOPICS.NOTIFICATION_EVENTS,
-        numPartitions: 2,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "259200000" }, // 3 days
-          { name: "cleanup.policy", value: "delete" },
-        ],
-      },
-      {
-        topic: KAFKA_TOPICS.SYSTEM_HEALTH,
-        numPartitions: 1,
-        replicationFactor: 1,
-        configEntries: [
-          { name: "retention.ms", value: "86400000" }, // 1 day
-          { name: "cleanup.policy", value: "delete" },
-        ],
-      },
-    ];
   }
 
   async createTopicsIfNotExist(): Promise<void> {
     try {
       await this.admin.connect();
-      this.logger.log("Connected to Kafka admin client");
+      this.logger.log('Connected to Kafka admin client');
 
       const existingTopics = await this.admin.listTopics();
-      this.logger.log(`Existing topics: ${existingTopics.join(", ")}`);
+      this.logger.log(`Existing topics: ${existingTopics.join(', ')}`);
 
       const topicConfigs = this.getTopicConfigurations();
       const topicsToCreate = topicConfigs.filter(
-        (config) => !existingTopics.includes(config.topic),
+        (config) => !existingTopics.includes(config.topic)
       );
 
       if (topicsToCreate.length > 0) {
-        this.logger.log(
-          `Creating topics: ${topicsToCreate.map((t) => t.topic).join(", ")}`,
-        );
+        this.logger.log(`Creating topics: ${topicsToCreate.map((t) => t.topic).join(', ')}`);
 
         await this.admin.createTopics({
           topics: topicsToCreate.map((config) => ({
@@ -112,21 +67,21 @@ export class KafkaAdminService implements OnModuleInit {
         });
 
         this.logger.log(
-          `Successfully created topics: ${topicsToCreate.map((t) => t.topic).join(", ")}`,
+          `Successfully created topics: ${topicsToCreate.map((t) => t.topic).join(', ')}`
         );
       } else {
-        this.logger.log("All required topics already exist");
+        this.logger.log('All required topics already exist');
       }
 
       // List topics again to verify creation
       const updatedTopics = await this.admin.listTopics();
-      this.logger.log(`All topics after creation: ${updatedTopics.join(", ")}`);
+      this.logger.log(`All topics after creation: ${updatedTopics.join(', ')}`);
     } catch (error) {
-      this.logger.error("Error managing Kafka topics:", error);
+      this.logger.error('Error managing Kafka topics:', error);
       throw error;
     } finally {
       await this.admin.disconnect();
-      this.logger.log("Disconnected from Kafka admin client");
+      this.logger.log('Disconnected from Kafka admin client');
     }
   }
 
@@ -190,13 +145,53 @@ export class KafkaAdminService implements OnModuleInit {
 
       return metadata.topics[0];
     } catch (error) {
-      this.logger.error(
-        `Failed to get metadata for topic ${topicName}:`,
-        error,
-      );
+      this.logger.error(`Failed to get metadata for topic ${topicName}:`, error);
       return null;
     } finally {
       await this.admin.disconnect();
     }
+  }
+
+  private getTopicConfigurations(): ITopicConfig[] {
+    return [
+      {
+        topic: KAFKA_TOPICS.USER_EVENTS,
+        numPartitions: 3,
+        replicationFactor: 1,
+        configEntries: [
+          { name: 'retention.ms', value: '604800000' }, // 7 days
+          { name: 'cleanup.policy', value: 'delete' },
+          { name: 'compression.type', value: 'snappy' },
+        ],
+      },
+      {
+        topic: KAFKA_TOPICS.MEETING_EVENTS,
+        numPartitions: 3,
+        replicationFactor: 1,
+        configEntries: [
+          { name: 'retention.ms', value: '604800000' }, // 7 days
+          { name: 'cleanup.policy', value: 'delete' },
+          { name: 'compression.type', value: 'snappy' },
+        ],
+      },
+      {
+        topic: KAFKA_TOPICS.NOTIFICATION_EVENTS,
+        numPartitions: 2,
+        replicationFactor: 1,
+        configEntries: [
+          { name: 'retention.ms', value: '259200000' }, // 3 days
+          { name: 'cleanup.policy', value: 'delete' },
+        ],
+      },
+      {
+        topic: KAFKA_TOPICS.SYSTEM_HEALTH,
+        numPartitions: 1,
+        replicationFactor: 1,
+        configEntries: [
+          { name: 'retention.ms', value: '86400000' }, // 1 day
+          { name: 'cleanup.policy', value: 'delete' },
+        ],
+      },
+    ];
   }
 }

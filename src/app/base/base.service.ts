@@ -1,7 +1,7 @@
-import { NotFoundException } from "@nestjs/common";
-import { BaseEntity, IBaseService } from "@src/app/base";
-import { toNumber } from "@src/shared";
-import { isNumber, isNumberString, isUUID } from "class-validator";
+import { NotFoundException } from '@nestjs/common';
+import { BaseEntity, IBaseService } from '@src/app/base';
+import { toNumber } from '@src/shared';
+import { isNumber, isNumberString, isUUID } from 'class-validator';
 import {
   DeepPartial,
   FindManyOptions,
@@ -10,14 +10,12 @@ import {
   ILike,
   Repository,
   SaveOptions,
-} from "typeorm";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
-import { IFindAllBaseOptions, IFindByIdBaseOptions } from "../interfaces";
-import { SuccessResponse } from "../types";
+} from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { IFindAllBaseOptions, IFindByIdBaseOptions } from '../interfaces';
+import { SuccessResponse } from '../types';
 
-export abstract class BaseService<T extends BaseEntity>
-  implements IBaseService<T>
-{
+export abstract class BaseService<T extends BaseEntity> implements IBaseService<T> {
   constructor(public repo: Repository<T>) {}
 
   public async isExist(filters: Partial<T>): Promise<T> {
@@ -42,7 +40,7 @@ export abstract class BaseService<T extends BaseEntity>
     entities: T[],
     options?: SaveOptions & {
       reload: false;
-    },
+    }
   ): Promise<T[]> {
     return this.repo.save(entities, options);
   }
@@ -53,30 +51,23 @@ export abstract class BaseService<T extends BaseEntity>
       limit?: number;
       page?: number;
     },
-    options?: IFindAllBaseOptions,
+    options?: IFindAllBaseOptions
   ): Promise<SuccessResponse | T[]> {
     const { searchTerm, limit: take, page, ...queryOptions } = filters;
     const skip = (page - 1) * take;
 
-    if (
-      searchTerm &&
-      this.repo.target.valueOf().hasOwnProperty("SEARCH_TERMS")
-    ) {
+    if (searchTerm && this.repo.target.valueOf().hasOwnProperty('SEARCH_TERMS')) {
       let SEARCH_TERMS = (this.repo.target.valueOf() as any).SEARCH_TERMS || [];
 
       if (Object.keys(queryOptions).length) {
-        SEARCH_TERMS = SEARCH_TERMS.filter(
-          (term) => !term.includes(Object.keys(queryOptions)),
-        );
+        SEARCH_TERMS = SEARCH_TERMS.filter((term) => !term.includes(Object.keys(queryOptions)));
       }
 
       const relations = this.repo.metadata.relations.map((r) => r.propertyName);
 
       Object.keys(queryOptions).forEach((key) => {
         const isValid =
-          isNumber(queryOptions[key]) || isNumberString(queryOptions[key])
-            ? true
-            : false;
+          isNumber(queryOptions[key]) || isNumberString(queryOptions[key]) ? true : false;
 
         if (relations.includes(key) && isValid) {
           queryOptions[key] = {
@@ -101,16 +92,12 @@ export abstract class BaseService<T extends BaseEntity>
         relations: options?.relations || [],
       });
 
-      return new SuccessResponse(
-        `${this.repo.metadata.name} fetched successfully`,
-        result,
-        {
-          total: result[1],
-          page: toNumber(page),
-          limit: toNumber(take),
-          skip,
-        },
-      );
+      return new SuccessResponse(`${this.repo.metadata.name} fetched successfully`, result, {
+        total: result[1],
+        page: toNumber(page),
+        limit: toNumber(take),
+        skip,
+      });
     } else {
       const relations = this.repo.metadata.relations.map((r) => r.propertyName);
 
@@ -137,16 +124,12 @@ export abstract class BaseService<T extends BaseEntity>
       } else {
         const result = await this.repo.findAndCount(opts);
 
-        return new SuccessResponse(
-          `${this.repo.metadata.name} fetched successfully`,
-          result[0],
-          {
-            total: result[1],
-            page: toNumber(page),
-            limit: toNumber(take),
-            skip,
-          },
-        );
+        return new SuccessResponse(`${this.repo.metadata.name} fetched successfully`, result[0], {
+          total: result[1],
+          page: toNumber(page),
+          limit: toNumber(take),
+          skip,
+        });
       }
     }
   }
@@ -186,7 +169,7 @@ export abstract class BaseService<T extends BaseEntity>
   async updateOneBase(
     id: number,
     data: QueryDeepPartialEntity<T>,
-    options?: IFindByIdBaseOptions,
+    options?: IFindByIdBaseOptions
   ): Promise<T> {
     await this.repo.update(id, data);
     return await this.findByIdBase(id, options);
@@ -194,24 +177,15 @@ export abstract class BaseService<T extends BaseEntity>
 
   async deleteOneBase(id: number): Promise<SuccessResponse> {
     await this.repo.delete(id);
-    return new SuccessResponse(
-      `${this.repo.metadata.name} deleted successfully`,
-      null,
-    );
+    return new SuccessResponse(`${this.repo.metadata.name} deleted successfully`, null);
   }
 
   async softDeleteOneBase(id: number | number): Promise<SuccessResponse> {
     await this.repo.softDelete(id);
-    return new SuccessResponse(
-      `${this.repo.metadata.name} deleted successfully`,
-      null,
-    );
+    return new SuccessResponse(`${this.repo.metadata.name} deleted successfully`, null);
   }
 
-  async recoverByIdBase(
-    id: number,
-    options?: IFindByIdBaseOptions,
-  ): Promise<T> {
+  async recoverByIdBase(id: number, options?: IFindByIdBaseOptions): Promise<T> {
     await this.repo.recover({ id } as DeepPartial<T>);
     return await this.findByIdBase(id, options);
   }

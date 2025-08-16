@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { BaseService } from "@src/app/base";
-import { asyncForEach } from "@src/shared";
-import { DataSource, In, Repository } from "typeorm";
-import { FilterPermissionDTO, RemovePermissionsDTO } from "../dtos";
-import { Permission } from "../entities/permission.entity";
-import { Role } from "../entities/role.entity";
-import { AddPermissionsDTO } from "./../dtos/role/addPermissions.dto";
-import { RolePermission } from "./../entities/rolePermission.entity";
-import { PermissionService } from "./permission.service";
-import { RolePermissionService } from "./rolePermission.service";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService } from '@src/app/base';
+import { asyncForEach } from '@src/shared';
+import { DataSource, In, Repository } from 'typeorm';
+import { FilterPermissionDTO, RemovePermissionsDTO } from '../dtos';
+import { Permission } from '../entities/permission.entity';
+import { Role } from '../entities/role.entity';
+import { AddPermissionsDTO } from './../dtos/role/addPermissions.dto';
+import { RolePermission } from './../entities/rolePermission.entity';
+import { PermissionService } from './permission.service';
+import { RolePermissionService } from './rolePermission.service';
 
 @Injectable()
 export class RoleService extends BaseService<Role> {
@@ -18,15 +18,12 @@ export class RoleService extends BaseService<Role> {
     private readonly _repo: Repository<Role>,
     private readonly dataSource: DataSource,
     private readonly rolePermissionService: RolePermissionService,
-    private readonly permissionService: PermissionService,
+    private readonly permissionService: PermissionService
   ) {
     super(_repo);
   }
 
-  async availablePermissions(
-    id: number,
-    payload: FilterPermissionDTO,
-  ): Promise<Permission[]> {
+  async availablePermissions(id: number, payload: FilterPermissionDTO): Promise<Permission[]> {
     const isExist = await this.isExist({ id });
 
     const permissions = (await this.permissionService.findAllBase(payload, {
@@ -42,7 +39,7 @@ export class RoleService extends BaseService<Role> {
     if (permissions && permissions.length > 0) {
       permissions.forEach((permission) => {
         const isAlreadyAdded = rolePermissions.find(
-          (rolePermission) => rolePermission.permissionId === permission.id,
+          (rolePermission) => rolePermission.permissionId === permission.id
         );
         permission.isAlreadyAdded = !!isAlreadyAdded;
       });
@@ -51,10 +48,7 @@ export class RoleService extends BaseService<Role> {
     return permissions;
   }
 
-  async addPermissions(
-    id: number,
-    payload: AddPermissionsDTO,
-  ): Promise<Permission[]> {
+  async addPermissions(id: number, payload: AddPermissionsDTO): Promise<Permission[]> {
     const isRoleExist = await this.isExist({ id });
 
     const addedPermissions: string[] = [];
@@ -75,13 +69,13 @@ export class RoleService extends BaseService<Role> {
         });
 
         if (isRolePermissionExist) {
-          throw new BadRequestException("Permission already exist");
+          throw new BadRequestException('Permission already exist');
         }
         await queryRunner.manager.save(
           Object.assign(new RolePermission(), {
             role: isRoleExist.id,
             permission: permissionId,
-          }),
+          })
         );
 
         addedPermissions.push(permissionId);
@@ -93,7 +87,7 @@ export class RoleService extends BaseService<Role> {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
 
-      throw new BadRequestException(error?.message || "Something went wrong");
+      throw new BadRequestException(error?.message || 'Something went wrong');
     }
 
     const permissions = await this.permissionService.find({
@@ -109,10 +103,7 @@ export class RoleService extends BaseService<Role> {
     return permissions;
   }
 
-  async removePermissions(
-    id: number,
-    payload: RemovePermissionsDTO,
-  ): Promise<Permission[]> {
+  async removePermissions(id: number, payload: RemovePermissionsDTO): Promise<Permission[]> {
     const isRoleExist = await this.isExist({ id });
 
     const removedPermissions: string[] = [];
@@ -133,7 +124,7 @@ export class RoleService extends BaseService<Role> {
         });
 
         if (!isRolePermissionExist) {
-          throw new BadRequestException("Permission does not exist");
+          throw new BadRequestException('Permission does not exist');
         }
         await queryRunner.manager.delete(RolePermission, {
           role: isRoleExist.id,
@@ -149,7 +140,7 @@ export class RoleService extends BaseService<Role> {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
 
-      throw new BadRequestException(error?.message || "Something went wrong");
+      throw new BadRequestException(error?.message || 'Something went wrong');
     }
 
     const permissions = await this.permissionService.find({

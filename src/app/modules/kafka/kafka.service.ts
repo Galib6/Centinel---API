@@ -1,5 +1,5 @@
-import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { ClientKafka } from "@nestjs/microservices";
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 
 export interface IKafkaMessage {
   key?: string;
@@ -30,14 +30,14 @@ export interface ITopicMetadata {
 export class KafkaService implements OnModuleInit {
   private readonly logger = new Logger(KafkaService.name);
 
-  constructor(@Inject("KAFKA_CLIENT") private readonly client: ClientKafka) {}
+  constructor(@Inject('KAFKA_CLIENT') private readonly client: ClientKafka) {}
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     try {
       await this.client.connect();
-      this.logger.log("Kafka client connected successfully");
+      this.logger.log('Kafka client connected successfully');
     } catch (error) {
-      this.logger.error("Failed to connect to Kafka", error);
+      this.logger.error('Failed to connect to Kafka', error);
     }
   }
 
@@ -64,20 +64,13 @@ export class KafkaService implements OnModuleInit {
       const response = await this.client.send(pattern, data).toPromise();
       return response;
     } catch (error) {
-      this.logger.error(
-        `Failed to send request for pattern '${pattern}'`,
-        error,
-      );
+      this.logger.error(`Failed to send request for pattern '${pattern}'`, error);
       throw error;
     }
   }
 
-  async bulkEmit(
-    messages: Array<{ topic: string; message: IKafkaMessage }>,
-  ): Promise<boolean[]> {
-    return Promise.all(
-      messages.map(({ topic, message }) => this.emit(topic, message)),
-    );
+  async bulkEmit(messages: Array<{ topic: string; message: IKafkaMessage }>): Promise<boolean[]> {
+    return Promise.all(messages.map(({ topic, message }) => this.emit(topic, message)));
   }
 
   async registerTopics(topics: ITopicConfig[]): Promise<boolean[]> {
@@ -98,21 +91,14 @@ export class KafkaService implements OnModuleInit {
               },
             ],
           });
-          this.logger.log(
-            `Topic '${topicConfig.topic}' registered successfully`,
-          );
+          this.logger.log(`Topic '${topicConfig.topic}' registered successfully`);
           results.push(true);
         } else {
-          this.logger.error(
-            `Admin client not available for topic '${topicConfig.topic}'`,
-          );
+          this.logger.error(`Admin client not available for topic '${topicConfig.topic}'`);
           results.push(false);
         }
       } catch (error) {
-        this.logger.error(
-          `Failed to register topic '${topicConfig.topic}'`,
-          error,
-        );
+        this.logger.error(`Failed to register topic '${topicConfig.topic}'`, error);
         results.push(false);
       }
     }
@@ -124,7 +110,7 @@ export class KafkaService implements OnModuleInit {
     try {
       const admin = (this.client as any).client?.admin?.();
       if (!admin) {
-        this.logger.error("Admin client not available for metadata retrieval");
+        this.logger.error('Admin client not available for metadata retrieval');
         return null;
       }
 
@@ -155,7 +141,7 @@ export class KafkaService implements OnModuleInit {
     try {
       const admin = (this.client as any).client?.admin?.();
       if (!admin) {
-        this.logger.error("Admin client not available for topic listing");
+        this.logger.error('Admin client not available for topic listing');
         return [];
       }
 
@@ -165,34 +151,34 @@ export class KafkaService implements OnModuleInit {
       this.logger.log(`Found ${topics.length} topics`);
       return topics;
     } catch (error) {
-      this.logger.error("Failed to list topics", error);
+      this.logger.error('Failed to list topics', error);
       return [];
     }
   }
 
   async healthCheck(): Promise<boolean> {
     try {
-      await this.emit("system.health", {
-        key: "health-check",
+      await this.emit('system.health', {
+        key: 'health-check',
         value: {
           timestamp: new Date().toISOString(),
-          service: "kafka-service",
-          status: "healthy",
+          service: 'kafka-service',
+          status: 'healthy',
         },
       });
       return true;
     } catch (error) {
-      this.logger.error("Kafka health check failed", error);
+      this.logger.error('Kafka health check failed', error);
       return false;
     }
   }
 
-  async onApplicationShutdown() {
+  async onApplicationShutdown(): Promise<void> {
     try {
       await this.client.close();
-      this.logger.log("Kafka client closed");
+      this.logger.log('Kafka client closed');
     } catch (error) {
-      this.logger.error("Error during Kafka cleanup", error);
+      this.logger.error('Error during Kafka cleanup', error);
     }
   }
 }

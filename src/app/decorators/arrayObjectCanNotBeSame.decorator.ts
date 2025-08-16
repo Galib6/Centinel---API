@@ -1,7 +1,7 @@
-import { isArrayHasSameObject } from "@src/shared";
-import { buildMessage, ValidateBy, ValidationOptions } from "class-validator";
+import { isArrayHasSameObject } from '@src/shared';
+import { buildMessage, ValidateBy, ValidationOptions } from 'class-validator';
 
-export const ARRAY_OBJECT_CAN_NOT_BE_SAME = "arrayObjectCanNotBeSame";
+export const ARRAY_OBJECT_CAN_NOT_BE_SAME = 'arrayObjectCanNotBeSame';
 
 function isValidated<T>(value: T[], keyProperty: keyof T): boolean {
   if (value && value.length > 0) {
@@ -14,23 +14,22 @@ function isValidated<T>(value: T[], keyProperty: keyof T): boolean {
 
 export function ArrayObjectCanNotBeSame<T>(
   keyProperty: keyof T,
-  validationOptions?: ValidationOptions,
+  validationOptions?: ValidationOptions
 ): PropertyDecorator {
   return ValidateBy(
     {
       name: ARRAY_OBJECT_CAN_NOT_BE_SAME,
       constraints: [keyProperty],
       validator: {
-        validate: (value, args): boolean =>
-          isValidated<T>(value, args?.constraints[0]),
+        validate: (value, args): boolean => isValidated<T>(value, args?.constraints[0]),
         defaultMessage: buildMessage(
           (eachPrefix) =>
             eachPrefix +
             `array of $property object property ${keyProperty.toString()} can not be same`,
-          validationOptions,
+          validationOptions
         ),
       },
     },
-    validationOptions,
+    validationOptions
   );
 }

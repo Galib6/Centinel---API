@@ -11,7 +11,7 @@ export class ErrorResponse {
     stack?: any;
   }) {
     this.statusCode = data.statusCode || 500;
-    this.message = data.message || "Internal Server Error";
+    this.message = data.message || 'Internal Server Error';
     this.errorMessages = data.errorMessages || undefined;
 
     if (data.stack) {

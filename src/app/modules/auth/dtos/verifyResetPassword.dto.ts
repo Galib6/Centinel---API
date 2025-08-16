@@ -1,11 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsString, IsNumber } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class VerifyResetPasswordDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "aunto@gmail.com",
+    example: 'aunto@gmail.com',
   })
   @IsNotEmpty()
   @IsEmail()
@@ -14,7 +14,7 @@ export class VerifyResetPasswordDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "hash string",
+    example: 'hash string',
   })
   @IsNotEmpty()
   @IsString()
@@ -32,7 +32,7 @@ export class VerifyResetPasswordDTO {
   @ApiProperty({
     type: String,
     required: true,
-    example: "123456",
+    example: '123456',
   })
   @IsNotEmpty()
   @IsString()

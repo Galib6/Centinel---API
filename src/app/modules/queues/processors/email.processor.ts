@@ -1,10 +1,10 @@
-import { Processor, WorkerHost } from "@nestjs/bullmq";
-import { Logger } from "@nestjs/common";
-import { Job } from "bullmq";
-import { EmailOptions, EmailService } from "../../../helpers/email.service";
-import { queuesConstants } from "../constants";
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
+import { Job } from 'bullmq';
+import { EmailService, IEmailOptions } from '../../../helpers/email.service';
+import { queuesConstants } from '../constants';
 
-export interface EmailJobData extends EmailOptions {
+export interface IEmailJobData extends IEmailOptions {
   priority?: number;
   delay?: number;
   attempts?: number;
@@ -18,7 +18,7 @@ export class EmailProcessor extends WorkerHost {
     super();
   }
 
-  async process(job: Job<EmailJobData>): Promise<any> {
+  async process(job: Job<IEmailJobData>): Promise<any> {
     const { data } = job;
     this.logger.log(`Processing email job ${job.id} for ${data.to}`);
 
@@ -27,13 +27,11 @@ export class EmailProcessor extends WorkerHost {
 
       if (result.success) {
         this.logger.log(
-          `Email sent successfully. Job ID: ${job.id}, Message ID: ${result.messageId}`,
+          `Email sent successfully. Job ID: ${job.id}, Message ID: ${result.messageId}`
         );
         return result;
       } else {
-        this.logger.error(
-          `Email sending failed. Job ID: ${job.id}, Error: ${result.error}`,
-        );
+        this.logger.error(`Email sending failed. Job ID: ${job.id}, Error: ${result.error}`);
         throw new Error(result.error);
       }
     } catch (error) {

@@ -1,22 +1,22 @@
-import { HttpService } from "@nestjs/axios";
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from "@nestjs/common";
-import { IActiveUser } from "@src/app/decorators/active-user.decorator";
-import { ENUM_AUTH_PROVIDERS } from "@src/app/enums/common.enums";
-import { BcryptHelper } from "@src/app/helpers";
-import { SuccessResponse } from "@src/app/types";
-import { ENV, ENV_PRODUCTION } from "@src/env";
-import { gen6digitOTP } from "@src/shared";
-import * as Crypto from "crypto";
-import { firstValueFrom } from "rxjs";
-import { DataSource } from "typeorm";
-import { EmailQueueService } from "../../queues/services/email-queue.service";
-import { User } from "../../user/entities/user.entity";
-import { UserRoleService } from "../../user/services/userRole.service";
+} from '@nestjs/common';
+import { IActiveUser } from '@src/app/decorators/active-user.decorator';
+import { ENUM_AUTH_PROVIDERS } from '@src/app/enums/common.enums';
+import { BcryptHelper } from '@src/app/helpers';
+import { SuccessResponse } from '@src/app/types';
+import { ENV, ENV_PRODUCTION } from '@src/env';
+import { gen6digitOTP } from '@src/shared';
+import * as Crypto from 'crypto';
+import { firstValueFrom } from 'rxjs';
+import { DataSource } from 'typeorm';
+import { EmailQueueService } from '../../queues/services/email-queue.service';
+import { User } from '../../user/entities/user.entity';
+import { UserRoleService } from '../../user/services/userRole.service';
 import {
   GoogleAuthRequestDTO,
   LoginDTO,
@@ -26,13 +26,13 @@ import {
   SendOtpDTO,
   VerifyOtpDTO,
   VerifyResetPasswordDTO,
-} from "../dtos";
-import { ValidateDTO } from "../dtos/validate.dto";
-import { JWTHelper } from "./../../../helpers/jwt.helper";
-import { UserRole } from "./../../user/entities/userRole.entity";
-import { UserService } from "./../../user/services/user.service";
-import { ChangePasswordDTO } from "./../dtos/changePassword.dto";
-import { AuthStatService } from "./authStat.service";
+} from '../dtos';
+import { ValidateDTO } from '../dtos/validate.dto';
+import { JWTHelper } from './../../../helpers/jwt.helper';
+import { UserRole } from './../../user/entities/userRole.entity';
+import { UserService } from './../../user/services/user.service';
+import { ChangePasswordDTO } from './../dtos/changePassword.dto';
+import { AuthStatService } from './authStat.service';
 
 @Injectable()
 export class AuthService {
@@ -44,30 +44,30 @@ export class AuthService {
     private readonly bcryptHelper: BcryptHelper,
     private readonly dataSource: DataSource,
     private readonly http: HttpService,
-    private readonly emailQueueService: EmailQueueService,
+    private readonly emailQueueService: EmailQueueService
   ) {}
   async googleAuthRequest(query: GoogleAuthRequestDTO): Promise<string> {
     const { webRedirectUrl } = query;
-    const state = JSON.stringify({ webRedirectUrl, provider: "google" });
+    const state = JSON.stringify({ webRedirectUrl, provider: 'google' });
     const scopes = [
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
     ];
     const authorizationUrl =
-      "https://accounts.google.com/o/oauth2/v2/auth" +
+      'https://accounts.google.com/o/oauth2/v2/auth' +
       `?client_id=${ENV.google.clientId}` +
       `&redirect_uri=${ENV.google.redirectUrl}` +
-      "&response_type=code" +
-      "&scope=" +
-      scopes.join(" ") +
-      "&state=" +
+      '&response_type=code' +
+      '&scope=' +
+      scopes.join(' ') +
+      '&state=' +
       state;
     return authorizationUrl;
   }
 
   async validateUserUsingIdentifierAndPassword(
     identifier: string,
-    password: string,
+    password: string
   ): Promise<User> {
     const user = await this.userService.findOne({
       where: {
@@ -79,10 +79,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const isPasswordValid = await this.bcryptHelper.compareHash(
-      password,
-      user.password,
-    );
+    const isPasswordValid = await this.bcryptHelper.compareHash(password, user.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException();
@@ -101,29 +98,28 @@ export class AuthService {
     // Queue password reset email
     await this.emailQueueService.queuePasswordResetEmail(
       email,
-      user.firstName || "User",
+      user.firstName || 'User',
       otp,
       undefined, // resetUrl can be added if needed
       5, // 5 minutes expiration
-      { priority: 1 }, // High priority for password reset
+      { priority: 1 } // High priority for password reset
     );
 
-    return new SuccessResponse(
-      `OTP sent to ${email}. Please check your email.`,
-      { email, hash, otp: ENV.config.isDevelopment ? otp : null },
-    );
+    return new SuccessResponse(`OTP sent to ${email}. Please check your email.`, {
+      email,
+      hash,
+      otp: ENV.config.isDevelopment ? otp : null,
+    });
   }
 
-  async verifyResetPassword(
-    payload: VerifyResetPasswordDTO,
-  ): Promise<SuccessResponse> {
+  async verifyResetPassword(payload: VerifyResetPasswordDTO): Promise<SuccessResponse> {
     const { email, otp, newPassword, hash } = payload;
     const user = await this.userService.isExist({ email });
 
     const isOtpVerified = this.jwtHelper.verifyOtpHash(email, otp, hash);
 
     if (!isOtpVerified) {
-      throw new BadRequestException("Invalid OTP");
+      throw new BadRequestException('Invalid OTP');
     }
 
     await this.userService.save([{ id: user.id, password: newPassword }]);
@@ -133,33 +129,23 @@ export class AuthService {
 
   async changePassword(
     payload: ChangePasswordDTO,
-    authUser: IActiveUser,
+    authUser: IActiveUser
   ): Promise<SuccessResponse> {
     const { oldPassword, newPassword } = payload;
 
     const isExist = await this.userService.findOne({
       where: { id: authUser.id },
-      select: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "password",
-        "phoneNumber",
-      ],
+      select: ['id', 'firstName', 'lastName', 'email', 'password', 'phoneNumber'],
     });
 
     if (!isExist) {
-      throw new BadRequestException("User does not exists");
+      throw new BadRequestException('User does not exists');
     }
 
-    const isPasswordMatched = await this.bcryptHelper.compareHash(
-      oldPassword,
-      isExist.password,
-    );
+    const isPasswordMatched = await this.bcryptHelper.compareHash(oldPassword, isExist.password);
 
     if (!isPasswordMatched) {
-      throw new BadRequestException("Invalid old password");
+      throw new BadRequestException('Invalid old password');
     }
 
     await this.userService.save([{ id: isExist.id, password: newPassword }]);
@@ -178,39 +164,27 @@ export class AuthService {
     // Queue welcome email
     await this.emailQueueService.queueWelcomeEmail(
       user.email,
-      `${user.firstName} ${user.lastName}`.trim() || "User",
+      `${user.firstName} ${user.lastName}`.trim() || 'User',
       undefined, // verificationUrl can be added if needed
-      { priority: 2 }, // Medium priority for welcome email
+      { priority: 2 } // Medium priority for welcome email
     );
 
-    return new SuccessResponse(
-      "User registered successfully. Please login",
-      loginRes?.data,
-    );
+    return new SuccessResponse('User registered successfully. Please login', loginRes?.data);
   }
 
   async refreshToken(payload: RefreshTokenDTO): Promise<SuccessResponse> {
-    const decoded = await this.jwtHelper.verifyRefreshToken(
-      payload.refreshToken,
-    );
+    const decoded = await this.jwtHelper.verifyRefreshToken(payload.refreshToken);
     if (!decoded.user || !decoded.user.id) {
-      throw new BadRequestException("Invalid token");
+      throw new BadRequestException('Invalid token');
     }
     const user = await this.userService.findOne({
       where: { id: decoded.user.id },
-      select: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "password",
-        "phoneNumber",
-      ],
+      select: ['id', 'firstName', 'lastName', 'email', 'password', 'phoneNumber'],
     });
 
     const userRoles = (await this.userRoleService.findAllBase(
       { user: user.id as any },
-      { relations: ["role"], withoutPaginate: true },
+      { relations: ['role'], withoutPaginate: true }
     )) as UserRole[];
 
     const roles = userRoles.map((uR) => uR.role.title);
@@ -225,7 +199,7 @@ export class AuthService {
     };
 
     const refreshTokenPayload = {
-      user: { id: user.id, name: user?.firstName + " " + user?.lastName },
+      user: { id: user.id, name: user?.firstName + ' ' + user?.lastName },
       isRefreshToken: true,
     };
 
@@ -233,16 +207,13 @@ export class AuthService {
 
     const token = this.jwtHelper.makeAccessToken(tokenPayload);
     const refreshToken = this.jwtHelper.makeRefreshToken(refreshTokenPayload);
-    const permissionToken = this.jwtHelper.makePermissionToken(
-      permissionTokenPayload,
-    );
+    const permissionToken = this.jwtHelper.makePermissionToken(permissionTokenPayload);
 
-    return new SuccessResponse("Refresh token success", {
+    return new SuccessResponse('Refresh token success', {
       token,
       refreshToken,
       permissionToken,
-      user:
-        ENV.config.nodeEnv === "production" ? null : { ...tokenPayload.user },
+      user: ENV.config.nodeEnv === 'production' ? null : { ...tokenPayload.user },
     });
   }
 
@@ -250,7 +221,7 @@ export class AuthService {
     const user = await this.userService.loginUser(payload);
     const userRoles = (await this.userRoleService.findAllBase(
       { user: user.id as any },
-      { relations: ["role"], withoutPaginate: true },
+      { relations: ['role'], withoutPaginate: true }
     )) as UserRole[];
 
     const roles = userRoles?.map((uR) => uR.role?.title) || [];
@@ -259,51 +230,45 @@ export class AuthService {
     const tokenPayload = {
       user: {
         id: user.id,
-        name: user?.firstName + " " + user?.lastName,
+        name: user?.firstName + ' ' + user?.lastName,
         roles,
       },
     };
     const refreshTokenPayload = {
-      user: { id: user.id, name: user?.firstName + " " + user?.lastName },
+      user: { id: user.id, name: user?.firstName + ' ' + user?.lastName },
       isRefreshToken: true,
     };
 
     const permissionTokenPayload = { permissions };
 
     const token = await this.jwtHelper.makeAccessToken(tokenPayload);
-    const refreshToken =
-      await this.jwtHelper.makeRefreshToken(refreshTokenPayload);
-    const permissionToken = await this.jwtHelper.makePermissionToken(
-      permissionTokenPayload,
-    );
+    const refreshToken = await this.jwtHelper.makeRefreshToken(refreshTokenPayload);
+    const permissionToken = await this.jwtHelper.makePermissionToken(permissionTokenPayload);
 
-    return new SuccessResponse("Login success", {
+    return new SuccessResponse('Login success', {
       token,
       refreshToken,
       permissionToken,
-      user:
-        ENV.config.nodeEnv === "production" ? null : { ...tokenPayload.user },
+      user: ENV.config.nodeEnv === 'production' ? null : { ...tokenPayload.user },
     });
   }
 
-  async sendOtp(payload: SendOtpDTO) {
-    const user = await this.userService.findOrCreateByPhoneNumber(
-      payload.phoneNumber,
-    );
+  async sendOtp(payload: SendOtpDTO): Promise<SuccessResponse> {
+    await this.userService.findOrCreateByPhoneNumber(payload.phoneNumber);
 
     const otp = gen6digitOTP();
     const authStat = await this.authStatService.createOrUpdateOtpByPhoneNumber(
       payload.phoneNumber,
-      otp,
+      otp
     );
 
     return new SuccessResponse(
-      "OTP sent successfully",
-      ENV.config.nodeEnv === "production" ? null : { otp: authStat.otp },
+      'OTP sent successfully',
+      ENV.config.nodeEnv === 'production' ? null : { otp: authStat.otp }
     );
   }
 
-  async verifyOtp(payload: VerifyOtpDTO) {
+  async verifyOtp(payload: VerifyOtpDTO): Promise<SuccessResponse> {
     await this.authStatService.verifyOtp(payload.phoneNumber, payload.otp);
 
     const user = await this.userService.findOneBase({
@@ -312,7 +277,7 @@ export class AuthService {
 
     const userRoles = (await this.userRoleService.findAllBase(
       { user: user.id as any },
-      { relations: ["role"], withoutPaginate: true },
+      { relations: ['role'], withoutPaginate: true }
     )) as UserRole[];
 
     const roles = userRoles.map((uR) => uR.role.title);
@@ -324,22 +289,21 @@ export class AuthService {
     const token = this.jwtHelper.makeAccessToken(tokenPayload);
     const refreshToken = this.jwtHelper.makeRefreshToken(refreshTokenPayload);
 
-    return new SuccessResponse("OTP verified successfully", {
+    return new SuccessResponse('OTP verified successfully', {
       token,
       refreshToken,
-      user:
-        ENV.config.nodeEnv === "production" ? null : { ...tokenPayload.user },
+      user: ENV.config.nodeEnv === 'production' ? null : { ...tokenPayload.user },
     });
   }
 
   async googleLogin(
     userData: Record<string, any>,
-    state: string,
+    state: string
   ): Promise<{
     callBackUrl: string;
   }> {
     if (!userData) {
-      throw new BadRequestException("No user from google");
+      throw new BadRequestException('No user from google');
     }
     const additionalData = JSON.parse(state) as {
       webRedirectUrl: string;
@@ -364,13 +328,13 @@ export class AuthService {
           email: userData?.email,
           authProvider: ENUM_AUTH_PROVIDERS.GOOGLE,
           phoneNumber: userData?.phoneNumber,
-          password: Crypto.randomBytes(20).toString("hex"),
+          password: Crypto.randomBytes(20).toString('hex'),
           isVerified: true,
         };
 
         await queryRunner.manager.save(Object.assign(new User(), newUserData));
         await queryRunner.commitTransaction();
-      } catch (error) {
+      } catch {
         await queryRunner.rollbackTransaction();
       }
     }
@@ -403,9 +367,7 @@ export class AuthService {
     // return this.validateUsingSystemAuth(payload);
   }
 
-  async validateUsingGoogleAuth(
-    payload: ValidateDTO,
-  ): Promise<SuccessResponse> {
+  async validateUsingGoogleAuth(payload: ValidateDTO): Promise<SuccessResponse> {
     const googleUrl = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${payload.token}`;
 
     const googleResponse = await this.http.get(googleUrl);
@@ -418,7 +380,7 @@ export class AuthService {
       where: { email: responseData.email },
     });
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     if (isEmailRequired) {
@@ -428,12 +390,9 @@ export class AuthService {
         },
       };
 
-      const token = this.jwtHelper.signToken(
-        ENV.jwt.jwtExpiresIn,
-        tokenPayload,
-      );
+      const token = this.jwtHelper.signToken(ENV.jwt.jwtExpiresIn, tokenPayload);
 
-      return new SuccessResponse("Validated successfully", {
+      return new SuccessResponse('Validated successfully', {
         token,
         isEmailRequired: true,
         user: ENV_PRODUCTION ? null : { ...tokenPayload.user },
@@ -443,7 +402,7 @@ export class AuthService {
     const tokenPayload = {
       user: {
         id: user.id,
-        name: (user?.firstName + " " + user?.lastName).trim(),
+        name: (user?.firstName + ' ' + user?.lastName).trim(),
         email: user.email,
       },
     };
@@ -451,15 +410,14 @@ export class AuthService {
     const refreshTokenPayload = {
       user: {
         id: user.id,
-        name: (user?.firstName + " " + user?.lastName).trim(),
+        name: (user?.firstName + ' ' + user?.lastName).trim(),
       },
       isRefreshToken: true,
     };
     const token = await this.jwtHelper.makeAccessToken(tokenPayload);
-    const refreshToken =
-      await this.jwtHelper.makeRefreshToken(refreshTokenPayload);
+    const refreshToken = await this.jwtHelper.makeRefreshToken(refreshTokenPayload);
 
-    return new SuccessResponse("Validated successfully", {
+    return new SuccessResponse('Validated successfully', {
       token,
       refreshToken,
       user: ENV_PRODUCTION ? null : { ...tokenPayload.user },

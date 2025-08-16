@@ -1,29 +1,22 @@
-import { ENUM_AUTH_PROVIDERS } from "@src/app/enums/common.enums";
-import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from "@src/shared";
-import { Type } from "class-transformer";
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  RelationId,
-} from "typeorm";
-import { Role } from "../../acl/entities/role.entity";
-import { UserRole } from "./userRole.entity";
+import { ENUM_AUTH_PROVIDERS } from '@src/app/enums/common.enums';
+import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from '@src/shared';
+import { Type } from 'class-transformer';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Role } from '../../acl/entities/role.entity';
+import { UserRole } from './userRole.entity';
 
 @Entity(ENUM_TABLE_NAMES.USERS)
 export class User {
   public static readonly SEARCH_TERMS: string[] = [
-    "email",
-    "username",
-    "phoneNumber",
-    "firstName",
-    "lastName",
-    "fullName",
+    'email',
+    'username',
+    'phoneNumber',
+    'firstName',
+    'lastName',
+    'fullName',
   ];
 
-  @PrimaryGeneratedColumn("increment")
+  @PrimaryGeneratedColumn('increment')
   id?: number;
 
   @Column({ nullable: true })
@@ -56,19 +49,19 @@ export class User {
   @Column({ type: ENUM_COLUMN_TYPES.VARCHAR, default: false })
   isVerified?: boolean;
 
-  @OneToMany((t) => UserRole, (e) => e.user)
-  @Type((t) => UserRole)
+  @OneToMany(() => UserRole, (e) => e.user)
+  @Type(() => UserRole)
   userRoles?: UserRole[];
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: 'NO ACTION' })
+  @Type(() => User)
   createdBy?: User;
 
   @RelationId((e: User) => e.createdBy)
   createdById?: number;
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: 'NO ACTION' })
+  @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: User) => e.updatedBy)

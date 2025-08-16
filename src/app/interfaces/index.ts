@@ -1,2 +1,2 @@
-export * from "./file.interfaces";
-export * from "./queryOptions.interfaces";
+export * from './file.interfaces';
+export * from './queryOptions.interfaces';

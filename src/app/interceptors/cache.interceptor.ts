@@ -5,13 +5,13 @@ import {
   Injectable,
   Logger,
   NestInterceptor,
-} from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-import { ENV } from "@src/env";
-import { Observable, of } from "rxjs";
-import { catchError, tap } from "rxjs/operators";
-import { RedisService } from "../modules/redis/redisCache.service";
+import { ENV } from '@src/env';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { RedisService } from '../modules/redis/redisCache.service';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
@@ -19,20 +19,14 @@ export class CacheInterceptor implements NestInterceptor {
 
   constructor(
     @Inject(RedisService) private readonly redisService: RedisService,
-    private readonly reflector: Reflector,
+    private readonly reflector: Reflector
   ) {}
 
-  async intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Promise<Observable<any>> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const handler = context.getHandler();
     const request: Request = context.switchToHttp().getRequest();
 
-    const revalidateKeys = this.reflector.get<string[]>(
-      "cacheRevalidateKeys",
-      handler,
-    );
+    const revalidateKeys = this.reflector.get<string[]>('cacheRevalidateKeys', handler);
 
     // Handle cache invalidation
     if (revalidateKeys?.length) {
@@ -44,13 +38,13 @@ export class CacheInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const cacheKeyPrefix = this.reflector.get<string>("cacheKey", handler);
+    const cacheKeyPrefix = this.reflector.get<string>('cacheKey', handler);
     if (!cacheKeyPrefix) {
       this.logger.error(`Cache key not found, API End point: ${request?.url}`);
       return next.handle();
     }
     const key = this.getCacheKey(context, cacheKeyPrefix);
-    const ttl = this.reflector.get<number>("cacheTTL", handler) || 300;
+    const ttl = this.reflector.get<number>('cacheTTL', handler) || 300;
 
     // Try serving from cache
     try {
@@ -76,7 +70,7 @@ export class CacheInterceptor implements NestInterceptor {
       catchError((err) => {
         this.logger.error(`Handler error: ${err.message}`);
         throw err;
-      }),
+      })
     );
   }
 

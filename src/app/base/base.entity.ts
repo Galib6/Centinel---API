@@ -1,5 +1,5 @@
-import { ENUM_COLUMN_TYPES } from "@src/shared";
-import { Type } from "class-transformer";
+import { ENUM_COLUMN_TYPES } from '@src/shared';
+import { Type } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../modules/user/entities/user.entity";
+} from 'typeorm';
+import { User } from '../modules/user/entities/user.entity';
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn("increment", { type: ENUM_COLUMN_TYPES.INT })
+  @PrimaryGeneratedColumn('increment', { type: ENUM_COLUMN_TYPES.INT })
   id?: number;
 
   @Column({ type: ENUM_COLUMN_TYPES.BOOLEAN, default: true, nullable: true })
@@ -27,15 +27,15 @@ export abstract class BaseEntity {
   @DeleteDateColumn({ select: false, type: ENUM_COLUMN_TYPES.TIMESTAMP_UTC })
   deletedAt?: Date;
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: 'NO ACTION' })
+  @Type(() => User)
   createdBy?: User;
 
   @RelationId((e: BaseEntity) => e.createdBy)
   createdById?: number;
 
-  @ManyToOne((t) => User, { onDelete: "NO ACTION" })
-  @Type((t) => User)
+  @ManyToOne(() => User, { onDelete: 'NO ACTION' })
+  @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: BaseEntity) => e.updatedBy)

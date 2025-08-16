@@ -1,13 +1,13 @@
-import { INestApplication } from "@nestjs/common";
-import { DocumentBuilder, OpenAPIObject, SwaggerModule } from "@nestjs/swagger";
-import { PathsObject } from "@nestjs/swagger/dist/interfaces/open-api-spec.interface";
-import { ENV } from "./env";
+import { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import { PathsObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { ENV } from './env';
 
-function filterInternalRoutes(doc: OpenAPIObject, tag) {
+function filterInternalRoutes(doc: OpenAPIObject, _tag): OpenAPIObject {
   const publicDoc = structuredClone(doc);
   const paths: PathsObject = {};
   Object.entries(publicDoc.paths).map(([k, path]) => {
-    if (k.includes("/web/")) {
+    if (k.includes('/web/')) {
       paths[k] = path;
     }
   });
@@ -18,8 +18,8 @@ function filterInternalRoutes(doc: OpenAPIObject, tag) {
 const defaultSwaggerOpts = {
   swaggerOptions: {
     docExpansion: false,
-    tagsSorter: "alpha",
-    operationsSorter: "alpha",
+    tagsSorter: 'alpha',
+    operationsSorter: 'alpha',
   },
 };
 
@@ -31,7 +31,7 @@ export function setupSwagger(app: INestApplication): void {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  const publicDoc = filterInternalRoutes(document, "web");
-  SwaggerModule.setup("/docs", app, document, defaultSwaggerOpts);
-  SwaggerModule.setup("/docs/web", app, publicDoc, defaultSwaggerOpts);
+  const publicDoc = filterInternalRoutes(document, 'web');
+  SwaggerModule.setup('/docs', app, document, defaultSwaggerOpts);
+  SwaggerModule.setup('/docs/web', app, publicDoc, defaultSwaggerOpts);
 }

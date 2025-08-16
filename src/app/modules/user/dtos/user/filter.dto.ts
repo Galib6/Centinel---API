@@ -1,10 +1,10 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumberString, IsOptional, IsString, IsEmail } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumberString, IsOptional, IsString, IsEmail } from 'class-validator';
 
 export class FilterUserDTO {
   @ApiProperty({
     type: Number,
-    description: "Limit the number of results",
+    description: 'Limit the number of results',
     default: 10,
     required: false,
   })
@@ -14,7 +14,7 @@ export class FilterUserDTO {
 
   @ApiProperty({
     type: Number,
-    description: "The page number",
+    description: 'The page number',
     default: 1,
     required: false,
   })
@@ -24,8 +24,8 @@ export class FilterUserDTO {
 
   @ApiProperty({
     type: String,
-    description: "The search term",
-    default: "",
+    description: 'The search term',
+    default: '',
     required: false,
   })
   @IsOptional()
@@ -34,8 +34,8 @@ export class FilterUserDTO {
 
   @ApiProperty({
     type: String,
-    description: "Email",
-    default: "",
+    description: 'Email',
+    default: '',
     required: false,
   })
   @IsOptional()

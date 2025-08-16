@@ -1,11 +1,11 @@
 // entity-manager.util.ts
-import { EntityTarget, QueryRunner } from "typeorm";
+import { EntityTarget, QueryRunner } from 'typeorm';
 
 export class EntityManagerUtil<T, U> {
   constructor(
     private queryRunner: QueryRunner,
     private entity: EntityTarget<T>,
-    private checkExistence: (criteria: Partial<U>) => Promise<boolean>,
+    private checkExistence: (criteria: Partial<U>) => Promise<boolean>
   ) {}
 
   // General method to process items for delete, update, and add operations
@@ -18,13 +18,12 @@ export class EntityManagerUtil<T, U> {
       updateEntityFields: (item: U) => Partial<T>;
       parentIdField?: keyof T;
       parentId?: string;
-    },
-  ) {
+    }
+  ): Promise<void> {
     const deleteItems = items.filter(options.getDeleteCondition);
     const updateItems = items.filter(options.getUpdateCondition);
     const newItems = items.filter(
-      (item) =>
-        !options.getDeleteCondition(item) && !options.getUpdateCondition(item),
+      (item) => !options.getDeleteCondition(item) && !options.getUpdateCondition(item)
     );
 
     await Promise.all([
@@ -33,14 +32,14 @@ export class EntityManagerUtil<T, U> {
         updateItems,
         options.updateEntityFields,
         options.parentIdField,
-        options.parentId,
+        options.parentId
       ),
       this.addNewEntities(newItems, options.createEntity),
     ]);
   }
 
   // Delete entities based on specified items
-  private async deleteEntities(deleteItems: U[]) {
+  private async deleteEntities(deleteItems: U[]): Promise<void> {
     if (!deleteItems.length) return;
     await Promise.all(
       deleteItems.map(async (item) => {
@@ -51,7 +50,7 @@ export class EntityManagerUtil<T, U> {
           await this.queryRunner.manager.delete(this.entity, {
             id: (item as any).id,
           });
-      }),
+      })
     );
   }
 
@@ -60,8 +59,8 @@ export class EntityManagerUtil<T, U> {
     updateItems: U[],
     updateEntityFields: (item: U) => Partial<T>,
     parentIdField?: keyof T,
-    parentId?: string,
-  ) {
+    parentId?: string
+  ): Promise<void> {
     if (!updateItems.length) return;
     await Promise.all(
       updateItems.map(async (item) => {
@@ -73,24 +72,20 @@ export class EntityManagerUtil<T, U> {
             ...updateEntityFields(item),
             ...(parentIdField && parentId ? { [parentIdField]: parentId } : {}),
           };
-          await this.queryRunner.manager.update(
-            this.entity,
-            { id: (item as any).id },
-            updateData,
-          );
+          await this.queryRunner.manager.update(this.entity, { id: (item as any).id }, updateData);
         }
-      }),
+      })
     );
   }
 
   // Add new entities based on specified items
-  private async addNewEntities(newItems: U[], createEntity: (item: U) => T) {
+  private async addNewEntities(newItems: U[], createEntity: (item: U) => T): Promise<void> {
     if (!newItems.length) return;
     await Promise.all(
       newItems.map(async (item) => {
         const entityInstance = createEntity(item);
         await this.queryRunner.manager.save(entityInstance);
-      }),
+      })
     );
   }
 }

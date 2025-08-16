@@ -10,7 +10,7 @@ env:
   NGINX_CONFIG_PATH: /etc/nginx/sites-enabled/centinel
   APP_DOMAIN: centinel.algalib.me
   HEALTH_CHECK_END_POINT: /api/v1/health
-  DEPLOY_DIRECTORY: "~/deploy/centinel-prod"
+  DEPLOY_DIRECTORY: '~/deploy/centinel-prod'
 
   DOCKER_USER: ${{ secrets.DOCKER_HUB_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -66,8 +66,8 @@ jobs:
           host: ${{ env.HOST }}
           username: ${{ env.USER }}
           key: ${{ env.SSH_KEY }}
-          source: "environments,docker-compose.yml"
-          target: "~/deploy/${{env.APP_NAME}}"
+          source: 'environments,docker-compose.yml'
+          target: '~/deploy/${{env.APP_NAME}}'
 
       - name: Zero Downtime Deploy to DigitalOcean
         uses: appleboy/ssh-action@master

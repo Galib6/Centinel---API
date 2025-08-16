@@ -1,27 +1,18 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { BaseService } from "@src/app/base/base.service";
-import { BcryptHelper } from "@src/app/helpers";
-import { asyncForEach, ENUM_ACL_DEFAULT_ROLES } from "@src/shared";
-import { isNotEmptyObject } from "class-validator";
-import { DataSource, Repository } from "typeorm";
-import { FilterRoleDTO } from "../../acl/dtos";
-import { Role } from "../../acl/entities/role.entity";
-import { RoleService } from "../../acl/services/role.service";
-import { LoginDTO, RegisterDTO } from "../../auth/dtos";
-import {
-  CreateRolesDTO,
-  CreateUserDTO,
-  UpdateRolesDTO,
-  UpdateUserDTO,
-} from "../dtos";
-import { User } from "../entities/user.entity";
-import { UserRole } from "./../entities/userRole.entity";
-import { UserRoleService } from "./userRole.service";
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService } from '@src/app/base/base.service';
+import { BcryptHelper } from '@src/app/helpers';
+import { asyncForEach, ENUM_ACL_DEFAULT_ROLES } from '@src/shared';
+import { isNotEmptyObject } from 'class-validator';
+import { DataSource, Repository } from 'typeorm';
+import { FilterRoleDTO } from '../../acl/dtos';
+import { Role } from '../../acl/entities/role.entity';
+import { RoleService } from '../../acl/services/role.service';
+import { LoginDTO, RegisterDTO } from '../../auth/dtos';
+import { CreateRolesDTO, CreateUserDTO, UpdateRolesDTO, UpdateUserDTO } from '../dtos';
+import { User } from '../entities/user.entity';
+import { UserRole } from './../entities/userRole.entity';
+import { UserRoleService } from './userRole.service';
 
 @Injectable()
 export class UserService extends BaseService<User> {
@@ -31,7 +22,7 @@ export class UserService extends BaseService<User> {
     private readonly userRoleService: UserRoleService,
     private readonly roleService: RoleService,
     private readonly bcrypt: BcryptHelper,
-    private readonly dataSource: DataSource,
+    private readonly dataSource: DataSource
   ) {
     super(userRepository);
   }
@@ -51,9 +42,7 @@ export class UserService extends BaseService<User> {
 
     if (roles && roles.length > 0) {
       roles.forEach((role) => {
-        const isAlreadyAdded = userRoles.find(
-          (userRole) => userRole.roleId === role.id,
-        );
+        const isAlreadyAdded = userRoles.find((userRole) => userRole.roleId === role.id);
         role.isAlreadyAdded = !!isAlreadyAdded;
       });
     }
@@ -61,10 +50,7 @@ export class UserService extends BaseService<User> {
     return roles;
   }
 
-  async createUser(
-    payload: CreateUserDTO,
-    relations?: string[],
-  ): Promise<User> {
+  async createUser(payload: CreateUserDTO, relations?: string[]): Promise<User> {
     const { roles, ...userData } = payload;
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -74,22 +60,20 @@ export class UserService extends BaseService<User> {
     let createdUser = null;
 
     try {
-      createdUser = await queryRunner.manager.save(
-        Object.assign(new User(), userData),
-      );
+      createdUser = await queryRunner.manager.save(Object.assign(new User(), userData));
 
       if (!createdUser) {
-        throw new BadRequestException("User not created");
+        throw new BadRequestException('User not created');
       }
 
       if (roles && roles.length) {
         await asyncForEach(roles, async (role: CreateRolesDTO) => {
-          const isRoleExist = await this.roleService.isExist({ id: role.role });
+          await this.roleService.isExist({ id: role.role });
           await queryRunner.manager.save(
             Object.assign(new UserRole(), {
               user: createdUser.id,
               role: role.role,
-            }),
+            })
           );
         });
       }
@@ -100,11 +84,11 @@ export class UserService extends BaseService<User> {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
 
-      throw new BadRequestException(error.message || "User not created");
+      throw new BadRequestException(error.message || 'User not created');
     }
 
     if (!createdUser) {
-      throw new BadRequestException("User not created");
+      throw new BadRequestException('User not created');
     }
 
     const updatedUser = await this.findOne({
@@ -117,12 +101,8 @@ export class UserService extends BaseService<User> {
     return updatedUser;
   }
 
-  async updateUser(
-    id: number,
-    payload: UpdateUserDTO,
-    relations: string[],
-  ): Promise<User> {
-    const isUserExist = await this.isExist({ id });
+  async updateUser(id: number, payload: UpdateUserDTO, relations: string[]): Promise<User> {
+    await this.isExist({ id });
 
     const { roles, ...userData } = payload;
 
@@ -140,7 +120,7 @@ export class UserService extends BaseService<User> {
         const newOrUpdatedItems = roles.filter((role) => !role.isDeleted);
 
         await asyncForEach(deletedItems, async (role: UpdateRolesDTO) => {
-          const isUserRoleExist = await this.userRoleService.isExist({
+          await this.userRoleService.isExist({
             user: { id },
             role: { id: role.role },
           });
@@ -151,7 +131,7 @@ export class UserService extends BaseService<User> {
         });
 
         await asyncForEach(newOrUpdatedItems, async (role: UpdateRolesDTO) => {
-          const isRoleExist = await this.roleService.isExist({
+          await this.roleService.isExist({
             id: role.role,
           });
           const isUserRoleExist = await this.userRoleService.findOne({
@@ -166,7 +146,7 @@ export class UserService extends BaseService<User> {
               Object.assign(new UserRole(), {
                 user: id,
                 role: role.role,
-              }),
+              })
             );
           }
         });
@@ -178,7 +158,7 @@ export class UserService extends BaseService<User> {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
 
-      throw new BadRequestException(error.message || "User not updated");
+      throw new BadRequestException(error.message || 'User not updated');
     }
 
     const updatedUser = await this.findOne({
@@ -204,7 +184,7 @@ export class UserService extends BaseService<User> {
         phoneNumber,
       });
 
-      const userRole = await this.userRoleService.createOneBase({
+      await this.userRoleService.createOneBase({
         user: user.id as any,
         role: role.id as any,
       });
@@ -219,7 +199,7 @@ export class UserService extends BaseService<User> {
     const isExist = await this.findOneBase({ email: payload.email });
 
     if (isExist) {
-      throw new ConflictException("Email already exists");
+      throw new ConflictException('Email already exists');
     } else {
       const createdUser = await this.createOneBase({
         firstName: payload.firstName,
@@ -241,29 +221,19 @@ export class UserService extends BaseService<User> {
   async loginUser(payload: LoginDTO): Promise<User> {
     const isExist = await this.findOne({
       where: { email: payload.email },
-      select: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "password",
-        "phoneNumber",
-      ],
+      select: ['id', 'firstName', 'lastName', 'email', 'password', 'phoneNumber'],
     });
 
-    console.log();
+    console.info();
 
     if (!isExist) {
-      throw new BadRequestException("User does not exists");
+      throw new BadRequestException('User does not exists');
     }
 
-    const isPasswordMatch = await this.bcrypt.compareHash(
-      payload.password,
-      isExist.password,
-    );
+    const isPasswordMatch = await this.bcrypt.compareHash(payload.password, isExist.password);
 
     if (!isPasswordMatch) {
-      throw new BadRequestException("Password does not match");
+      throw new BadRequestException('Password does not match');
     }
 
     return isExist;
