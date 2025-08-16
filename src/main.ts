@@ -52,7 +52,7 @@ async function bootstrap(): Promise<void> {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
   app.setGlobalPrefix(ENV.swagger.apiPrefix);
@@ -62,11 +62,11 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(ENV.config.port);
   logger.log(
-    `🚀🚀🚀🚀 Application is running on: ${await app.getUrl()} 🚀🚀🚀🚀`
+    `🚀🚀🚀🚀 Application is running on: ${await app.getUrl()} 🚀🚀🚀🚀`,
   );
 
   logger.log(
-    `📖📖📖 Documentation is available on: ${await app.getUrl()}/docs 📖📖📖`
+    `📖📖📖 Documentation is available on: ${await app.getUrl()}/docs 📖📖📖`,
   );
 }
 bootstrap();

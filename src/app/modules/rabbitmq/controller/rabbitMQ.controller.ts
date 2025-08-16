@@ -27,7 +27,7 @@ export class RabbitMqController {
   async sendMessage(): Promise<any> {
     try {
       return await firstValueFrom(
-        this.client.send("user.created", { msg: "Hello from publisher" })
+        this.client.send("user.created", { msg: "Hello from publisher" }),
       );
     } catch (error) {
       // Log the error for debugging
