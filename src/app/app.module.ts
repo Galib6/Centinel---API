@@ -13,6 +13,7 @@ import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AuthMiddleware } from './middlewares';
 import { AuthModule } from './modules/auth/auth.module';
 import { GalleryModule } from './modules/galleries/gallery.module';
+import { MetricsModule } from './modules/matrics/metrics.module';
 import { BullBoardModule } from './modules/queues/bullBoard.module';
 import { QueueModule } from './modules/queues/queue.module';
 import { RabbitMQModule } from './modules/rabbitmq/rabbitMQ.module';
@@ -27,6 +28,7 @@ const MODULES = [
   RedisModule,
   BullBoardModule,
   RabbitMQModule,
+  MetricsModule,
   // KafkaModule,
 ];
 @Module({

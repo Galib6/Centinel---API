@@ -1,5 +1,5 @@
-import { Module } from "@nestjs/common";
-import { RabbitMqController } from "./controller/rabbitMQ.controller";
+import { Module } from '@nestjs/common';
+import { RabbitMqController } from './controller/rabbitMQ.controller';
 
 @Module({
   imports: [],
