@@ -4,7 +4,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { json, urlencoded } from 'body-parser';
 import { join } from 'path';
 import { AppModule } from './app/app.module';
-import { KafkaFactory } from './app/modules/kafka/config/kafka.factory';
 import { ENV } from './env';
 import { createLogger } from './logger';
 import { setupSecurity } from './security';
@@ -20,17 +19,28 @@ async function bootstrap(): Promise<void> {
       : ['error', 'warn', 'debug', 'log', 'verbose'],
   });
 
-  const kafkaOptions = KafkaFactory.createMicroserviceOptions();
-  if (kafkaOptions) {
-    try {
-      app.connectMicroservice(kafkaOptions);
-      await app.startAllMicroservices();
-    } catch (error) {
-      console.error('❌ Failed to start Kafka microservice:', error);
-    }
-  } else {
-    console.warn('⚠️ Kafka is disabled or configuration is missing');
-  }
+  // const kafkaOptions = KafkaFactory.createMicroserviceOptions();
+  // if (kafkaOptions) {
+  //   try {
+  //     app.connectMicroservice(kafkaOptions);
+  //     await app.startAllMicroservices();
+  //   } catch (error) {
+  //     console.error("❌ Failed to start Kafka microservice:", error);
+  //   }
+  // } else {
+  //   console.log("⚠️ Kafka is disabled or configuration is missing");
+  // }
+
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: ["amqp://localhost:5672"],
+  //     queue: "test_queue",
+  //     queueOptions: { durable: false },
+  //   },
+  // });
+
+  // await app.startAllMicroservices();
 
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('hbs');

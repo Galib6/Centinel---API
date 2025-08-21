@@ -17,8 +17,14 @@ export class AccessTokenGuard implements CanActivate {
      */
   ) {}
   public async canActivate(context: ExecutionContext): Promise<boolean> {
+    const EXCLUDED_PATHS = ['/api/v1/metrics'];
     //Extract the request form execution context
     const request = context.switchToHttp().getRequest();
+    const reqPath = request.path || request.url;
+    // Exclude paths from authentication
+    if (EXCLUDED_PATHS.includes(reqPath)) {
+      return true;
+    }
     //extract token for header
     const token = this.extractRequestFormHeader(request);
 
