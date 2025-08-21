@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { ExceptionFilter } from './filters';
 import { GuardsModule } from './guards/gaurds.module';
 import { HelpersModule } from './helpers/helpers.module';
-import { ActiveUserInserter } from './interceptors/audit.interceptor';
+import { ActiveUserInserter } from './interceptors/activeUserInserter.interceptor';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AuthMiddleware } from './middlewares';
 import { AuthModule } from './modules/auth/auth.module';
