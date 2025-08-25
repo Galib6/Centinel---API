@@ -1,17 +1,16 @@
 import { LoggerService } from '@nestjs/common';
 import pino from 'pino';
-import createWriteStream from 'pino-loki';
 import { ENV } from './env';
 
 export function createLogger(): LoggerService {
   const logFolder = ENV.logFolder;
 
   // Loki stream for Grafana Loki
-  const lokiStream = createWriteStream({
-    batching: true,
-    interval: 5, // seconds
-    host: 'http://localhost:3100',
-  });
+  // const lokiStream = createWriteStream({
+  //   batching: true,
+  //   interval: 5, // seconds
+  //   host: 'http://localhost:3100',
+  // });
 
   // Main logger for console and files
   const logger = pino({
@@ -39,7 +38,7 @@ export function createLogger(): LoggerService {
   });
 
   // Separate logger for Loki
-  const lokiLogger = pino({}, lokiStream);
+  const lokiLogger = pino();
 
   // Adapter to match LoggerService interface
   // ANSI green: \x1b[32m ... \x1b[0m
