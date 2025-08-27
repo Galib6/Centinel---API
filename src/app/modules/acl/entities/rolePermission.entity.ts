@@ -21,5 +21,5 @@ export class RolePermission extends BaseEntity {
   permission?: Permission;
 
   @RelationId((e: RolePermission) => e.permission)
-  permissionId?: number;
+  permissionId?: string;
 }

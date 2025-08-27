@@ -16,8 +16,8 @@ import { User } from '../../user/entities/user.entity';
 export class Role {
   public static readonly SEARCH_TERMS: string[] = ['title'];
 
-  @PrimaryGeneratedColumn('increment', { type: ENUM_COLUMN_TYPES.INT })
-  id?: number;
+  @PrimaryGeneratedColumn('uuid')
+  id?: string;
 
   @Column()
   title?: string;
@@ -41,12 +41,12 @@ export class Role {
   createdBy?: User;
 
   @RelationId((e: Role) => e.createdBy)
-  createdById?: number;
+  createdById?: string;
 
   @ManyToOne(() => User, { onDelete: 'NO ACTION' })
   @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: Role) => e.updatedBy)
-  updatedById?: number;
+  updatedById?: string;
 }

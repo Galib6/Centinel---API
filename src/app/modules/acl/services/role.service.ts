@@ -23,7 +23,7 @@ export class RoleService extends BaseService<Role> {
     super(_repo);
   }
 
-  async availablePermissions(id: number, payload: FilterPermissionDTO): Promise<Permission[]> {
+  async availablePermissions(id: string, payload: FilterPermissionDTO): Promise<Permission[]> {
     const isExist = await this.isExist({ id });
 
     const permissions = (await this.permissionService.findAllBase(payload, {
@@ -48,7 +48,7 @@ export class RoleService extends BaseService<Role> {
     return permissions;
   }
 
-  async addPermissions(id: number, payload: AddPermissionsDTO): Promise<Permission[]> {
+  async addPermissions(id: string, payload: AddPermissionsDTO): Promise<Permission[]> {
     const isRoleExist = await this.isExist({ id });
 
     const addedPermissions: string[] = [];
@@ -103,7 +103,7 @@ export class RoleService extends BaseService<Role> {
     return permissions;
   }
 
-  async removePermissions(id: number, payload: RemovePermissionsDTO): Promise<Permission[]> {
+  async removePermissions(id: string, payload: RemovePermissionsDTO): Promise<Permission[]> {
     const isRoleExist = await this.isExist({ id });
 
     const removedPermissions: string[] = [];

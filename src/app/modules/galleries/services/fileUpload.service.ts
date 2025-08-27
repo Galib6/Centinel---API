@@ -188,7 +188,7 @@ export class FileUploadService {
   //   }
   // }
 
-  async deleteFile(id: number): Promise<SuccessResponse> {
+  async deleteFile(id: string): Promise<SuccessResponse> {
     return await this.fileStorageService.deleteOneBase(id);
   }
 }

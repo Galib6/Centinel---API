@@ -13,7 +13,7 @@ import { User } from '../modules/user/entities/user.entity';
 
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn('increment', { type: ENUM_COLUMN_TYPES.INT })
-  id?: number;
+  id?: string;
 
   @Column({ type: ENUM_COLUMN_TYPES.BOOLEAN, default: true, nullable: true })
   isActive?: boolean;
@@ -32,12 +32,12 @@ export abstract class BaseEntity {
   createdBy?: User;
 
   @RelationId((e: BaseEntity) => e.createdBy)
-  createdById?: number;
+  createdById?: string;
 
   @ManyToOne(() => User, { onDelete: 'NO ACTION' })
   @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: BaseEntity) => e.updatedBy)
-  updatedById?: number;
+  updatedById?: string;
 }

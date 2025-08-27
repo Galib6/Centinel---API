@@ -41,7 +41,7 @@ export class FileStorageController {
   }
 
   @Delete(':id')
-  async deleteOne(@Param('id') id: number): Promise<SuccessResponse> {
+  async deleteOne(@Param('id') id: string): Promise<SuccessResponse> {
     return this.fileUploadService.deleteFile(id);
   }
 }

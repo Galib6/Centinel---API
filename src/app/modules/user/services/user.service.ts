@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '@src/app/base/base.service';
 import { BcryptHelper } from '@src/app/helpers';
@@ -16,6 +16,7 @@ import { UserRoleService } from './userRole.service';
 
 @Injectable()
 export class UserService extends BaseService<User> {
+  private readonly logger = new Logger(UserService.name);
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -27,7 +28,7 @@ export class UserService extends BaseService<User> {
     super(userRepository);
   }
 
-  async availableRoles(id: number, payload: FilterRoleDTO): Promise<any> {
+  async availableRoles(id: string, payload: FilterRoleDTO): Promise<any> {
     const isExist = await this.isExist({ id });
 
     const roles = (await this.roleService.findAllBase(payload, {
@@ -84,7 +85,7 @@ export class UserService extends BaseService<User> {
       await queryRunner.rollbackTransaction();
       await queryRunner.release();
 
-      throw new BadRequestException(error.message || 'User not created');
+      throw new Error(error);
     }
 
     if (!createdUser) {
@@ -101,7 +102,7 @@ export class UserService extends BaseService<User> {
     return updatedUser;
   }
 
-  async updateUser(id: number, payload: UpdateUserDTO, relations: string[]): Promise<User> {
+  async updateUser(id: string, payload: UpdateUserDTO, relations: string[]): Promise<User> {
     await this.isExist({ id });
 
     const { roles, ...userData } = payload;
@@ -223,8 +224,6 @@ export class UserService extends BaseService<User> {
       where: { email: payload.email },
       select: ['id', 'firstName', 'lastName', 'email', 'password', 'phoneNumber'],
     });
-
-    console.info();
 
     if (!isExist) {
       throw new BadRequestException('User does not exists');

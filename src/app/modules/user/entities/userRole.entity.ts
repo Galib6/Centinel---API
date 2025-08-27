@@ -9,7 +9,7 @@ export class UserRole {
   public static readonly SEARCH_TERMS: string[] = [];
 
   @PrimaryGeneratedColumn('increment', { type: ENUM_COLUMN_TYPES.INT })
-  id?: number;
+  id?: string;
 
   @ManyToOne(() => Role, { onDelete: 'CASCADE' })
   @Type(() => Role)
@@ -20,8 +20,8 @@ export class UserRole {
   user?: User;
 
   @RelationId((e: UserRole) => e.role)
-  roleId?: number;
+  roleId?: string;
 
   @RelationId((e: UserRole) => e.user)
-  userId?: number;
+  userId?: string;
 }

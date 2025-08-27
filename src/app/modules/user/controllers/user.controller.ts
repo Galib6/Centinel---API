@@ -36,13 +36,13 @@ export class UserController {
   }
 
   @Get(':id/available-roles')
-  async availableRoles(@Param('id') id: number, @Query() query: FilterRoleDTO): Promise<Role[]> {
+  async availableRoles(@Param('id') id: string, @Query() query: FilterRoleDTO): Promise<Role[]> {
     return this.service.availableRoles(id, query);
   }
 
   @CacheKey('users:user_list_{id}')
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<User> {
+  async findById(@Param('id') id: string): Promise<User> {
     return this.service.findByIdBase(id, { relations: this.RELATIONS });
   }
 
@@ -57,12 +57,12 @@ export class UserController {
   //   }
 
   @Patch(':id')
-  async updateOne(@Param('id') id: number, @Body() body: UpdateUserDTO): Promise<User> {
+  async updateOne(@Param('id') id: string, @Body() body: UpdateUserDTO): Promise<User> {
     return this.service.updateUser(id, body, this.RELATIONS);
   }
 
   @Delete(':id')
-  async deleteOne(@Param('id') id: number): Promise<SuccessResponse> {
+  async deleteOne(@Param('id') id: string): Promise<SuccessResponse> {
     return this.service.deleteOneBase(id);
   }
 

@@ -2,7 +2,7 @@
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ENV } from '@src/env';
 import { Queue } from 'bullmq';
 import * as express from 'express';
@@ -10,6 +10,7 @@ import { queueNames } from './constants';
 
 @Module({})
 export class BullBoardModule implements OnModuleInit {
+  private logger = new Logger(BullBoardModule.name);
   onModuleInit(): void {
     const app = express();
 
@@ -41,7 +42,7 @@ export class BullBoardModule implements OnModuleInit {
 
     app.use('/admin/queues', serverAdapter.getRouter());
     app.listen(3001, () => {
-      console.info('🧿 Bull Board available at http://localhost:3001/admin/queues');
+      this.logger.log('\n\n\n🚀🚀🚀 Bull Board available  http://localhost:3001/admin/queues\n');
     });
   }
 }

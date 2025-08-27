@@ -15,7 +15,7 @@ export class UserRoleService extends BaseService<UserRole> {
     super(userRoleRepository);
   }
 
-  async getUserPermissions(userId: number): Promise<{
+  async getUserPermissions(userId: string): Promise<{
     permission: string[];
     roles: string[];
   }> {

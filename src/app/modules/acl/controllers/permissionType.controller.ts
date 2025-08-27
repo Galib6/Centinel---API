@@ -20,7 +20,7 @@ export class PermissionTypeController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<PermissionType> {
+  async findById(@Param('id') id: string): Promise<PermissionType> {
     return this.service.findByIdBase(id, { relations: this.RELATIONS });
   }
 
@@ -36,14 +36,14 @@ export class PermissionTypeController {
 
   @Patch(':id')
   async updateOne(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() body: UpdatePermissionTypeDTO
   ): Promise<PermissionType> {
     return this.service.updateOneBase(id, body, { relations: this.RELATIONS });
   }
 
   @Delete(':id')
-  async deleteOne(@Param('id') id: number): Promise<SuccessResponse> {
+  async deleteOne(@Param('id') id: string): Promise<SuccessResponse> {
     return this.service.deleteOneBase(id);
   }
 

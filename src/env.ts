@@ -62,6 +62,9 @@ export const ENV = {
 
   // Logger configuration
   logFolder: envConfig.LOG_FOLDER,
+  lokiHost: envConfig.LOKI_HOST,
+  serviceName: envConfig.SERVICE_NAME,
+  appVersion: envConfig.APP_VERSION,
 
   // JWT configuration
   jwt: {

@@ -4,7 +4,7 @@ import { GenericObject, SuccessResponse } from '../types';
 import { IFindAllBaseOptions } from './../interfaces/queryOptions.interfaces';
 
 export interface IBaseService<T> {
-  findByIdBase(id: number, options?: IFindByIdBaseOptions): Promise<T>;
+  findByIdBase(id: string, options?: IFindByIdBaseOptions): Promise<T>;
 
   isExist(filters: GenericObject): Promise<T>;
 
@@ -18,14 +18,14 @@ export interface IBaseService<T> {
   createOneBase(data: T, options?: IFindByIdBaseOptions): Promise<T>;
 
   updateOneBase(
-    id: number,
+    id: string,
     data: QueryDeepPartialEntity<T>,
     options?: IFindByIdBaseOptions
   ): Promise<T>;
 
-  deleteOneBase(id: number): Promise<SuccessResponse>;
+  deleteOneBase(id: string): Promise<SuccessResponse>;
 
-  softDeleteOneBase(id: number): Promise<SuccessResponse>;
+  softDeleteOneBase(id: string): Promise<SuccessResponse>;
 
-  recoverByIdBase(id: number, options?: IFindByIdBaseOptions): Promise<T>;
+  recoverByIdBase(id: string, options?: IFindByIdBaseOptions): Promise<T>;
 }

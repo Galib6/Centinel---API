@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseCreateDTO } from '@src/app/base';
 import { Type } from 'class-transformer';
 import {
   IsEmail,
@@ -19,9 +20,9 @@ export class CreateRolesDTO {
   })
   @IsNotEmpty()
   @IsUUID()
-  readonly role!: number;
+  readonly role!: string;
 }
-export class CreateUserDTO {
+export class CreateUserDTO extends BaseCreateDTO {
   @ApiProperty({
     type: String,
     required: true,

@@ -134,7 +134,7 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     }
   }
 
-  async findByIdBase(id: number, options?: IFindByIdBaseOptions): Promise<T> {
+  async findByIdBase(id: string, options?: IFindByIdBaseOptions): Promise<T> {
     return await this.repo.findOne({
       where: {
         id,
@@ -167,7 +167,7 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
   }
 
   async updateOneBase(
-    id: number,
+    id: string,
     data: QueryDeepPartialEntity<T>,
     options?: IFindByIdBaseOptions
   ): Promise<T> {
@@ -175,17 +175,17 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     return await this.findByIdBase(id, options);
   }
 
-  async deleteOneBase(id: number): Promise<SuccessResponse> {
+  async deleteOneBase(id: string): Promise<SuccessResponse> {
     await this.repo.delete(id);
     return new SuccessResponse(`${this.repo.metadata.name} deleted successfully`, null);
   }
 
-  async softDeleteOneBase(id: number | number): Promise<SuccessResponse> {
+  async softDeleteOneBase(id: string | number): Promise<SuccessResponse> {
     await this.repo.softDelete(id);
     return new SuccessResponse(`${this.repo.metadata.name} deleted successfully`, null);
   }
 
-  async recoverByIdBase(id: number, options?: IFindByIdBaseOptions): Promise<T> {
+  async recoverByIdBase(id: string, options?: IFindByIdBaseOptions): Promise<T> {
     await this.repo.recover({ id } as DeepPartial<T>);
     return await this.findByIdBase(id, options);
   }

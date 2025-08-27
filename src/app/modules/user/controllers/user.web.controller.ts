@@ -11,12 +11,12 @@ export class WebUserController {
   constructor(private readonly service: UserService) {}
 
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<User> {
+  async findById(@Param('id') id: string): Promise<User> {
     return this.service.findByIdBase(id);
   }
 
   @Patch(':id')
-  async updateOne(@Param('id') id: number, @Body() body: UpdateUserDTO): Promise<User> {
+  async updateOne(@Param('id') id: string, @Body() body: UpdateUserDTO): Promise<User> {
     return this.service.updateOneBase(id, body);
   }
 }

@@ -20,7 +20,7 @@ export class UpdateRolesDTO {
   })
   @IsNotEmpty()
   @IsNumber()
-  readonly role!: number;
+  readonly role!: string;
 
   @ApiProperty({
     type: Boolean,

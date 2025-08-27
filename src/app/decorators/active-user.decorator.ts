@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { REQUEST_USER_KEY } from '../constants/keys.constants';
 
 export interface IActiveUser {
-  id: number;
+  id: string;
   name: string;
   roles: string[];
 }

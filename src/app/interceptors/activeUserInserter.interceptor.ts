@@ -56,7 +56,7 @@ export class ActiveUserInserter implements NestInterceptor {
   /**
    * Adds audit field to request body, handling both single objects and arrays
    */
-  private addAuditField(body: any, fieldName: string, userId: number): void {
+  private addAuditField(body: any, fieldName: string, userId: string): void {
     if (typeof body === 'object' && body !== null) {
       if (Array.isArray(body)) {
         // Handle bulk operations

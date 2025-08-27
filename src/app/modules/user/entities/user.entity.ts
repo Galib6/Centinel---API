@@ -16,8 +16,8 @@ export class User {
     'fullName',
   ];
 
-  @PrimaryGeneratedColumn('increment')
-  id?: number;
+  @PrimaryGeneratedColumn('uuid')
+  id?: string;
 
   @Column({ nullable: true })
   firstName?: string;
@@ -58,14 +58,14 @@ export class User {
   createdBy?: User;
 
   @RelationId((e: User) => e.createdBy)
-  createdById?: number;
+  createdById?: string;
 
   @ManyToOne(() => User, { onDelete: 'NO ACTION' })
   @Type(() => User)
   updatedBy?: User;
 
   @RelationId((e: User) => e.updatedBy)
-  updatedById?: number;
+  updatedById?: string;
 
   @Column({ type: ENUM_COLUMN_TYPES.BOOLEAN, default: true, nullable: true })
   isActive?: boolean;

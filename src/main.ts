@@ -9,7 +9,7 @@ import { createLogger } from './logger';
 import { setupSecurity } from './security';
 import { setupSwagger } from './swagger';
 
-const logger = new Logger();
+const logger = new Logger('main.ts');
 //test
 
 async function bootstrap(): Promise<void> {
@@ -61,8 +61,8 @@ async function bootstrap(): Promise<void> {
   setupSwagger(app);
 
   await app.listen(ENV.config.port);
-  logger.log(`🚀🚀🚀🚀 Application is running on: ${await app.getUrl()} 🚀🚀🚀🚀`);
+  logger.log(`\n\n🚀🚀🚀Application is running on: ${await app.getUrl()} \n\n`);
 
-  logger.log(`📖📖📖 Documentation is available on: ${await app.getUrl()}/docs 📖📖📖`);
+  logger.log(`📖📖📖 Documentation is available on:  ${await app.getUrl()}/docs 📖📖📖`);
 }
 bootstrap();

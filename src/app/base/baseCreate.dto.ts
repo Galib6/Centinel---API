@@ -12,5 +12,5 @@ export class BaseCreateDTO {
 
   @IsOptional()
   @IsNumber()
-  readonly createdBy!: any;
+  readonly createdBy!: string;
 }
