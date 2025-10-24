@@ -57,6 +57,7 @@ export class User {
   @Type(() => User)
   createdBy?: User;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: User) => e.createdBy)
   createdById?: string;
 
@@ -64,6 +65,7 @@ export class User {
   @Type(() => User)
   updatedBy?: User;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: User) => e.updatedBy)
   updatedById?: string;
 

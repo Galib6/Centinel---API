@@ -22,7 +22,9 @@ export default [
       parser: tsParser,
       parserOptions: {
         project: 'tsconfig.json',
-        tsconfigRootDir: '.',
+        // parserOptions.tsconfigRootDir must be an absolute path. In ESM modules use
+        // import.meta.url to compute the directory at runtime.
+        tsconfigRootDir: new URL('.', import.meta.url).pathname,
       },
     },
     linterOptions: {

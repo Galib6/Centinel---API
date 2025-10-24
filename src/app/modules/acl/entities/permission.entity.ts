@@ -1,5 +1,5 @@
 import { BaseEntity } from '@src/app/base';
-import { ENUM_TABLE_NAMES } from '@src/shared';
+import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from '@src/shared';
 import { Type } from 'class-transformer';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { PermissionType } from './permissionType.entity';
@@ -15,6 +15,7 @@ export class Permission extends BaseEntity {
   @Type(() => PermissionType)
   permissionType?: PermissionType;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: Permission) => e.permissionType)
   permissionTypeId?: string;
 

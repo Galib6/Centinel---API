@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '@src/app/base';
 import { asyncForEach } from '@src/shared';
+import { plainToInstance } from 'class-transformer';
 import { DataSource, In, Repository } from 'typeorm';
 import { FilterPermissionDTO, RemovePermissionsDTO } from '../dtos';
 import { Permission } from '../entities/permission.entity';
@@ -32,7 +33,7 @@ export class RoleService extends BaseService<Role> {
 
     const rolePermissions = await this.rolePermissionService.find({
       where: {
-        role: { id: isExist.id as any },
+        roleId: isExist.id,
       },
     });
 
@@ -58,13 +59,13 @@ export class RoleService extends BaseService<Role> {
     await queryRunner.startTransaction();
 
     try {
-      payload.permissions = [...new Set(payload.permissions)];
+      payload.permissionIds = [...new Set(payload.permissionIds)];
 
-      await asyncForEach(payload.permissions, async (permissionId) => {
+      await asyncForEach(payload.permissionIds, async (permissionId) => {
         const isRolePermissionExist = await this.rolePermissionService.findOne({
           where: {
-            role: { id: isRoleExist.id as any },
-            permission: { id: permissionId },
+            roleId: id,
+            permissionId: permissionId,
           },
         });
 
@@ -72,9 +73,9 @@ export class RoleService extends BaseService<Role> {
           throw new BadRequestException('Permission already exist');
         }
         await queryRunner.manager.save(
-          Object.assign(new RolePermission(), {
-            role: isRoleExist.id,
-            permission: permissionId,
+          plainToInstance(RolePermission, {
+            roleId: isRoleExist.id,
+            permissionId: permissionId,
           })
         );
 
@@ -113,22 +114,22 @@ export class RoleService extends BaseService<Role> {
     await queryRunner.startTransaction();
 
     try {
-      payload.permissions = [...new Set(payload.permissions)];
+      payload.permissionIds = [...new Set(payload.permissionIds)];
 
-      await asyncForEach(payload.permissions, async (permissionId) => {
+      await asyncForEach(payload.permissionIds, async (permissionId) => {
         const isRolePermissionExist = await this.rolePermissionService.findOne({
           where: {
-            role: { id: isRoleExist.id as any },
-            permission: { id: permissionId },
+            roleId: isRoleExist.id,
+            permissionId: permissionId,
           },
         });
 
         if (!isRolePermissionExist) {
           throw new BadRequestException('Permission does not exist');
         }
-        await queryRunner.manager.delete(RolePermission, {
-          role: isRoleExist.id,
-          permission: permissionId,
+        await queryRunner.manager.delete<RolePermission>(RolePermission, {
+          roleId: isRoleExist.id,
+          permissionId: permissionId,
         });
 
         removedPermissions.push(permissionId);

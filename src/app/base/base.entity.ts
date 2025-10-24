@@ -12,7 +12,7 @@ import {
 import { User } from '../modules/user/entities/user.entity';
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn('increment', { type: ENUM_COLUMN_TYPES.INT })
+  @PrimaryGeneratedColumn('uuid')
   id?: string;
 
   @Column({ type: ENUM_COLUMN_TYPES.BOOLEAN, default: true, nullable: true })
@@ -31,6 +31,7 @@ export abstract class BaseEntity {
   @Type(() => User)
   createdBy?: User;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: BaseEntity) => e.createdBy)
   createdById?: string;
 
@@ -38,6 +39,7 @@ export abstract class BaseEntity {
   @Type(() => User)
   updatedBy?: User;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: BaseEntity) => e.updatedBy)
   updatedById?: string;
 }

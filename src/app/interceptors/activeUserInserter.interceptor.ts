@@ -37,12 +37,12 @@ export class ActiveUserInserter implements NestInterceptor {
       try {
         // For POST requests (create operations)
         if (method === 'POST') {
-          this.addAuditField(request.body, 'createdBy', userId);
+          this.addAuditField(request.body, 'createdById', userId);
         }
 
         // For PUT/PATCH requests (update operations)
         if (['PUT', 'PATCH'].includes(method)) {
-          this.addAuditField(request.body, 'updatedBy', userId);
+          this.addAuditField(request.body, 'updatedById', userId);
         }
       } catch (error) {
         // Log error but don't break the request flow

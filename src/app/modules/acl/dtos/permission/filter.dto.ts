@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseDTO } from '@src/app/base';
-import { IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNumberString, IsOptional, IsString } from 'class-validator';
 
 export class FilterPermissionDTO extends BaseDTO {
   @ApiProperty({
@@ -32,12 +32,12 @@ export class FilterPermissionDTO extends BaseDTO {
   @IsString()
   readonly searchTerm!: string;
 
-  @ApiProperty({
-    type: String,
-    description: 'permission type id',
-    required: false,
-  })
-  @IsOptional()
-  @IsUUID()
-  readonly permissionType!: any;
+  // @ApiProperty({
+  //   type: String,
+  //   description: 'permission type id',
+  //   required: false,
+  // })
+  // @IsOptional()
+  // @IsUUID()
+  // readonly permissionTypeId!: any;
 }

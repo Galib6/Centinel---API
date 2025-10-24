@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
+import { BaseCreateDTO } from '@src/app/base';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class CreatePermissionDTO {
+export class CreatePermissionDTO extends BaseCreateDTO {
   @ApiProperty({
     type: String,
     required: true,
@@ -18,7 +19,7 @@ export class CreatePermissionDTO {
   })
   @IsNotEmpty()
   @IsUUID()
-  readonly permissionType!: any;
+  readonly permissionTypeId!: string;
 
   @ApiProperty({
     type: Boolean,

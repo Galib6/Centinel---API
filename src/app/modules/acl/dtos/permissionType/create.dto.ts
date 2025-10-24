@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
+import { BaseCreateDTO } from '@src/app/base';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreatePermissionTypeDTO {
+export class CreatePermissionTypeDTO extends BaseCreateDTO {
   @ApiProperty({
     type: String,
     required: true,

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '@src/app/base/base.service';
 import { BcryptHelper } from '@src/app/helpers';
 import { asyncForEach, ENUM_ACL_DEFAULT_ROLES } from '@src/shared';
+import { plainToInstance } from 'class-transformer';
 import { isNotEmptyObject } from 'class-validator';
 import { DataSource, Repository } from 'typeorm';
 import { FilterRoleDTO } from '../../acl/dtos';
@@ -105,7 +106,7 @@ export class UserService extends BaseService<User> {
   async updateUser(id: string, payload: UpdateUserDTO, relations: string[]): Promise<User> {
     await this.isExist({ id });
 
-    const { roles, ...userData } = payload;
+    const { roleIds, ...userData } = payload;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -116,37 +117,36 @@ export class UserService extends BaseService<User> {
         await queryRunner.manager.update(User, { id }, userData);
       }
 
-      if (roles && roles.length > 0) {
-        const deletedItems = roles.filter((role) => role.isDeleted);
-        const newOrUpdatedItems = roles.filter((role) => !role.isDeleted);
+      if (roleIds && roleIds.length > 0) {
+        const deletedItems = roleIds.filter((role) => role.isDeleted);
+        const newOrUpdatedItems = roleIds.filter((role) => !role.isDeleted);
 
         await asyncForEach(deletedItems, async (role: UpdateRolesDTO) => {
           await this.userRoleService.isExist({
-            user: { id },
-            role: { id: role.role },
+            userId: id,
+            roleId: role.id,
           });
           await queryRunner.manager.delete(UserRole, {
-            user: { id },
-            role: { id: role.role },
+            userId: id,
+            roleId: role.id,
           });
         });
 
         await asyncForEach(newOrUpdatedItems, async (role: UpdateRolesDTO) => {
           await this.roleService.isExist({
-            id: role.role,
+            id: role.id,
           });
           const isUserRoleExist = await this.userRoleService.findOne({
             where: {
-              user: { id },
-              role: { id: role.role },
+              userId: id,
+              roleId: role.id,
             },
           });
-
           if (!isUserRoleExist) {
             await queryRunner.manager.save(
-              Object.assign(new UserRole(), {
-                user: id,
-                role: role.role,
+              plainToInstance(UserRole, {
+                userId: id,
+                roleId: role.id,
               })
             );
           }

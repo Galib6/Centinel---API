@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseUpdateDTO } from '@src/app/base';
 import { IsNotEmptyArray, IsUUIDArray } from '@src/app/decorators';
 
-export class RemovePermissionsDTO {
+export class RemovePermissionsDTO extends BaseUpdateDTO {
   @ApiProperty({
     type: [String],
     required: true,
@@ -9,5 +10,5 @@ export class RemovePermissionsDTO {
   })
   @IsNotEmptyArray()
   @IsUUIDArray()
-  permissions!: string[];
+  permissionIds!: string[];
 }

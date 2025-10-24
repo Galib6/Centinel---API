@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsOptional, IsUUID } from 'class-validator';
 
 export class BaseCreateDTO {
   // @ApiProperty({
@@ -11,6 +11,6 @@ export class BaseCreateDTO {
   // readonly isActive: boolean = true;
 
   @IsOptional()
-  @IsNumber()
-  readonly createdBy!: string;
+  @IsUUID()
+  readonly createdById!: string;
 }

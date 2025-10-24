@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseUpdateDTO } from '@src/app/base';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-export class UpdatePermissionTypeDTO {
+export class UpdatePermissionTypeDTO extends BaseUpdateDTO {
   @ApiProperty({
     type: String,
     required: false,

@@ -66,7 +66,7 @@ export class RoleController {
     return this.service.deleteOneBase(id);
   }
 
-  @Delete(':id/remove-permissions')
+  @Patch(':id/remove-permissions')
   async removePermission(
     @Param('id') id: string,
     @Body() body: RemovePermissionsDTO
