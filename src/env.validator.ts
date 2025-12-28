@@ -47,7 +47,8 @@ const envSchema = Joi.object({
 
   // Logger configuration
   LOG_FOLDER: Joi.string().default('logs'),
-  LOKI_HOST: Joi.string().optional(),
+  LOG_MAX_SIZE: Joi.string().default('100m'),
+  LOG_MAX_FILES: Joi.number().integer().default(5),
   SERVICE_NAME: Joi.string().default('centinel-api'),
   APP_VERSION: Joi.string().default('1.0.0'),
 

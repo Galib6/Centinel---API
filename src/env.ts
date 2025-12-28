@@ -62,7 +62,8 @@ export const ENV = {
 
   // Logger configuration
   logFolder: envConfig.LOG_FOLDER,
-  lokiHost: envConfig.LOKI_HOST,
+  logMaxSize: envConfig.LOG_MAX_SIZE,
+  logMaxFiles: envConfig.LOG_MAX_FILES,
   serviceName: envConfig.SERVICE_NAME,
   appVersion: envConfig.APP_VERSION,
 

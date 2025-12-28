@@ -21,8 +21,8 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     }
 
     if (event.entity.firstName || event.entity.lastName) {
-      event.entity.fullName = `${event.entity.firstName ?? ''}${
-        event.entity.lastName ? ` ${event.entity.lastName}` : ''
+      event.entity.fullName = `${event.entity.firstName?.trim() ?? ''}${
+        event.entity.lastName.trim() ? ` ${event.entity.lastName.trim()}` : ''
       }`.trim();
     }
   }

@@ -1,16 +1,17 @@
-import { Injectable, LoggerService, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+/**
+ * Enhanced logger service (pino-backed)
+ * - Provides Nest-compatible logging methods: log, error, warn, debug, verbose
+ * - Adds: setLogLevel, logPerformance, flush
+ * - Writes rotated JSON logs: app.log, error.log, debug.log (configurable via env)
+ * - Pretty-printed, colorized console output in development for easier debugging
+ *
+ * The service intentionally exposes a small public API to keep usage simple and testable.
+ */
+import { Injectable, LoggerService, OnModuleDestroy } from '@nestjs/common';
 import pino from 'pino';
 import { ENV } from './env';
 
 interface ILoggerConfig {
-  enableLoki?: boolean;
-  lokiConfig?: {
-    host: string;
-    batchingEnabled?: boolean;
-    batchInterval?: number;
-    labels?: Record<string, string>;
-    basicAuth?: string;
-  };
   fileRotation?: {
     maxSize?: string;
     maxFiles?: number;
@@ -52,16 +53,9 @@ class LoggerManager {
 
   private buildLogger(config: ILoggerConfig): pino.Logger {
     const {
-      enableLoki = false,
-      lokiConfig = {
-        host: 'http://localhost:3100',
-        batchingEnabled: true,
-        batchInterval: 5,
-        labels: {},
-      },
       fileRotation = {
-        maxSize: '50m',
-        maxFiles: 10,
+        maxSize: ENV.logMaxSize || '100m',
+        maxFiles: ENV.logMaxFiles || 5,
       },
       logLevel = ENV.config?.nodeEnv === 'production' ? 'info' : 'debug',
     } = config;
@@ -78,7 +72,7 @@ class LoggerManager {
         level: logLevel,
         options: {
           colorize: true,
-          translateTime: 'HH:MM:ss',
+          translateTime: 'yyyy-mm-dd HH:MM:ss',
           ignore: 'pid,hostname,service,env',
           messageFormat: '[{context}] {msg}',
           levelFirst: true,
@@ -96,6 +90,7 @@ class LoggerManager {
           file: `${logFolder}/app.log`,
           frequency: 'daily',
           size: fileRotation.maxSize,
+          maxFiles: fileRotation.maxFiles,
           mkdir: true,
         },
       },
@@ -106,35 +101,25 @@ class LoggerManager {
           file: `${logFolder}/error.log`,
           frequency: 'daily',
           size: fileRotation.maxSize,
+          maxFiles: fileRotation.maxFiles,
           mkdir: true,
         },
       }
     );
 
-    // Loki transport (if enabled) - with unique instance to prevent conflicts
-    if (enableLoki) {
-      targets.push({
-        target: 'pino-loki',
-        level: logLevel,
-        options: {
-          batching: lokiConfig.batchingEnabled,
-          interval: lokiConfig.batchInterval,
-          host: lokiConfig.host,
-          basicAuth: lokiConfig.basicAuth || undefined,
-          labels: {
-            service: ENV.serviceName || 'centinel-api',
-            environment: ENV.config?.nodeEnv || 'development',
-            version: ENV.appVersion || '1.0.0',
-            instance: `${ENV.serviceName}-${process.pid}-${Date.now()}`, // Unique instance ID
-            ...lokiConfig.labels,
-          },
-          replaceTimestamp: true,
-          convertArrays: false,
-          timeout: 30000,
-          silenceErrors: false,
-        },
-      });
-    }
+    // Human-readable debug logs (pretty-printed) to help with local debugging
+    // This produces non-colored, pretty output suitable for quick inspection of `./logs/debug.log`.
+    targets.push({
+      target: 'pino-roll',
+      level: 'debug',
+      options: {
+        file: `${logFolder}/debug.log`,
+        frequency: 'daily',
+        size: fileRotation.maxSize,
+        maxFiles: fileRotation.maxFiles,
+        mkdir: true,
+      },
+    });
 
     return pino({
       level: logLevel,
@@ -169,12 +154,6 @@ class LoggerManager {
 // Enhanced LoggerService interface
 export interface IExtendedLoggerService extends LoggerService {
   setLogLevel: (level: string) => void;
-  logWithMetadata: (
-    level: string,
-    message: string,
-    metadata: Record<string, any>,
-    context?: string
-  ) => void;
   logPerformance: (
     operation: string,
     duration: number,
@@ -182,30 +161,18 @@ export interface IExtendedLoggerService extends LoggerService {
     metadata?: Record<string, any>
   ) => void;
   flush: () => Promise<void>;
-  isReady: () => boolean;
 }
 
 // Injectable Logger Service with proper lifecycle management
 @Injectable()
-export class EnhancedLoggerService
-  implements IExtendedLoggerService, OnModuleInit, OnModuleDestroy
-{
+export class EnhancedLoggerService implements IExtendedLoggerService, OnModuleDestroy {
   private logger: pino.Logger;
   private loggerManager: LoggerManager;
   private isInitialized = false;
-  private initializationPromise: Promise<void> | null = null;
 
   constructor(private config: ILoggerConfig = {}) {
     this.loggerManager = LoggerManager.getInstance();
-  }
-
-  async onModuleInit(): Promise<void> {
-    if (this.initializationPromise) {
-      return this.initializationPromise;
-    }
-
-    this.initializationPromise = this.initialize();
-    return this.initializationPromise;
+    this.initialize();
   }
 
   async onModuleDestroy(): Promise<void> {
@@ -216,8 +183,7 @@ export class EnhancedLoggerService
     }
   }
 
-  async log(message: any, context?: string): Promise<void> {
-    await this.ensureInitialized();
+  log(message: any, context?: string): void {
     const childLogger = this.createChildLogger(context);
 
     if (typeof message === 'string') {
@@ -227,8 +193,7 @@ export class EnhancedLoggerService
     }
   }
 
-  async error(message: any, trace?: string, context?: string): Promise<void> {
-    await this.ensureInitialized();
+  error(message: any, trace?: string, context?: string): void {
     const childLogger = this.createChildLogger(context);
 
     if (message instanceof Error) {
@@ -259,8 +224,7 @@ export class EnhancedLoggerService
     }
   }
 
-  async warn(message: any, context?: string): Promise<void> {
-    await this.ensureInitialized();
+  warn(message: any, context?: string): void {
     const childLogger = this.createChildLogger(context);
 
     if (typeof message === 'string') {
@@ -270,8 +234,7 @@ export class EnhancedLoggerService
     }
   }
 
-  async debug(message: any, context?: string): Promise<void> {
-    await this.ensureInitialized();
+  debug(message: any, context?: string): void {
     const childLogger = this.createChildLogger(context);
 
     if (typeof message === 'string') {
@@ -281,8 +244,7 @@ export class EnhancedLoggerService
     }
   }
 
-  async verbose(message: any, context?: string): Promise<void> {
-    await this.ensureInitialized();
+  verbose(message: any, context?: string): void {
     const childLogger = this.createChildLogger(context);
 
     if (typeof message === 'string') {
@@ -298,24 +260,14 @@ export class EnhancedLoggerService
     }
   }
 
-  async logWithMetadata(
-    level: string,
-    message: string,
-    metadata: Record<string, any>,
-    context?: string
-  ): Promise<void> {
-    await this.ensureInitialized();
-    const childLogger = this.createChildLogger(context);
-    (childLogger as any)[level]({ ...metadata }, message);
-  }
+  // NOTE: `logWithMetadata` removed to keep the API small; use `log`/`error`/`debug` + object payloads instead.
 
-  async logPerformance(
+  logPerformance(
     operation: string,
     duration: number,
     context?: string,
     metadata?: Record<string, any>
-  ): Promise<void> {
-    await this.ensureInitialized();
+  ): void {
     const childLogger = this.createChildLogger(context);
     childLogger.info(
       {
@@ -336,15 +288,9 @@ export class EnhancedLoggerService
     }
   }
 
-  isReady(): boolean {
-    return this.isInitialized;
-  }
+  // internal helpers are intentionally limited; avoid exposing manager control publicly.
 
-  clearLoggers(): void {
-    this.loggerManager.clearLoggers();
-  }
-
-  private async initialize(): Promise<void> {
+  private initialize(): void {
     try {
       this.logger = this.loggerManager.createLogger(
         this.getEffectiveConfig(),
@@ -363,16 +309,6 @@ export class EnhancedLoggerService
     const isProduction = !isDevelopment;
 
     return {
-      enableLoki: isProduction && !!ENV.lokiHost,
-      lokiConfig: {
-        host: ENV.lokiHost || 'http://localhost:3100',
-        batchingEnabled: true,
-        batchInterval: 5,
-        labels: {
-          service: ENV.serviceName || 'centinel-api',
-          environment: ENV.config?.nodeEnv || 'development',
-        },
-      },
       fileRotation: {
         maxSize: '50m',
         maxFiles: 10,
@@ -384,17 +320,9 @@ export class EnhancedLoggerService
 
   private createChildLogger(context?: string): pino.Logger {
     if (!this.isInitialized) {
-      throw new Error('Logger service not initialized. Call onModuleInit() first.');
+      this.initialize();
     }
     return context ? this.logger.child({ context }) : this.logger;
-  }
-
-  private async ensureInitialized(): Promise<void> {
-    if (!this.isInitialized && !this.initializationPromise) {
-      await this.onModuleInit();
-    } else if (this.initializationPromise) {
-      await this.initializationPromise;
-    }
   }
 }
 
@@ -407,18 +335,8 @@ export function createCustomLogger(config: ILoggerConfig = {}): IExtendedLoggerS
   return new EnhancedLoggerService(config);
 }
 
-export function createProductionLogger(lokiHost?: string): IExtendedLoggerService {
+export function createProductionLogger(): IExtendedLoggerService {
   return new EnhancedLoggerService({
-    enableLoki: !!lokiHost,
-    lokiConfig: {
-      host: lokiHost || 'http://localhost:3100',
-      batchingEnabled: true,
-      batchInterval: 5,
-      labels: {
-        service: ENV.serviceName || 'centinel-api',
-        environment: ENV.config?.nodeEnv || 'production',
-      },
-    },
     fileRotation: {
       maxSize: '50m',
       maxFiles: 10,
@@ -442,7 +360,7 @@ export function LogPerformance(operation?: string) {
         const duration = Date.now() - start;
 
         if (logger && typeof logger.logPerformance === 'function') {
-          await logger.logPerformance(operationName, duration, target.constructor.name);
+          logger.logPerformance(operationName, duration, target.constructor.name);
         }
 
         return result;
@@ -450,7 +368,7 @@ export function LogPerformance(operation?: string) {
         const duration = Date.now() - start;
 
         if (logger && typeof logger.logPerformance === 'function') {
-          await logger.logPerformance(operationName, duration, target.constructor.name, {
+          logger.logPerformance(operationName, duration, target.constructor.name, {
             error: true,
             errorMessage: error instanceof Error ? error.message : String(error),
           });

@@ -14,9 +14,7 @@ const logger = new Logger('main.ts');
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: ENV.config.isDevelopment
-      ? createLogger()
-      : ['error', 'warn', 'debug', 'log', 'verbose'],
+    logger: createLogger(),
   });
 
   // const kafkaOptions = KafkaFactory.createMicroserviceOptions();
