@@ -1,7 +1,7 @@
 import { BaseEntity } from '@src/app/base';
-import { ENUM_TABLE_NAMES } from '@src/shared';
+import { ENUM_COLUMN_TYPES, ENUM_TABLE_NAMES } from '@src/shared';
 import { Type } from 'class-transformer';
-import { Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { Permission } from './permission.entity';
 import { Role } from './role.entity';
 
@@ -13,6 +13,7 @@ export class RolePermission extends BaseEntity {
   @Type(() => Role)
   role?: Role;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: RolePermission) => e.role)
   roleId?: string;
 
@@ -20,6 +21,7 @@ export class RolePermission extends BaseEntity {
   @Type(() => Permission)
   permission?: Permission;
 
+  @Column({ type: ENUM_COLUMN_TYPES.UUID })
   @RelationId((e: RolePermission) => e.permission)
   permissionId?: string;
 }

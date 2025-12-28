@@ -18,7 +18,7 @@ export class UpdatePermissionDTO {
   })
   @IsOptional()
   @IsUUID()
-  readonly permissionType!: string;
+  readonly permissionTypeId!: string;
 
   @ApiProperty({
     type: Boolean,

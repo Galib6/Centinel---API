@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsOptional, IsUUID } from 'class-validator';
+import { User } from '../modules/user/entities/user.entity';
 
 export class BaseUpdateDTO {
   @ApiProperty({
@@ -12,6 +13,6 @@ export class BaseUpdateDTO {
   readonly isActive: boolean;
 
   @IsOptional()
-  @IsNumber()
-  readonly updatedBy!: any;
+  @IsUUID()
+  readonly updatedById!: User;
 }

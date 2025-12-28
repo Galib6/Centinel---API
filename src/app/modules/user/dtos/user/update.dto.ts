@@ -4,9 +4,9 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
   ValidateNested,
@@ -19,8 +19,8 @@ export class UpdateRolesDTO {
     example: 'c10ee33d-20a7-4689-8f80-929963400f7d',
   })
   @IsNotEmpty()
-  @IsNumber()
-  readonly role!: string;
+  @IsUUID()
+  readonly id!: string;
 
   @ApiProperty({
     type: Boolean,
@@ -76,10 +76,10 @@ export class UpdateUserDTO extends BaseUpdateDTO {
     required: false,
     example: [
       {
-        role: '1e276fa4-bab1-4bda-bee2-8bc509960467',
+        id: '1e276fa4-bab1-4bda-bee2-8bc509960467',
       },
       {
-        role: 'c10ee33d-20a7-4689-8f80-929963400f7d',
+        id: 'c10ee33d-20a7-4689-8f80-929963400f7d',
         isDeleted: true,
       },
     ],
@@ -87,5 +87,5 @@ export class UpdateUserDTO extends BaseUpdateDTO {
   @ValidateNested()
   @Type(() => UpdateRolesDTO)
   @IsOptional()
-  readonly roles!: UpdateRolesDTO[];
+  readonly roleIds!: UpdateRolesDTO[];
 }

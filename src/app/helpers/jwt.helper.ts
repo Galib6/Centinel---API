@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ENV } from '@src/env';
+import type { StringValue } from 'ms';
 import * as OtpUtil from 'otp-without-db';
 import { GenericObject } from '../types';
 
@@ -13,7 +14,7 @@ export class JWTHelper {
   // }
 
   public async signToken<T extends object | Buffer>(
-    expiresIn: string,
+    expiresIn: StringValue,
     payload: T
   ): Promise<string> {
     return await this.jwtService.signAsync(payload, {
