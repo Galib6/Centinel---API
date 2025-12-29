@@ -292,12 +292,16 @@ export class EnhancedLoggerService implements IExtendedLoggerService, OnModuleDe
 
   private initialize(): void {
     try {
+      const effectiveConfig = this.getEffectiveConfig();
       this.logger = this.loggerManager.createLogger(
-        this.getEffectiveConfig(),
+        effectiveConfig,
         `${ENV.serviceName}-${Date.now()}`
       );
       this.isInitialized = true;
-      this.logger.info('Logger service initialized successfully');
+      this.logger.info(
+        { fileRotation: effectiveConfig.fileRotation },
+        'Logger service initialized successfully'
+      );
     } catch (error) {
       console.error('Failed to initialize logger:', error);
       throw error;
@@ -310,8 +314,8 @@ export class EnhancedLoggerService implements IExtendedLoggerService, OnModuleDe
 
     return {
       fileRotation: {
-        maxSize: '50m',
-        maxFiles: 10,
+        maxSize: ENV.logMaxSize || '50m',
+        maxFiles: ENV.logMaxFiles || 10,
       },
       logLevel: isProduction ? 'info' : 'debug',
       ...this.config,

@@ -54,12 +54,6 @@ export const ENV = {
     rateLimitMax: envConfig.RATE_LIMIT_MAX,
   },
 
-  liveKit: {
-    apiKey: envConfig.LIVEKIT_API_KEY,
-    secret: envConfig.LIVEKIT_API_SECRET,
-    serverUrl: envConfig.LIVEKIT_SERVER_URL,
-  },
-
   // Logger configuration
   logFolder: envConfig.LOG_FOLDER,
   logMaxSize: envConfig.LOG_MAX_SIZE,

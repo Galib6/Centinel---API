@@ -27,9 +27,7 @@ export class BullBoardModule implements OnModuleInit {
               port: ENV.redis.port,
               username: ENV.redis.username,
               password: ENV.redis.password,
-              ...(!ENV.redis.host?.startsWith('localhost')
-                ? { tls: { rejectUnauthorized: false } }
-                : {}),
+              ...(ENV.redis.tls ? { tls: { rejectUnauthorized: false } } : {}),
             },
           })
         )

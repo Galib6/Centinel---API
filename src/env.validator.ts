@@ -15,7 +15,7 @@ const envSchema = Joi.object({
     .valid('development', 'production', 'test', 'staging')
     .default('development'),
   API_PREFIX: Joi.string().default('api/v1'),
-  API_BASE_URL: Joi.string().uri().default('http://localhost:4500'),
+  API_BASE_URL: Joi.string().uri().default('http://localhost:4600'),
   TZ: Joi.string().default('UTC'),
 
   // Swagger configuration
@@ -49,7 +49,6 @@ const envSchema = Joi.object({
   LOG_FOLDER: Joi.string().default('logs'),
   LOG_MAX_SIZE: Joi.string().default('100m'),
   LOG_MAX_FILES: Joi.number().integer().default(5),
-  SERVICE_NAME: Joi.string().default('centinel-api'),
   APP_VERSION: Joi.string().default('1.0.0'),
 
   // JWT configuration
@@ -70,10 +69,10 @@ const envSchema = Joi.object({
   SMTP_PASSWORD: Joi.string().required(),
 
   REDIS_HOST: Joi.string().required(),
-  REDIS_PORT: Joi.string().required(),
-  REDIS_USERNAME: Joi.string().allow(''),
-  REDIS_PASSWORD: Joi.string().optional(),
-  REDIS_TLS: Joi.string().required(),
+  REDIS_PORT: Joi.number().integer().default(6379),
+  REDIS_USERNAME: Joi.string().allow('').default(''),
+  REDIS_PASSWORD: Joi.string().optional().allow(''),
+  REDIS_TLS: Joi.boolean().truthy('true').falsy('false').default(false),
 
   SEED_SUPER_ADMIN_EMAIL: Joi.string().required(),
   SEED_SUPER_ADMIN_PASSWORD: Joi.string().required(),
@@ -109,7 +108,21 @@ const { error, value: validatedEnv } = envSchema.validate(process.env, {
 });
 
 if (error) {
-  throw new Error(`ENV validation error: ${error.message}`);
+  console.error('\n❌ ENV validation error:');
+  if (error.details && Array.isArray(error.details)) {
+    error.details.forEach((d) => {
+      console.error(
+        `  - ${d.message} (path: ${Array.isArray(d.path) ? d.path.join('.') : d.path})`
+      );
+    });
+  } else {
+    console.error(error.message);
+  }
+  console.error(
+    `Loaded env file: ${path.join(process.cwd(), 'environments', `${process.env.NODE_ENV || 'development'}.env`)}`
+  );
+  // ensure the process exits with a non-zero code so the error is visible in terminal/containers
+  process.exit(1);
 }
 
 export const envConfig = validatedEnv;
