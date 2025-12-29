@@ -39,3 +39,5 @@ EXPOSE $APM_PROMETHEUS_PORT
 
 # Define the entrypoint
 ENTRYPOINT ["sh", "./entrypoint.sh"]
+
+
