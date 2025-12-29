@@ -7,8 +7,8 @@ on:
 env:
   NODE_ENV: production
   APP_NAME: centinel-prod
-  NGINX_CONFIG_PATH: /etc/nginx/sites-enabled/centinel
-  APP_DOMAIN: centinel.algalib.me
+  NGINX_CONFIG_PATH: /etc/nginx/sites-enabled/c.r-tech.live
+  APP_DOMAIN: c.r-tech.live
   HEALTH_CHECK_END_POINT: /api/v1/health
   DEPLOY_DIRECTORY: '~/deploy/centinel-prod'
 
