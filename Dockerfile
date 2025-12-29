@@ -33,9 +33,6 @@ COPY --from=builder /app/entrypoint.sh ./
 # Ensure the entrypoint script is executable
 RUN chmod +x ./entrypoint.sh
 
-# Set the environment variable
-ENV PORT=6800
-
 # Expose the port
 EXPOSE $PORT
 EXPOSE $APM_PROMETHEUS_PORT
