@@ -35,9 +35,14 @@ jobs:
       - name: Process and Load Environment Variables
         run: |
           echo "📝 Loading env vars from secret into memory"
-          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | awk 'BEGIN {FS=": "; OFS="="} $1 && NF==2 {gsub(/ /, "", $1); print $1 "=\"" $2 "\"" }' | while read line; do
-            export $line
-          done
+          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | \
+            sed '/^\s*$/d; /^\s*\/\//d' | \
+            while IFS='=' read -r key value; do
+              # Remove surrounding quotes if present
+              value=${value%\"}
+              value=${value#\"}
+              export "$key=$value"
+            done
 
           envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < ./environments/prod.example.env > ./environments/$NODE_ENV.env
           echo "Contents of ./environments/$NODE_ENV.env:"
