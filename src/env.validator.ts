@@ -102,6 +102,17 @@ const envSchema = Joi.object({
   }),
 }).unknown(true);
 
+// Log environment values (masking sensitive keys) before validation for debugging
+const safeEnv: Record<string, string | undefined> = Object.keys(process.env).reduce(
+  (acc, k) => {
+    const isSensitive = /password|secret|key|token|jwt|private|cert|smtp|db_password|access_key/i.test(k);
+    acc[k] = isSensitive ? '***' : process.env[k];
+    return acc;
+  },
+  {} as Record<string, string | undefined>
+);
+console.log('\nLoaded env values (masked):', JSON.stringify(safeEnv, null, 2));
+
 // Validate process.env
 const { error, value: validatedEnv } = envSchema.validate(process.env, {
   abortEarly: false,
