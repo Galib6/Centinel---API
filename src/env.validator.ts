@@ -22,6 +22,17 @@ config({
   path: envFilePath,
 });
 
+// Log ALL env values BEFORE validation
+console.error('\n🔍 All env values BEFORE validation:');
+console.error('DB_HOST:', process.env.DB_HOST);
+console.error('DB_USERNAME:', process.env.DB_USERNAME);
+console.error('DB_PASSWORD:', process.env.DB_PASSWORD);
+console.error('DB_DATABASE:', process.env.DB_DATABASE);
+console.error('S3_ENDPOINT:', process.env.S3_ENDPOINT);
+console.error('JWT_SECRET:', process.env.JWT_SECRET);
+console.error('REDIS_HOST:', process.env.REDIS_HOST);
+console.error('KAFKA_ENABLED:', process.env.KAFKA_ENABLED);
+
 const envSchema = Joi.object({
   PORT: Joi.number().integer().default(8000),
   APP_ENV: Joi.string()
