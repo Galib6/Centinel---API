@@ -34,12 +34,10 @@ jobs:
 
       - name: Process and Load Environment Variables
         run: |
-          # Parse env vars: remove \r, trim spaces around =, and quote values
-          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | tr -d '\r' | sed "s/^[[:space:]]*//;s/[[:space:]]*$//;s/ *= */=/;s/=\(.*\)/=\"\1\"/" > /tmp/env_vars.txt
-          set -a && source /tmp/env_vars.txt && set +a
-          rm -f /tmp/env_vars.txt
-          envsubst < ./environments/prod.example.env > ./environments/$NODE_ENV.env
-          cat ./environments/$NODE_ENV.env
+          # Write secrets directly to production.env (already in KEY=VALUE format)
+          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | tr -d '\r' | sed "s/^[[:space:]]*//;s/[[:space:]]*$//;s/ *= */=/" > ./environments/production.env
+          echo "✅ Created production.env:"
+          cat ./environments/production.env
 
       - name: Log in to Docker Hub
         run: docker login -u ${{env.DOCKER_USER}} -p ${{env.DOCKER_PASSWORD}}
