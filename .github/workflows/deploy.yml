@@ -35,6 +35,9 @@ jobs:
       - name: Process and Load Environment Variables
         run: |
           echo "${{ secrets.PRODUCTION_ENV_VARS }}" | tr -d '\r' > /tmp/env_vars.txt
+          echo "=== env_vars.txt contents ==="
+          cat /tmp/env_vars.txt
+          echo "=== end ==="
           set -a && source /tmp/env_vars.txt && set +a
           rm -f /tmp/env_vars.txt
           envsubst < ./environments/prod.example.env > ./environments/$NODE_ENV.env
