@@ -35,9 +35,26 @@ jobs:
       - name: Process and Load Environment Variables
         run: |
           echo "📝 Loading env vars from secret into memory"
-          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | awk 'BEGIN {FS=": "; OFS="="} $1 && NF==2 {gsub(/ /, "", $1); print $1 "=\"" $2 "\"" }' | while read line; do
-            export $line
-          done
+
+          # Write secrets to a temp file and source it
+          echo "${{ secrets.PRODUCTION_ENV_VARS }}" > /tmp/env_vars.txt
+
+          # Export each line as an environment variable
+          while IFS= read -r line; do
+            # Skip empty lines and comments
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+            # Trim leading and trailing whitespace
+            line=$(echo "$line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+            # Remove spaces around equals sign (KEY = VALUE -> KEY=VALUE)
+            line=$(echo "$line" | sed -e 's/[[:space:]]*=[[:space:]]*/=/g')
+            # Skip if line is empty after trimming
+            [[ -z "$line" ]] && continue
+            # Export the variable
+            export "$line"
+          done < /tmp/env_vars.txt
+
+          # Clean up
+          rm -f /tmp/env_vars.txt
 
           envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < ./environments/prod.example.env > ./environments/$NODE_ENV.env
           echo "Contents of ./environments/$NODE_ENV.env:"
@@ -49,7 +66,7 @@ jobs:
         run: docker build . --file Dockerfile --tag ${{env.DOCKER_USER}}/${{env.APP_NAME}}:latest
       - name: Docker Push
         run: docker push ${{env.DOCKER_USER}}/${{env.APP_NAME}}:latest
-        
+
       - name: Zero Downtime Deploy to DigitalOcean
         uses: appleboy/ssh-action@master
         with:
@@ -127,4 +144,3 @@ jobs:
             fi
 
             echo "✅ Deployment complete"
-
