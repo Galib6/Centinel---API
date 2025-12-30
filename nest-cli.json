@@ -9,6 +9,11 @@
         "include": "./app/modules/mail/template",
         "outDir": "dist/",
         "watchAssets": true
+      },
+      {
+        "include": "./gRPC/proto/**/*.proto",
+        "outDir": "dist/",
+        "watchAssets": true
       }
     ]
   }

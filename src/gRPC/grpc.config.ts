@@ -1,13 +1,20 @@
 import { ClientsModuleOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
+// In production (dist), proto files are in dist/gRPC/proto
+// In development (src), proto files are in src/gRPC/proto
+const protoBasePath =
+  process.env.NODE_ENV === 'production'
+    ? join(process.cwd(), 'dist/gRPC/proto')
+    : join(process.cwd(), 'src/gRPC/proto');
+
 export const grpcClientsConfig: ClientsModuleOptions = [
   {
     name: 'AUTH_SERVICE',
     transport: Transport.GRPC,
     options: {
       package: ['auth', 'common'],
-      protoPath: join(process.cwd(), 'src/gRPC/proto/auth.proto'),
+      protoPath: join(protoBasePath, 'auth.proto'),
       url: process.env.AUTH_SERVICE_URL || 'localhost:50051',
       keepalive: {
         keepaliveTimeMs: 30000,

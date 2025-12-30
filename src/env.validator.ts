@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import * as fs from 'fs';
 import * as Joi from 'joi';
 import * as path from 'path';
 
@@ -9,29 +8,9 @@ const envFilePath = path.join(
   `${process.env.NODE_ENV || 'development'}.env`
 );
 
-// Debug: Check if file exists and show contents
-console.error(`\n📁 Looking for env file: ${envFilePath}`);
-if (fs.existsSync(envFilePath)) {
-  const fileContent = fs.readFileSync(envFilePath, 'utf8');
-  console.error(`✅ File exists. Contents (first 500 chars):\n${fileContent.substring(0, 500)}...`);
-} else {
-  console.error(`❌ File does NOT exist!`);
-}
-
 config({
   path: envFilePath,
 });
-
-// Log ALL env values BEFORE validation
-console.error('\n🔍 All env values BEFORE validation:');
-console.error('DB_HOST:', process.env.DB_HOST);
-console.error('DB_USERNAME:', process.env.DB_USERNAME);
-console.error('DB_PASSWORD:', process.env.DB_PASSWORD);
-console.error('DB_DATABASE:', process.env.DB_DATABASE);
-console.error('S3_ENDPOINT:', process.env.S3_ENDPOINT);
-console.error('JWT_SECRET:', process.env.JWT_SECRET);
-console.error('REDIS_HOST:', process.env.REDIS_HOST);
-console.error('KAFKA_ENABLED:', process.env.KAFKA_ENABLED);
 
 const envSchema = Joi.object({
   PORT: Joi.number().integer().default(8000),
@@ -129,18 +108,6 @@ const envSchema = Joi.object({
   }),
 }).unknown(true);
 
-// Log environment values (masking sensitive keys) before validation for debugging
-// const safeEnv: Record<string, string | undefined> = Object.keys(process.env).reduce(
-//   (acc, k) => {
-//     const isSensitive =
-//       /password|secret|key|token|jwt|private|cert|smtp|db_password|access_key/i.test(k);
-//     acc[k] = isSensitive ? '***' : process.env[k];
-//     return acc;
-//   },
-//   {} as Record<string, string | undefined>
-// );
-// console.error('\nLoaded env values (masked):', JSON.stringify(safeEnv, null, 2));
-
 // Validate process.env
 const { error, value: validatedEnv } = envSchema.validate(process.env, {
   abortEarly: false,
@@ -160,7 +127,6 @@ if (error) {
   console.error(
     `Loaded env file: ${path.join(process.cwd(), 'environments', `${process.env.NODE_ENV || 'development'}.env`)}`
   );
-  // ensure the process exits with a non-zero code so the error is visible in terminal/containers
   process.exit(1);
 }
 
