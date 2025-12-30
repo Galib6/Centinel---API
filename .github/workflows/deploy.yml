@@ -36,10 +36,10 @@ jobs:
         run: |
           echo "📝 Loading env vars from secret into memory"
 
-          # Write secrets to a temp file and source it
-          echo "${{ secrets.PRODUCTION_ENV_VARS }}" > /tmp/env_vars.txt
+          # Write secrets to a temp file
+          echo "${{ secrets.PRODUCTION_ENV_VARS }}" > /tmp/env_vars_raw.txt
 
-          # Export each line as an environment variable
+          # Clean up the file: trim whitespace and normalize spaces around =
           while IFS= read -r line; do
             # Skip empty lines and comments
             [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
@@ -49,14 +49,19 @@ jobs:
             line=$(echo "$line" | sed -e 's/[[:space:]]*=[[:space:]]*/=/g')
             # Skip if line is empty after trimming
             [[ -z "$line" ]] && continue
-            # Export the variable
-            export "$line"
-          done < /tmp/env_vars.txt
+            # Write to cleaned file
+            echo "$line" >> /tmp/env_vars.txt
+          done < /tmp/env_vars_raw.txt
+
+          # Enable auto-export and source the file
+          set -a
+          source /tmp/env_vars.txt
+          set +a
 
           # Clean up
-          rm -f /tmp/env_vars.txt
+          rm -f /tmp/env_vars_raw.txt /tmp/env_vars.txt
 
-          envsubst "`printf '${%s} ' $(sh -c "env|cut -d'=' -f1")`" < ./environments/prod.example.env > ./environments/$NODE_ENV.env
+          envsubst < ./environments/prod.example.env > ./environments/$NODE_ENV.env
           echo "Contents of ./environments/$NODE_ENV.env:"
           cat ./environments/$NODE_ENV.env
 
