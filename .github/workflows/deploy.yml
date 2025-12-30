@@ -34,7 +34,8 @@ jobs:
 
       - name: Process and Load Environment Variables
         run: |
-          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | tr -d '\r' | sed 's/ *= */=/g' > /tmp/env_vars.txt
+          # Parse env vars: remove \r, trim spaces around =, and quote values
+          echo "${{ secrets.PRODUCTION_ENV_VARS }}" | tr -d '\r' | sed "s/^[[:space:]]*//;s/[[:space:]]*$//;s/ *= */=/;s/=\(.*\)/=\"\1\"/" > /tmp/env_vars.txt
           set -a && source /tmp/env_vars.txt && set +a
           rm -f /tmp/env_vars.txt
           envsubst < ./environments/prod.example.env > ./environments/$NODE_ENV.env
