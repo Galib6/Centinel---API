@@ -1,9 +1,25 @@
 import { config } from 'dotenv';
+import * as fs from 'fs';
 import * as Joi from 'joi';
 import * as path from 'path';
 
+const envFilePath = path.join(
+  process.cwd(),
+  'environments',
+  `${process.env.NODE_ENV || 'development'}.env`
+);
+
+// Debug: Check if file exists and show contents
+console.error(`\n📁 Looking for env file: ${envFilePath}`);
+if (fs.existsSync(envFilePath)) {
+  const fileContent = fs.readFileSync(envFilePath, 'utf8');
+  console.error(`✅ File exists. Contents (first 500 chars):\n${fileContent.substring(0, 500)}...`);
+} else {
+  console.error(`❌ File does NOT exist!`);
+}
+
 config({
-  path: path.join(process.cwd(), 'environments', `${process.env.NODE_ENV || 'development'}.env`),
+  path: envFilePath,
 });
 
 const envSchema = Joi.object({
@@ -103,15 +119,16 @@ const envSchema = Joi.object({
 }).unknown(true);
 
 // Log environment values (masking sensitive keys) before validation for debugging
-const safeEnv: Record<string, string | undefined> = Object.keys(process.env).reduce(
-  (acc, k) => {
-    const isSensitive = /password|secret|key|token|jwt|private|cert|smtp|db_password|access_key/i.test(k);
-    acc[k] = isSensitive ? '***' : process.env[k];
-    return acc;
-  },
-  {} as Record<string, string | undefined>
-);
-console.log('\nLoaded env values (masked):', JSON.stringify(safeEnv, null, 2));
+// const safeEnv: Record<string, string | undefined> = Object.keys(process.env).reduce(
+//   (acc, k) => {
+//     const isSensitive =
+//       /password|secret|key|token|jwt|private|cert|smtp|db_password|access_key/i.test(k);
+//     acc[k] = isSensitive ? '***' : process.env[k];
+//     return acc;
+//   },
+//   {} as Record<string, string | undefined>
+// );
+// console.error('\nLoaded env values (masked):', JSON.stringify(safeEnv, null, 2));
 
 // Validate process.env
 const { error, value: validatedEnv } = envSchema.validate(process.env, {
@@ -137,4 +154,3 @@ if (error) {
 }
 
 export const envConfig = validatedEnv;
-
