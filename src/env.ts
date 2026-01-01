@@ -29,6 +29,7 @@ export const ENV = {
     password: envConfig.DB_PASSWORD,
     databaseName: envConfig.DB_DATABASE,
     logging: envConfig.DB_LOGGING,
+    ssl: envConfig.DB_SSL,
   },
   fileStorage: {
     s3Region: envConfig.S3_REGION,

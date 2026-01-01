@@ -37,6 +37,7 @@ const envSchema = Joi.object({
   DB_PASSWORD: Joi.string().required(),
   DB_DATABASE: Joi.string().required(),
   DB_LOGGING: Joi.boolean().default(false),
+  DB_SSL: Joi.boolean().truthy('true').falsy('false').default(false),
 
   // Security configuration
   CORS_ALLOWED_ORIGINS: Joi.string().default('http://localhost,http://localhost:3000'),
