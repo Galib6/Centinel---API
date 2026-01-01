@@ -6,6 +6,13 @@ import * as Redis from 'ioredis';
 export class RedisService implements OnModuleDestroy {
   private redisClient: Redis.Redis;
   constructor() {
+    console.error('Redis Configuration:', {
+      host: ENV.redis.host,
+      port: ENV.redis.port,
+      username: ENV.redis.username,
+      tls: ENV.redis.tls,
+    });
+
     this.redisClient = new Redis.Redis({
       host: ENV.redis.host,
       port: ENV.redis.port,
