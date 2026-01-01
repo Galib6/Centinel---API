@@ -6,19 +6,12 @@ import * as Redis from 'ioredis';
 export class RedisService implements OnModuleDestroy {
   private redisClient: Redis.Redis;
   constructor() {
-    console.error('Redis Configuration:', {
-      host: ENV.redis.host,
-      port: ENV.redis.port,
-      username: ENV.redis.username,
-      tls: ENV.redis.tls,
-    });
-
     this.redisClient = new Redis.Redis({
       host: ENV.redis.host,
       port: ENV.redis.port,
       password: ENV.redis.password,
       username: ENV.redis.username,
-      ...(ENV.redis.tls ? { tls: { rejectUnauthorized: false } } : {}),
+      ...(ENV.redis.tls ? { tls: { rejectUnauthorized: false } } : { tls: undefined }),
     });
 
     this.redisClient.on('error', (err) => {
