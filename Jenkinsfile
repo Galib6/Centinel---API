@@ -1,11 +1,17 @@
 pipeline {
     agent any
 
+    // This tool directive tells Jenkins to install/use the configured Node.js environment
+    // Ensure you have configured a NodeJS tool named 'node' in Jenkins Global Tool Configuration
+    tools {
+        nodejs 'node'
+    }
+
     environment {
         // Define your environment variables here
         DOCKER_IMAGE_NAME = 'centinel-api'
-        DOCKER_REGISTRY = 'your-registry-url' // e.g., 'docker.io' or 'registry.example.com'
-        DOCKER_REPO = 'your-username/centinel-api' // e.g., 'galib/centinel-api'
+        DOCKER_REGISTRY = 'your-registry-url' // e.g., 'docker.io'
+        DOCKER_REPO = 'your-username/centinel-api' 
         DOCKER_CREDENTIALS_ID = 'your-docker-credentials-id'
     }
 
@@ -16,25 +22,37 @@ pipeline {
             }
         }
 
-        stage('Prepare & Test') {
+        stage('Install Dependencies') {
             steps {
-                // Run yarn inside a temporary node container mapped to the current workspace
-                // This avoids needing yarn installed on the Jenkins host
-                // We use sh -c to run multiple commands inside the container
-                sh 'docker run --rm -v "${WORKSPACE}:/app" -w /app node:22.12.0-alpine sh -c "yarn install --frozen-lockfile && yarn lint && yarn test"'
+                // Install yarn globally if not present in the node image
+                sh 'npm install -g yarn'
+                sh 'yarn install --frozen-lockfile'
+            }
+        }
+
+        stage('Lint & Test') {
+            steps {
+                sh 'yarn lint'
+                sh 'yarn test'
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh 'yarn build'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                // Build using standard docker command
+                // This step REQUIRES Docker to be installed on the Jenkins server
+                // If this fails, your Jenkins agent cannot talk to the Docker daemon.
                 sh "docker build -t ${DOCKER_REGISTRY}/${DOCKER_REPO}:${env.BUILD_NUMBER} ."
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                // Use withCredentials to securely inject username/password
                 withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     sh "echo \$DOCKER_PASSWORD | docker login ${DOCKER_REGISTRY} -u \$DOCKER_USERNAME --password-stdin"
                     
@@ -57,7 +75,7 @@ pipeline {
 
     post {
         always {
-            // Clean up images to save space
+            // Clean up images to save space (ignore errors if docker is missing)
             sh "docker rmi ${DOCKER_REGISTRY}/${DOCKER_REPO}:${env.BUILD_NUMBER} || true"
             sh "docker rmi ${DOCKER_REGISTRY}/${DOCKER_REPO}:latest || true"
             cleanWs()
