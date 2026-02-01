@@ -4,9 +4,9 @@ pipeline {
     environment {
         // Define your environment variables here
         DOCKER_IMAGE_NAME = 'centinel-api'
-        DOCKER_REGISTRY = 'your-registry-url' // e.g., 'docker.io/username'
+        DOCKER_REGISTRY = 'your-registry-url' // e.g., 'docker.io' or 'registry.example.com'
+        DOCKER_REPO = 'your-username/centinel-api' // e.g., 'galib/centinel-api'
         DOCKER_CREDENTIALS_ID = 'your-docker-credentials-id'
-        // NODE_ENV = 'production' // variable set in Dockerfile/env files
     }
 
     stages {
@@ -17,61 +17,50 @@ pipeline {
         }
 
         stage('Prepare & Test') {
-            agent {
-                docker {
-                    image 'node:22.12.0-alpine'
-                    reuseNode true
-                }
-            }
             steps {
-                sh 'yarn install --frozen-lockfile'
-                sh 'yarn lint'
-                sh 'yarn test'
-                sh 'yarn build'
+                // Run yarn inside a temporary node container mapped to the current workspace
+                // This avoids needing yarn installed on the Jenkins host
+                // We use sh -c to run multiple commands inside the container
+                sh 'docker run --rm -v "${WORKSPACE}:/app" -w /app node:22.12.0-alpine sh -c "yarn install --frozen-lockfile && yarn lint && yarn test"'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    dockerImage = docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER}")
-                }
+                // Build using standard docker command
+                sh "docker build -t ${DOCKER_REGISTRY}/${DOCKER_REPO}:${env.BUILD_NUMBER} ."
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
-                        dockerImage.push()
-                        dockerImage.push("latest")
-                    }
+                // Use withCredentials to securely inject username/password
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "echo \$DOCKER_PASSWORD | docker login ${DOCKER_REGISTRY} -u \$DOCKER_USERNAME --password-stdin"
+                    
+                    sh "docker push ${DOCKER_REGISTRY}/${DOCKER_REPO}:${env.BUILD_NUMBER}"
+                    
+                    // Tag and push latest
+                    sh "docker tag ${DOCKER_REGISTRY}/${DOCKER_REPO}:${env.BUILD_NUMBER} ${DOCKER_REGISTRY}/${DOCKER_REPO}:latest"
+                    sh "docker push ${DOCKER_REGISTRY}/${DOCKER_REPO}:latest"
                 }
             }
         }
 
         stage('Deploy') {
-            // Adjust this stage based on your deployment strategy (e.g., SSH, Kubernetes, etc.)
             steps {
                 echo 'Deploying...'
-                // Example SSH deployment:
-                // sshagent(['your-ssh-credentials-id']) {
-                //     sh "ssh user@server 'docker pull ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} && docker-compose up -d'"
-                // }
+                // Add deployment steps here
             }
         }
     }
 
     post {
         always {
-            // Clean up workspace or docker images if needed
+            // Clean up images to save space
+            sh "docker rmi ${DOCKER_REGISTRY}/${DOCKER_REPO}:${env.BUILD_NUMBER} || true"
+            sh "docker rmi ${DOCKER_REGISTRY}/${DOCKER_REPO}:latest || true"
             cleanWs()
-        }
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
