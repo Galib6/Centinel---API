@@ -1,0 +1,11 @@
+node_modules
+dist
+logs
+.git
+.github
+.gitignore
+Dockerfile
+Jenkinsfile
+test
+bitbucket-pipelines.yml
+.gitlab-ci.yml

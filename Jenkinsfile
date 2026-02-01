@@ -16,26 +16,17 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Prepare & Test') {
+            agent {
+                docker {
+                    image 'node:22.12.0-alpine'
+                    reuseNode true
+                }
+            }
             steps {
                 sh 'yarn install --frozen-lockfile'
-            }
-        }
-
-        stage('Lint') {
-            steps {
                 sh 'yarn lint'
-            }
-        }
-
-        stage('Test') {
-            steps {
                 sh 'yarn test'
-            }
-        }
-
-        stage('Build Application') {
-            steps {
                 sh 'yarn build'
             }
         }
