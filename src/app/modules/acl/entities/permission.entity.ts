@@ -15,7 +15,7 @@ export class Permission extends BaseEntity {
   @Type(() => PermissionType)
   permissionType?: PermissionType;
 
-  @Column({ type: ENUM_COLUMN_TYPES.UUID })
+  @Column({ type: ENUM_COLUMN_TYPES.UUID, nullable: true })
   @RelationId((e: Permission) => e.permissionType)
   permissionTypeId?: string;
 

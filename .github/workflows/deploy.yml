@@ -2,7 +2,7 @@ name: Centinel Prod CI
 
 on:
   push:
-    branches: [main]
+    branches: [mains]
 
 env:
   NODE_ENV: production

@@ -71,7 +71,7 @@ export class FileUploadService {
     folder?: string;
     createdBy?: User;
   }): Promise<FileStorage> {
-    const { file, folder = 'others' } = data;
+    const { file, folder = 'staging' } = data;
     // Return null if no file is provided
     if (!file) return null;
 
@@ -143,7 +143,7 @@ export class FileUploadService {
 
   async getFileUrl(key: string, folder: string): Promise<{ url: string }> {
     return {
-      url: `https://${ENV.fileStorage.s3Bucket}.${ENV.fileStorage.s3Region}.cdn.digitaloceanspaces.com/${ENV.fileStorage.folderPrefix}/${folder}/${key}`,
+      url: `https://${ENV.fileStorage.s3Region}.cdn.digitaloceanspaces.com/${ENV.fileStorage.s3Bucket}/${ENV.fileStorage.folderPrefix}/${folder}/${key}`,
     };
   }
 

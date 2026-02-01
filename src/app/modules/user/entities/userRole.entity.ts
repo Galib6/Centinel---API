@@ -19,11 +19,11 @@ export class UserRole {
   @Type(() => User)
   user?: User;
 
-  @Column({ type: ENUM_COLUMN_TYPES.UUID })
+  @Column({ type: ENUM_COLUMN_TYPES.UUID, nullable: true })
   @RelationId((e: UserRole) => e.role)
   roleId?: string;
 
-  @Column({ type: ENUM_COLUMN_TYPES.UUID })
+  @Column({ type: ENUM_COLUMN_TYPES.UUID, nullable: true })
   @RelationId((e: UserRole) => e.user)
   userId?: string;
 }

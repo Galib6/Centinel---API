@@ -13,7 +13,7 @@ export class RolePermission extends BaseEntity {
   @Type(() => Role)
   role?: Role;
 
-  @Column({ type: ENUM_COLUMN_TYPES.UUID })
+  @Column({ type: ENUM_COLUMN_TYPES.UUID, nullable: true })
   @RelationId((e: RolePermission) => e.role)
   roleId?: string;
 
@@ -21,7 +21,7 @@ export class RolePermission extends BaseEntity {
   @Type(() => Permission)
   permission?: Permission;
 
-  @Column({ type: ENUM_COLUMN_TYPES.UUID })
+  @Column({ type: ENUM_COLUMN_TYPES.UUID, nullable: true })
   @RelationId((e: RolePermission) => e.permission)
   permissionId?: string;
 }
